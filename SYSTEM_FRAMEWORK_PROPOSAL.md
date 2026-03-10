@@ -1011,3 +1011,106 @@ v3 的核心，不再是“拥有更多技能”，而是：
 - baseline 必须支持分环境、分窗口比较（至少 `rolling_7d` 与 `rolling_30d`）。
 - 必须提供 staging 试运行入口，先覆盖 2~3 类低风险任务。
 - 即使不做完整持久服务，也必须先定义服务边界：调度入口、状态存储、trace 落盘、proposal review 队列。
+
+---
+
+# 29. 方案修正与机制运行表（优化）
+
+为避免“只有流程图、没有运行门控”的问题，新增机制化运行表：
+
+- 文档：`docs/mechanism-runtime-table-2026-03-10.md`
+- 核心价值：对 14 个关键节点补齐 **Mechanism + Threshold + Failure Handling + Audit Fields**。
+- 执行原则：高风险默认 review-only、candidate 不直升 active、失败可回滚且可追溯。
+
+---
+
+# 30. 文件管理与目录库机制（File Governance + Catalog DB）
+
+新增文件治理基础设施要求：
+
+- 文件管理办法：按 `CORE / CONTROLLED / WORKING / GENERATED` 分类治理。
+- 数据库目录：维护 `file_catalog`（路径、分类、风险、可写模式、索引时间、哈希）。
+- 执行前置：`before_task / before_subtask` 必须经过 `catalog_precheck(file_scope)`。
+- 执行硬约束：写入前强制 `catalog_enforce(path, writable_mode)`，不满足直接阻断。
+- 指标接入：回归报告新增 `file_policy_block_count` 与 `unauthorized_write_attempt_count`。
+
+参考文档：`docs/file-management-and-db-catalog-2026-03-10.md`
+参考脚本：`scripts/build_file_catalog_db.py`
+
+---
+
+# 31. 流程缺口补齐（节点机制增强）
+
+在第 29/30 节基础上，新增“流程复盘缺口补齐”：
+
+- 新增机制文档章节：`docs/mechanism-runtime-table-2026-03-10.md` 第五节。
+- 补齐重点节点机制：
+  - Ingress：`Idempotency Key + Rate Limit`
+  - Routing：`Tie-breaker + Abstain Gate`
+  - Execute：`Sandbox + Timeout/Budget`
+  - Governance：`Reviewer Quorum + Freeze Window`
+  - File Governance：`Ownership Lock + Transactional Patch`
+- 补充强制审计字段：`idempotency_key, rule_set_version, abstain_reason, execution_budget, evidence_hash, review_quorum, drift_score` 等。
+
+---
+
+# 32. 统一状态机总表（System State Machine Table）
+
+为解决状态分散问题，统一收口 Task / Proposal / Memory Object / File Object 状态机。
+
+- 标准表见：`docs/final-closure-tables-2026-03-10.md` 第 1 节。
+- 强制要求：所有状态迁移必须可审计（记录 `from_state`, `to_state`, `reason`, `actor`, `timestamp`）。
+- 禁止跳跃迁移：仅允许状态表定义的边。
+
+# 33. 统一 Outcome / Correctness / Success 判定
+
+为避免“有回复=成功”的误判，统一判定字段与规则：
+
+- 字段：`interaction_success, execution_success, goal_success, governance_success, done_criteria_met, constraint_check_passed, validation_check_passed, overall_outcome`。
+- 规则与映射见：`docs/final-closure-tables-2026-03-10.md` 第 2 节。
+- 结果必须驱动：failure taxonomy、proposal seed、review policy、分层 metrics。
+
+# 34. 统一入口制度（Single Ingress Policy）
+
+为避免旁路，定义强制入口制度：
+
+- 所有消息/事件/review/自动触发必须先转为标准 `Envelope`。
+- 必须先过 continuity resolution，再执行 `before_task`。
+- 禁止任何 skill/hook/script 绕过主链路直接执行或写核心对象。
+- 细则见：`docs/final-closure-tables-2026-03-10.md` 第 3 节。
+
+---
+
+# 35. Canonical Field Dictionary + Canonical Object Schema（数据库统一语义）
+
+数据库层新增两项基础设施级约束：
+
+- `canonical_field_dictionary`：统一字段名称、类型、枚举、语义、允许出现位置。
+- `canonical_object_schema`：统一对象必填字段与跨对象约束。
+
+落地位置：
+- `evoclaw/runtime/contracts/canonical_field_dictionary.yaml`
+- `evoclaw/runtime/contracts/canonical_object_schema.yaml`
+
+强制规则：
+1. 新增表/新增 schema 不得绕过字段字典。
+2. 禁止同名不同义（如 task risk 与 skill risk 混用 `risk_level`）。
+3. 禁止不同名同义（如 `task_type/job_type/work_type` 并存）。
+4. 字段后缀统一：`*_id`, `*_status`, `*_version`, `*_at`。
+
+---
+
+# 36. 详细落实计划（Execution Rollout Plan）
+
+为避免“有机制、无推进路径”，新增详细落实计划文档：
+
+- `docs/implementation-rollout-plan-2026-03-10.md`
+
+计划包含：
+- 6 周排期（W1~W6）
+- 分模块任务与验收标准
+- 里程碑与交付物
+- 运行 SLO/KPI
+- 风险缓解与 RACI
+- 第一周可直接开工清单
+- v1.1 补充：Continuity Resolver、Outcome Evaluator、Memory Lifecycle Skeleton、Regression Rules 冻结

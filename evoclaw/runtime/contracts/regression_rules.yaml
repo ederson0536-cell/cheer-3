@@ -1,0 +1,15 @@
+{
+  "policy_version": "regression_rules_v1",
+  "release_gate": {
+    "min_pass_rate": 0.7,
+    "max_warning_count": 3,
+    "max_fail_count": 0,
+    "warning_requires_manual_review": true,
+    "fail_requires_block": true
+  },
+  "labels": {
+    "pass": "allow_publish",
+    "warning": "manual_review_required",
+    "fail": "publish_blocked"
+  }
+}
