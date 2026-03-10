@@ -265,3 +265,23 @@ Periodically:
 ## Make It Yours
 
 This is a starting point. Add your own conventions, style, and rules as you figure out what works.
+
+
+## Root File Responsibilities (Quick Map)
+
+To reduce accidental edits, treat these root files as explicit contracts:
+
+- `AGENTS.md`: Workspace operating policy and behavior constraints.
+  - Update only when governance/human instructions change.
+- `SOUL.md`: Assistant identity contract.
+  - Update only through EvoClaw proposal/governance pipeline.
+- `USER.md`: Human profile/preferences context.
+  - Update when the human provides new explicit profile signals.
+- `MEMORY.md`: Curated long-term memory summary.
+  - Update after reflection distills stable learnings.
+- `TOOLS.md`: Local environment tool notes.
+  - Update when tool paths/versions/defaults/local infra details change.
+
+Canonical machine-readable source:
+- `evoclaw/runtime/config/root_file_registry.json`
+- `evoclaw/runtime/config/memory_directory_registry.json`
