@@ -14,7 +14,8 @@ class AutoHandler:
         return {
             "type": "routed",
             "result": payload["handler_result"],
-            "ingress": payload["ingress"],
+            "envelope": payload["envelope"],
+            "continuity_resolution": payload.get("continuity_resolution"),
         }
 
 

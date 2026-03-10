@@ -17,6 +17,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from components.task_engine import analyze_task
 from components.memory_retrieval import get_memory_retrieval
+from components.file_governance import get_file_governance
 
 
 def run_before_task(message: str, context: dict = None) -> dict:
@@ -40,6 +41,13 @@ def run_before_task(message: str, context: dict = None) -> dict:
         task_understanding=task_understanding,
         recent_days=7,
     )
+
+    # 3.5 file catalog precheck (Week5)
+    governor = get_file_governance()
+    file_scope = task_understanding.get("file_scope") or []
+    if isinstance(file_scope, str):
+        file_scope = [file_scope]
+    catalog_precheck = governor.catalog_precheck(file_scope=file_scope, mode="auto")
 
     # 4. 兼容旧字段
     rules = retrieval["rules_track"]["rules"]
@@ -86,8 +94,11 @@ def run_before_task(message: str, context: dict = None) -> dict:
         "rule_description": rule_description,
         "experience": experience,
         "context_summary": context_summary,
+        "file_governance": {"catalog_precheck": catalog_precheck},
         "ready_to_execute": (
-            task_understanding["uncertainty_level"] < 0.7 and len(blocking_rules) == 0
+            task_understanding["uncertainty_level"] < 0.7
+            and len(blocking_rules) == 0
+            and bool(catalog_precheck.get("pass", True))
         ),
     }
     

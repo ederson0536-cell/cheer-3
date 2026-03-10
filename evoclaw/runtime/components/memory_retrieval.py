@@ -339,10 +339,26 @@ class MemoryRetrieval:
         if experience_track.get("graph"):
             context_summary += f"\n🕸️ 图谱命中: {len(experience_track['graph'])}条"
 
+        recall_priority_order = ["rules", "experience", "candidate"]
+        recall_packet = {
+            "rules": rules_track,
+            "experience": {
+                "episodic": experience_track.get("episodic", {}),
+                "semantic": experience_track.get("semantic", []),
+                "memories": experience_track.get("memories", []),
+                "graph": experience_track.get("graph", []),
+            },
+            "candidate": {
+                "candidate": experience_track.get("candidate", []),
+            },
+        }
+
         return {
             "timestamp": datetime.now().isoformat(),
             "rules_track": rules_track,
             "experience_track": experience_track,
+            "recall_priority_order": recall_priority_order,
+            "recall_packet": recall_packet,
             "context_summary": context_summary.strip(),
             "hits": hits,
             "retrieval_stats": self.stats,

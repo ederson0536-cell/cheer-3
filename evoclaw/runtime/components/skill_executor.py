@@ -9,6 +9,7 @@ from datetime import datetime
 from pathlib import Path
 
 from evoclaw.workspace_resolver import resolve_workspace
+from components.file_governance import get_file_governance
 
 WORKSPACE = str(resolve_workspace(__file__))
 
@@ -24,6 +25,14 @@ class SkillExecutor:
         """Execute a skill with the given task"""
         
         print(f"\n[SkillExecutor] Executing: {skill_id}")
+
+        governor = get_file_governance()
+        file_scope = task.get("file_scope") or []
+        if isinstance(file_scope, str):
+            file_scope = [file_scope]
+        pre = governor.catalog_precheck(file_scope=file_scope, mode=str(task.get("writable_mode", "auto")))
+        if not pre.get("pass", True):
+            return {"success": False, "error": "file_scope_blocked", "details": pre}
         
         # Map skills to execution functions
         executors = {

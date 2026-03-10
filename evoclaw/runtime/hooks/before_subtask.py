@@ -16,6 +16,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from components.skill_router import route_task
 from components.skill_registry import get_registry
+from components.file_governance import get_file_governance
 
 WORKSPACE = str(resolve_workspace(__file__))
 
@@ -43,6 +44,13 @@ def run_before_subtask(
     local_experience = recall_local_experience(subtask_info)
     
     # 4. Generate subtask checklist
+    # 4.5 Week5 file catalog precheck
+    governor = get_file_governance()
+    local_scope = subtask_info.get("file_scope") or task_info.get("file_scope") or []
+    if isinstance(local_scope, str):
+        local_scope = [local_scope]
+    catalog_precheck = governor.catalog_precheck(file_scope=local_scope, mode="auto")
+
     checklist = generate_subtask_checklist(subtask_info, routing_result)
     
     result = {
@@ -54,7 +62,8 @@ def run_before_subtask(
         "rules": rules,
         "local_experience": local_experience,
         "checklist": checklist,
-        "ready_to_execute": routing_result.get("ready_to_execute", True)
+        "file_governance": {"catalog_precheck": catalog_precheck},
+        "ready_to_execute": routing_result.get("ready_to_execute", True) and bool(catalog_precheck.get("pass", True))
     }
     
     # Save to working memory
