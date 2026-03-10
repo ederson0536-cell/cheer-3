@@ -11,14 +11,14 @@ from pathlib import Path
 DEFAULT_EXCLUDES = {'.git', '.venv', '__pycache__'}
 
 
-def classify(path: str) -> tuple[str, str, str, str]:
+def classify(path: str) -> tuple[str, str, str, str, str]:
     if path in {'SOUL.md', 'AGENTS.md'} or path.startswith('evoclaw/runtime/'):
-        return ('CORE', 'system', 'high', 'review-only')
+        return ('CORE', 'system', 'high', 'review-only', 'locked')
     if path.startswith('evoclaw/runtime/contracts/') or path.startswith('evoclaw/runtime/config/'):
-        return ('CONTROLLED', 'contracts', 'medium', 'review-only')
+        return ('CONTROLLED', 'contracts', 'medium', 'review-only', 'review_pending')
     if path.startswith('docs/'):
-        return ('WORKING', 'docs', 'low', 'auto')
-    return ('WORKING', 'general', 'medium', 'auto')
+        return ('WORKING', 'docs', 'low', 'auto', 'active')
+    return ('WORKING', 'general', 'medium', 'auto', 'active')
 
 
 def file_hash(p: Path) -> str:
@@ -50,9 +50,10 @@ def main() -> int:
     now = datetime.now(timezone.utc).isoformat()
 
     for p, rel in iter_files(root):
-        fclass, domain, risk, mode = classify(rel)
+        fclass, domain, task_risk_level, mode, file_status = classify(rel)
         digest = file_hash(p)
-        rows.append((rel, fclass, domain, risk, mode, digest, now, 1))
+        file_id = f"file_{digest[:16]}"
+        rows.append((file_id, rel, file_status, fclass, domain, task_risk_level, mode, digest, 'v1', 'v1', now, now, 1))
 
     if args.dry_run:
         print(f'files_scanned={len(rows)}')
@@ -65,13 +66,18 @@ def main() -> int:
         cur = conn.cursor()
         cur.execute('''
             CREATE TABLE IF NOT EXISTS file_catalog (
-              path TEXT PRIMARY KEY,
+              file_id TEXT PRIMARY KEY,
+              path TEXT NOT NULL UNIQUE,
+              file_status TEXT NOT NULL,
               file_class TEXT NOT NULL,
               owner_domain TEXT,
-              risk_level TEXT NOT NULL,
+              task_risk_level TEXT NOT NULL,
               writable_mode TEXT NOT NULL,
               last_hash TEXT,
-              last_indexed_at TEXT NOT NULL,
+              schema_version TEXT NOT NULL,
+              policy_version TEXT NOT NULL,
+              created_at TEXT NOT NULL,
+              updated_at TEXT NOT NULL,
               exists_flag INTEGER NOT NULL
             )
         ''')
@@ -80,8 +86,8 @@ def main() -> int:
         cur.execute('DELETE FROM file_catalog')
         cur.executemany('''
             INSERT INTO file_catalog
-            (path, file_class, owner_domain, risk_level, writable_mode, last_hash, last_indexed_at, exists_flag)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            (file_id, path, file_status, file_class, owner_domain, task_risk_level, writable_mode, last_hash, schema_version, policy_version, created_at, updated_at, exists_flag)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', rows)
         conn.commit()
     finally:

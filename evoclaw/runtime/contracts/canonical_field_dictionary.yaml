@@ -1,41 +1,283 @@
-version: 1
+version: 2
 name: canonical_field_dictionary
+owner: runtime-governance
+
+purpose: >-
+  Unified field language for task/memory/proposal/trace/governance/file-catalog tables.
+  Prevents same-name-different-meaning and different-name-same-meaning drift.
+
+naming_suffix_rules:
+  id_fields: "*_id"
+  status_fields: "*_status"
+  version_fields: "*_version"
+  datetime_fields: "*_at"
+  boolean_fields: "*_flag | is_* | has_*"
 
 canonical_fields:
+  # A) identity fields
   task_id:
     type: string
-    meaning: unique task identifier
-    used_in: [task_subtask, decision_trace]
+    required: true
+    meaning: unique id for current task
+    appears_in: [task, subtask, episodic_record, proposal, decision_trace]
+    example: task_20260310_001
+
   subtask_id:
     type: string
-    meaning: unique subtask identifier
-    used_in: [task_subtask, decision_trace]
-  risk_level:
+    required: true
+    meaning: unique id for current subtask
+    appears_in: [subtask, decision_trace, episodic_record]
+    example: subtask_20260310_001
+
+  root_task_id:
+    type: [string, "null"]
+    required: false
+    meaning: root lineage id for continuity chain
+    appears_in: [task, subtask, envelope, decision_trace]
+
+  parent_task_id:
+    type: [string, "null"]
+    required: false
+    meaning: direct parent task id
+    appears_in: [task, subtask]
+
+  trace_id:
+    type: string
+    required: true
+    meaning: unique trace object id
+    appears_in: [decision_trace, governance_record]
+
+  proposal_id:
+    type: string
+    required: true
+    meaning: unique proposal id
+    appears_in: [proposal, review, release, rollback]
+
+  review_id:
+    type: string
+    required: false
+    meaning: review workflow id
+    appears_in: [review, governance_record]
+
+  release_id:
+    type: string
+    required: false
+    meaning: canary/publish release id
+    appears_in: [release, rollback, governance_record]
+
+  rollback_id:
+    type: string
+    required: false
+    meaning: rollback event id
+    appears_in: [rollback, governance_record]
+
+  skill_id:
+    type: string
+    required: true
+    meaning: unique skill identifier
+    appears_in: [skill_registry, routing_trace, skill_performance]
+
+  file_id:
+    type: string
+    required: false
+    meaning: stable file identifier (hash/path based)
+    appears_in: [file_catalog, file_change_record]
+
+  # B) risk & trust
+  task_risk_level:
     type: enum(low|medium|high)
-    meaning: runtime task/subtask risk for current operation
-    used_in: [task_subtask, memory_contract]
-  risk_profile:
+    required: true
+    meaning: runtime risk of task/subtask operation
+    appears_in: [task, subtask, governance_evaluation]
+
+  skill_risk_profile:
     type: enum(low|medium|high|critical)
-    meaning: static skill risk capability profile
-    used_in: [skill_registry]
+    required: true
+    meaning: static skill capability risk profile
+    appears_in: [skill_registry]
+
   trust_level:
     type: enum(unverified|low|medium|high)
-    meaning: skill trust grade controlled by governance
-    used_in: [skill_registry, routing_score]
+    required: true
+    meaning: trust grade for skill/source
+    appears_in: [skill_registry, routing_trace, governance_gate]
+
+  # C) status fields
+  task_status:
+    type: enum(new|open|in_progress|blocked|awaiting_review|completed|failed|archived)
+    required: true
+    appears_in: [task]
+
+  proposal_status:
+    type: enum(draft|candidate|review_pending|canary|active|rejected|rolled_back|archived)
+    required: true
+    appears_in: [proposal]
+
+  memory_status:
+    type: enum(raw|episodic|candidate|semantic|deprecated|archived)
+    required: true
+    appears_in: [memory_event, memory_object]
+
+  file_status:
+    type: enum(active|candidate_patch|review_pending|published|rolled_back|locked)
+    required: true
+    appears_in: [file_catalog, file_change_record]
+
+  review_status:
+    type: enum(pending|approved|rejected|closed)
+    required: true
+    appears_in: [review]
+
+  # D) version fields
+  schema_version:
+    type: string
+    required: true
+    appears_in: [all_contract_objects]
+
+  policy_version:
+    type: string
+    required: true
+    appears_in: [governance_record, decision_trace]
+
+  trace_version:
+    type: string
+    required: true
+    appears_in: [decision_trace]
+
+  router_version:
+    type: string
+    required: true
+    appears_in: [decision_trace, routing_trace]
+
+  config_version:
+    type: string
+    required: false
+    appears_in: [runtime_config_snapshot]
+
+  # E) audit fields
+  created_at:
+    type: datetime
+    required: true
+    appears_in: [all_persistent_tables]
+
+  updated_at:
+    type: datetime
+    required: true
+    appears_in: [all_mutable_tables]
+
+  created_by:
+    type: string
+    required: false
+    appears_in: [all_persistent_tables]
+
+  updated_by:
+    type: string
+    required: false
+    appears_in: [all_mutable_tables]
+
+  source_hook:
+    type: enum(before_task|before_subtask|after_subtask|after_task|system)
+    required: false
+    appears_in: [memory_event, proposal_seed, trace]
+
+  evidence_hash:
+    type: string
+    required: false
+    appears_in: [proposal, memory_event, governance_record]
+
+  # F) outcome & correctness
+  interaction_success:
+    type: boolean
+    required: true
+    appears_in: [task_outcome, subtask_outcome]
+
+  execution_success:
+    type: boolean
+    required: true
+    appears_in: [task_outcome, subtask_outcome]
+
+  goal_success:
+    type: boolean
+    required: true
+    appears_in: [task_outcome, subtask_outcome]
+
+  governance_success:
+    type: boolean
+    required: true
+    appears_in: [task_outcome, subtask_outcome]
+
+  done_criteria_met:
+    type: boolean
+    required: true
+    appears_in: [task_outcome, subtask_outcome]
+
+  constraint_check_passed:
+    type: boolean
+    required: true
+    appears_in: [task_outcome, subtask_outcome]
+
+  validation_check_passed:
+    type: boolean
+    required: true
+    appears_in: [task_outcome, subtask_outcome]
+
+  overall_outcome:
+    type: enum(success|partial|failure)
+    required: true
+    appears_in: [task_outcome, subtask_outcome]
+
+  # shared operational fields
+  scenario:
+    type: string
+    required: true
+    appears_in: [task, subtask, routing_trace]
+
   file_scope:
     type: array<string>
-    meaning: allowed file paths/scope for operation
-    used_in: [task_subtask, memory_contract]
+    required: false
+    appears_in: [task, subtask, file_policy_check]
+
   routing_score:
     type: number(0..1)
-    meaning: final weighted routing score
-    used_in: [routing_score, decision_trace]
-  uncertainty_level:
-    type: number(0..1)
-    meaning: confidence uncertainty of task understanding
-    used_in: [task_subtask]
+    required: false
+    appears_in: [routing_trace, decision_trace]
 
-naming_rules:
-  - prefer *_level for runtime numeric/ordinal signal
-  - prefer *_profile for static capability classification
-  - avoid synonyms for same concept across contracts
+
+  message_id:
+    type: string
+    required: true
+    meaning: canonical ingress message identifier
+    appears_in: [envelope, continuity_resolver, task]
+
+  session_id:
+    type: string
+    required: true
+    meaning: session scope identifier
+    appears_in: [envelope, continuity_resolver, task]
+
+  ingested_by:
+    type: string
+    required: true
+    meaning: ingress processor name, must be evoclaw on primary path
+    appears_in: [envelope, task]
+
+  continuity_type:
+    type: enum(new_task|continue_existing_task|attach_as_subtask|fork_from_existing_task)
+    required: true
+    appears_in: [continuity_resolver, task]
+
+  continuity_resolution:
+    type: object
+    required: true
+    meaning: continuity decision payload attached before execution
+    appears_in: [ingress_metadata]
+
+forbidden_synonyms:
+  task_type: [job_type, work_type]
+  task_risk_level: [risk_level]
+  skill_risk_profile: [risk_profile, risk_level]
+  overall_outcome: [success_flag, result_ok, passed]
+
+notes:
+  - New schema/table must reference this dictionary before review.
+  - Field meaning changes require dictionary version bump and governance review.

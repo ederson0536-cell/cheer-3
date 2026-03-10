@@ -1,0 +1,29 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Continuity Resolver Schema",
+  "type": "object",
+  "required": [
+    "message_id",
+    "session_id",
+    "continuity_type",
+    "confidence",
+    "schema_version",
+    "policy_version"
+  ],
+  "properties": {
+    "message_id": {"type": "string"},
+    "session_id": {"type": "string"},
+    "task_id": {"type": ["string", "null"]},
+    "root_task_id": {"type": ["string", "null"]},
+    "parent_task_id": {"type": ["string", "null"]},
+    "continuity_type": {
+      "type": "string",
+      "enum": ["new_task", "continue_existing_task", "attach_as_subtask", "fork_from_existing_task"]
+    },
+    "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+    "schema_version": {"type": "string"},
+    "policy_version": {"type": "string"},
+    "created_at": {"type": "string"}
+  },
+  "additionalProperties": false
+}
