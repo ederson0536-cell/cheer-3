@@ -38,6 +38,57 @@ def main() -> int:
     assert env["metadata"]["ingested_by"] == "evoclaw"
     assert payload["continuity_resolution"]["message_id"] == env["metadata"]["message_id"]
 
+
+    duplicate = route_message(
+        "你好",
+        source="validator",
+        channel="test",
+        metadata={
+            "session_id": "sess-week2",
+            "sender": "validator",
+            "raw_message_id": "fixed-1",
+            "timestamp": "2026-03-10T00:00:00",
+        },
+    )
+    duplicate_again = route_message(
+        "你好",
+        source="validator",
+        channel="test",
+        metadata={
+            "session_id": "sess-week2",
+            "sender": "validator",
+            "raw_message_id": "fixed-1",
+            "timestamp": "2026-03-10T00:00:00",
+        },
+    )
+    assert isinstance(duplicate["handler_result"], dict)
+    assert duplicate_again["handler_result"]["status"] == "blocked"
+    assert duplicate_again["handler_result"]["reason"] == "duplicate_message"
+
+    blocked = None
+    for i in range(30):
+        out = route_message(
+            f"burst-{i}",
+            source="validator",
+            channel="burst-channel",
+            metadata={
+                "session_id": "sess-burst",
+                "sender": "validator",
+                "raw_message_id": f"burst-{i}",
+                "timestamp": "2026-03-10T00:00:00",
+            },
+        )
+        if out["handler_result"].get("reason") == "rate_limited":
+            blocked = out
+            break
+    assert blocked is not None
+    assert blocked["handler_result"]["status"] == "blocked"
+
+    cron_code = (WORKSPACE / "evoclaw" / "cron_runner.py").read_text(encoding="utf-8")
+    assert "route_message(" in cron_code
+    assert "handler.handle(message)" not in cron_code
+    assert "handler.handle(text.strip())" not in cron_code
+
     print("WEEK2_INGRESS_CONTINUITY_PASS")
     return 0
 

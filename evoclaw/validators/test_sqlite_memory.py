@@ -81,6 +81,8 @@ class SQLiteMemoryStoreTests(unittest.TestCase):
                 "candidates",
                 "system_state",
                 "system_logs",
+                "system_catalog",
+                "system_readable_checklist",
             }.issubset(tables)
         )
         self.assertIn("experiences", view_names)
@@ -815,6 +817,100 @@ class SQLiteMemoryStoreTests(unittest.TestCase):
 
         by_skill = store.query_candidates(skill_id="notion_api", limit=10)
         self.assertEqual([c["id"] for c in by_skill], ["cand-2"])
+
+
+    def test_build_file_catalog_writes_system_catalog_summary(self):
+        workspace_root = Path(self.tmpdir.name) / "workspace"
+        workspace_root.mkdir(parents=True, exist_ok=True)
+
+        (workspace_root / "memory" / "tasks").mkdir(parents=True, exist_ok=True)
+        (workspace_root / "memory" / "tasks" / "2026-03-10.jsonl").write_text(
+            "\n".join(
+                [
+                    json.dumps({"task_id": "t-1", "event": "started"}, ensure_ascii=False),
+                    json.dumps({"task_id": "t-2", "event": "completed"}, ensure_ascii=False),
+                ]
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        (workspace_root / "AGENTS.md").write_text("# root policy\n", encoding="utf-8")
+        (workspace_root / "SOUL.md").write_text("# soul\n", encoding="utf-8")
+
+        registry = workspace_root / "evoclaw" / "runtime" / "config"
+        registry.mkdir(parents=True, exist_ok=True)
+        (registry / "root_file_registry.json").write_text(
+            json.dumps(
+                {
+                    "schema_version": "v1",
+                    "files": [
+                        {
+                            "path": "AGENTS.md",
+                            "file_class": "CORE",
+                            "primary_function": "workspace policy",
+                            "change_trigger": "policy change"
+                        }
+                    ]
+                },
+                ensure_ascii=False,
+            ),
+            encoding="utf-8",
+        )
+
+        result = subprocess.run(
+            [
+                "python3",
+                "scripts/build_file_catalog_db.py",
+                "--root",
+                str(workspace_root),
+                "--db",
+                str(workspace_root / "memory" / "file_catalog.sqlite"),
+                "--memory-db",
+                str(self.db_path),
+            ],
+            check=False,
+            text=True,
+            capture_output=True,
+        )
+        self.assertEqual(result.returncode, 0, msg=result.stderr)
+
+        store = SQLiteMemoryStore(self.db_path)
+        store.init_schema()
+        rows = store.query_system_catalog()
+        self.assertTrue(any(r["object_key"] == "tasks.total" and r["object_count"] >= 2 for r in rows))
+        self.assertTrue(any(r["object_key"] == "files.total" and r["object_count"] > 0 for r in rows))
+        self.assertTrue(any(r["object_key"] == "root_file.AGENTS.md" for r in rows))
+
+        checklist = store.query_readable_checklist()
+        self.assertTrue(any(r["checklist_id"] == "root_file::AGENTS.md" for r in checklist))
+
+
+    def test_replace_and_query_readable_checklist(self):
+        store = SQLiteMemoryStore(self.db_path)
+        store.init_schema()
+        store.replace_readable_checklist(
+            [
+                {
+                    "checklist_id": "root_file::AGENTS.md",
+                    "checklist_type": "root_file",
+                    "target_path": "AGENTS.md",
+                    "purpose": "policy",
+                    "when_to_change": "when policy updates",
+                    "source": "test",
+                },
+                {
+                    "checklist_id": "memory_dir::memory/experiences",
+                    "checklist_type": "memory_directory",
+                    "target_path": "memory/experiences",
+                    "purpose": "experience logs",
+                    "when_to_change": "append on interaction",
+                    "source": "test",
+                },
+            ]
+        )
+        root_rows = store.query_readable_checklist(checklist_type="root_file")
+        self.assertEqual(len(root_rows), 1)
+        self.assertEqual(root_rows[0]["target_path"], "AGENTS.md")
 
 
 if __name__ == "__main__":
