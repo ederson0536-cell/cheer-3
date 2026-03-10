@@ -1,0 +1,76 @@
+{
+  "schema_version": "v1",
+  "generated_note": "Root-level files and change triggers for file governance and catalog inventory.",
+  "files": [
+    {
+      "path": "AGENTS.md",
+      "file_class": "CORE",
+      "owner_domain": "governance",
+      "task_risk_level": "high",
+      "writable_mode": "review-only",
+      "file_status": "locked",
+      "primary_function": "Workspace operation policy and agent behavior constraints.",
+      "change_trigger": "Only when operating instructions are updated by governance/human"
+    },
+    {
+      "path": "SOUL.md",
+      "file_class": "CORE",
+      "owner_domain": "identity",
+      "task_risk_level": "high",
+      "writable_mode": "review-only",
+      "file_status": "locked",
+      "primary_function": "Agent identity definition (CORE/MUTABLE traits).",
+      "change_trigger": "Only via EvoClaw proposal/governance pipeline"
+    },
+    {
+      "path": "USER.md",
+      "file_class": "CONTROLLED",
+      "owner_domain": "context",
+      "task_risk_level": "medium",
+      "writable_mode": "review-only",
+      "file_status": "review_pending",
+      "primary_function": "Human profile and long-term preference context.",
+      "change_trigger": "When user profile or preferences are explicitly updated"
+    },
+    {
+      "path": "MEMORY.md",
+      "file_class": "CONTROLLED",
+      "owner_domain": "memory",
+      "task_risk_level": "medium",
+      "writable_mode": "review-only",
+      "file_status": "review_pending",
+      "primary_function": "Curated long-term memory summary for main sessions.",
+      "change_trigger": "After reflection distills stable learnings"
+    },
+    {
+      "path": "SYSTEM_FRAMEWORK_PROPOSAL.md",
+      "file_class": "CONTROLLED",
+      "owner_domain": "architecture",
+      "task_risk_level": "high",
+      "writable_mode": "review-only",
+      "file_status": "review_pending",
+      "primary_function": "Top-level system architecture and rollout baseline.",
+      "change_trigger": "When framework contracts/rollout strategy changes"
+    },
+    {
+      "path": "TOOLS.md",
+      "file_class": "CONTROLLED",
+      "owner_domain": "tooling",
+      "task_risk_level": "medium",
+      "writable_mode": "review-only",
+      "file_status": "review_pending",
+      "primary_function": "Environment-specific tool notes and operational shortcuts.",
+      "change_trigger": "When local tools/env paths/version habits change"
+    },
+    {
+      "path": "HEARTBEAT.md",
+      "file_class": "CONTROLLED",
+      "owner_domain": "operations",
+      "task_risk_level": "medium",
+      "writable_mode": "review-only",
+      "file_status": "review_pending",
+      "primary_function": "Heartbeat pipeline checklist and proactive duty sequence.",
+      "change_trigger": "When heartbeat pipeline order or required checks change"
+    }
+  ]
+}

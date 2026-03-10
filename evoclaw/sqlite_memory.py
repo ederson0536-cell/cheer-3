@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 import sqlite3
+from datetime import datetime
 from hashlib import sha1
 from pathlib import Path
 from typing import Any
@@ -318,6 +319,33 @@ class SQLiteMemoryStore:
                 CREATE INDEX IF NOT EXISTS idx_system_logs_source ON system_logs(source);
                 CREATE INDEX IF NOT EXISTS idx_system_logs_level ON system_logs(level);
                 CREATE INDEX IF NOT EXISTS idx_system_logs_created_at ON system_logs(created_at);
+
+                CREATE TABLE IF NOT EXISTS system_catalog (
+                    object_key TEXT PRIMARY KEY,
+                    object_type TEXT NOT NULL DEFAULT '',
+                    object_count INTEGER NOT NULL DEFAULT 0,
+                    primary_function TEXT NOT NULL DEFAULT '',
+                    change_trigger TEXT NOT NULL DEFAULT '',
+                    source TEXT NOT NULL DEFAULT '',
+                    metadata_json TEXT NOT NULL DEFAULT '{}',
+                    updated_at TEXT NOT NULL DEFAULT ''
+                );
+
+                CREATE INDEX IF NOT EXISTS idx_system_catalog_object_type ON system_catalog(object_type);
+                CREATE INDEX IF NOT EXISTS idx_system_catalog_updated_at ON system_catalog(updated_at);
+
+                CREATE TABLE IF NOT EXISTS system_readable_checklist (
+                    checklist_id TEXT PRIMARY KEY,
+                    checklist_type TEXT NOT NULL DEFAULT '',
+                    target_path TEXT NOT NULL DEFAULT '',
+                    purpose TEXT NOT NULL DEFAULT '',
+                    when_to_change TEXT NOT NULL DEFAULT '',
+                    source TEXT NOT NULL DEFAULT '',
+                    updated_at TEXT NOT NULL DEFAULT ''
+                );
+
+                CREATE INDEX IF NOT EXISTS idx_system_readable_checklist_type ON system_readable_checklist(checklist_type);
+                CREATE INDEX IF NOT EXISTS idx_system_readable_checklist_target ON system_readable_checklist(target_path);
                 """
             )
             self._ensure_memories_fts(conn)
@@ -1202,3 +1230,89 @@ class SQLiteMemoryStore:
                 (cutoff, limit)
             ).fetchall()
         return [dict(r) for r in rows]
+
+
+    def replace_system_catalog(self, rows: list[dict[str, Any]]) -> None:
+        now = datetime.now().isoformat()
+        with self._connect() as conn:
+            conn.execute("DELETE FROM system_catalog")
+            conn.executemany(
+                """
+                INSERT INTO system_catalog (
+                    object_key, object_type, object_count,
+                    primary_function, change_trigger, source,
+                    metadata_json, updated_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                [
+                    (
+                        str(row.get("object_key") or ""),
+                        str(row.get("object_type") or ""),
+                        int(row.get("object_count") or 0),
+                        str(row.get("primary_function") or ""),
+                        str(row.get("change_trigger") or ""),
+                        str(row.get("source") or ""),
+                        self._json_dumps(row.get("metadata"), {}),
+                        str(row.get("updated_at") or now),
+                    )
+                    for row in rows
+                ],
+            )
+
+    def query_system_catalog(self, object_type: str | None = None, limit: int = 500) -> list[dict[str, Any]]:
+        sql = "SELECT * FROM system_catalog"
+        params: list[Any] = []
+        if object_type:
+            sql += " WHERE object_type = ?"
+            params.append(object_type)
+        sql += " ORDER BY object_key ASC LIMIT ?"
+        params.append(int(limit))
+
+        with self._connect() as conn:
+            rows = conn.execute(sql, params).fetchall()
+
+        result: list[dict[str, Any]] = []
+        for row in rows:
+            item = dict(row)
+            item["metadata"] = json.loads(item.get("metadata_json") or "{}")
+            result.append(item)
+        return result
+
+
+    def replace_readable_checklist(self, rows: list[dict[str, Any]]) -> None:
+        now = datetime.now().isoformat()
+        with self._connect() as conn:
+            conn.execute("DELETE FROM system_readable_checklist")
+            conn.executemany(
+                """
+                INSERT INTO system_readable_checklist (
+                    checklist_id, checklist_type, target_path,
+                    purpose, when_to_change, source, updated_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?)
+                """,
+                [
+                    (
+                        str(row.get("checklist_id") or ""),
+                        str(row.get("checklist_type") or ""),
+                        str(row.get("target_path") or ""),
+                        str(row.get("purpose") or ""),
+                        str(row.get("when_to_change") or ""),
+                        str(row.get("source") or ""),
+                        str(row.get("updated_at") or now),
+                    )
+                    for row in rows
+                ],
+            )
+
+    def query_readable_checklist(self, checklist_type: str | None = None, limit: int = 500) -> list[dict[str, Any]]:
+        sql = "SELECT * FROM system_readable_checklist"
+        params: list[Any] = []
+        if checklist_type:
+            sql += " WHERE checklist_type = ?"
+            params.append(checklist_type)
+        sql += " ORDER BY checklist_id ASC LIMIT ?"
+        params.append(int(limit))
+
+        with self._connect() as conn:
+            rows = conn.execute(sql, params).fetchall()
+        return [dict(row) for row in rows]

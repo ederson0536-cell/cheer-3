@@ -32,6 +32,8 @@
 
 ## Memory Directory Index (`memory/`)
 
+> 详细职责与改动触发规则见：`memory/README.md`
+
 | 目录 | 用途 |
 |------|------|
 | `YYYY-MM-DD.md` | 每日日志 |

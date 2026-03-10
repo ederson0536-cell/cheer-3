@@ -22,6 +22,7 @@ from evoclaw.workspace_resolver import resolve_workspace
 
 WORKSPACE = resolve_workspace(__file__)
 CATALOG_DB = WORKSPACE / "memory" / "file_catalog.sqlite"
+ROOT_FILE_REGISTRY = WORKSPACE / "evoclaw" / "runtime" / "config" / "root_file_registry.json"
 DEFAULT_EXCLUDES = {".git", ".venv", "__pycache__"}
 
 
@@ -31,17 +32,40 @@ class FileGovernance:
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
         self.audit_file = WORKSPACE / "memory" / "governance" / "file_ops_audit.jsonl"
         self.audit_file.parent.mkdir(parents=True, exist_ok=True)
+        self.root_file_registry = self._load_root_file_registry()
 
-    def _classify(self, rel_path: str) -> tuple[str, str, str, str, str]:
+    def _load_root_file_registry(self) -> dict[str, dict]:
+        if not ROOT_FILE_REGISTRY.exists():
+            return {}
+        try:
+            payload = json.loads(ROOT_FILE_REGISTRY.read_text(encoding="utf-8"))
+            files = payload.get("files", [])
+            return {item.get("path"): item for item in files if isinstance(item, dict) and item.get("path")}
+        except Exception:
+            return {}
+
+    def _classify(self, rel_path: str) -> tuple[str, str, str, str, str, str, str]:
+        root_row = self.root_file_registry.get(rel_path)
+        if root_row:
+            return (
+                root_row.get("file_class", "CONTROLLED"),
+                root_row.get("owner_domain", "governance"),
+                root_row.get("task_risk_level", "medium"),
+                root_row.get("writable_mode", "review-only"),
+                root_row.get("file_status", "review_pending"),
+                root_row.get("primary_function", ""),
+                root_row.get("change_trigger", ""),
+            )
+
         if rel_path in {"SOUL.md", "AGENTS.md"} or rel_path.startswith("evoclaw/runtime/"):
-            return ("CORE", "system", "high", "review-only", "locked")
+            return ("CORE", "system", "high", "review-only", "locked", "Runtime/core governance code.", "Change only with reviewed runtime governance updates")
         if rel_path.startswith("evoclaw/runtime/contracts/") or rel_path.startswith("evoclaw/runtime/config/"):
-            return ("CONTROLLED", "contracts", "medium", "review-only", "review_pending")
+            return ("CONTROLLED", "contracts", "medium", "review-only", "review_pending", "Runtime contracts and policies.", "When schema/policy contracts are revised")
         if rel_path.startswith("docs/"):
-            return ("WORKING", "docs", "low", "auto", "active")
+            return ("WORKING", "docs", "low", "auto", "active", "Documentation and reports.", "When docs/reporting needs updates")
         if rel_path.startswith("memory/"):
-            return ("GENERATED", "runtime-memory", "medium", "auto", "active")
-        return ("WORKING", "general", "medium", "auto", "active")
+            return ("GENERATED", "runtime-memory", "medium", "auto", "active", "Generated runtime memory artifacts.", "Managed by runtime pipeline outputs")
+        return ("WORKING", "general", "medium", "auto", "active", "General workspace file.", "When implementation/tasks require update")
 
     def _iter_files(self):
         for dirpath, dirnames, filenames in os.walk(WORKSPACE):
@@ -62,11 +86,11 @@ class FileGovernance:
         now = datetime.now(timezone.utc).isoformat()
         rows = []
         for p, rel in self._iter_files():
-            fclass, domain, risk, mode, status = self._classify(rel)
+            fclass, domain, risk, mode, status, primary_function, change_trigger = self._classify(rel)
             digest = self._hash(p)
             path_digest = hashlib.sha256(rel.encode("utf-8")).hexdigest()
             file_id = f"file_{path_digest[:24]}"
-            rows.append((file_id, rel, status, fclass, domain, risk, mode, digest, "v1", "v1", now, now, 1))
+            rows.append((file_id, rel, status, fclass, domain, risk, mode, digest, primary_function, change_trigger, "v1", "v1", now, now, 1))
 
         with sqlite3.connect(self.db_path) as conn:
             cur = conn.cursor()
@@ -81,6 +105,8 @@ class FileGovernance:
                     task_risk_level TEXT NOT NULL,
                     writable_mode TEXT NOT NULL,
                     last_hash TEXT,
+                    primary_function TEXT NOT NULL DEFAULT "",
+                    change_trigger TEXT NOT NULL DEFAULT "",
                     schema_version TEXT NOT NULL,
                     policy_version TEXT NOT NULL,
                     created_at TEXT NOT NULL,
@@ -91,13 +117,18 @@ class FileGovernance:
             )
             cur.execute("CREATE INDEX IF NOT EXISTS idx_file_catalog_path ON file_catalog(path)")
             cur.execute("CREATE INDEX IF NOT EXISTS idx_file_catalog_class ON file_catalog(file_class)")
+            columns = {row[1] for row in cur.execute("PRAGMA table_info(file_catalog)").fetchall()}
+            if "primary_function" not in columns:
+                cur.execute("ALTER TABLE file_catalog ADD COLUMN primary_function TEXT NOT NULL DEFAULT ''")
+            if "change_trigger" not in columns:
+                cur.execute("ALTER TABLE file_catalog ADD COLUMN change_trigger TEXT NOT NULL DEFAULT ''")
             cur.execute("DELETE FROM file_catalog")
             cur.executemany(
                 """
                 INSERT INTO file_catalog (
                     file_id,path,file_status,file_class,owner_domain,task_risk_level,
-                    writable_mode,last_hash,schema_version,policy_version,created_at,updated_at,exists_flag
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    writable_mode,last_hash,primary_function,change_trigger,schema_version,policy_version,created_at,updated_at,exists_flag
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 rows,
             )
@@ -115,7 +146,7 @@ class FileGovernance:
             if row:
                 return dict(row)
         # fallback on-the-fly classification
-        fclass, domain, risk, mode, status = self._classify(rel)
+        fclass, domain, risk, mode, status, primary_function, change_trigger = self._classify(rel)
         return {
             "file_id": f"file_dynamic_{hash(rel) & 0xfffffff}",
             "path": rel,
