@@ -1,0 +1,95 @@
+version: 1
+name: canonical_object_schema
+
+object_rules:
+  task:
+    required_fields:
+      - task_id
+      - root_task_id
+      - parent_task_id
+      - task_status
+      - task_risk_level
+      - scenario
+      - schema_version
+      - created_at
+      - updated_at
+
+  subtask:
+    required_fields:
+      - subtask_id
+      - parent_task_id
+      - root_task_id
+      - task_id
+      - task_status
+      - task_risk_level
+      - scenario
+      - schema_version
+      - created_at
+      - updated_at
+
+  proposal:
+    required_fields:
+      - proposal_id
+      - task_id
+      - proposal_status
+      - policy_version
+      - schema_version
+      - created_at
+      - updated_at
+
+  memory_object:
+    required_fields:
+      - task_id
+      - memory_status
+      - schema_version
+      - source_hook
+      - created_at
+      - updated_at
+
+  decision_trace:
+    required_fields:
+      - trace_id
+      - task_id
+      - trace_version
+      - schema_version
+      - router_version
+      - policy_version
+      - routing_score
+      - created_at
+
+  file_catalog:
+    required_fields:
+      - file_id
+      - file_status
+      - task_risk_level
+      - policy_version
+      - schema_version
+      - created_at
+      - updated_at
+
+  governance_record:
+    required_fields:
+      - task_id
+      - proposal_id
+      - review_id
+      - review_status
+      - policy_version
+      - schema_version
+      - created_at
+
+cross_object_constraints:
+  - name: lineage_consistency
+    rule: subtask.parent_task_id must reference existing task.task_id
+
+  - name: trace_consistency
+    rule: decision_trace.task_id must exist in task table
+
+  - name: proposal_traceability
+    rule: proposal.proposal_id must be linkable to at least one evidence_hash
+
+  - name: field_dictionary_enforcement
+    rule: every required field must exist in canonical_field_dictionary
+
+migration_policy:
+  - new object type must be registered here before schema merge
+  - status changes require explicit state transition table update
