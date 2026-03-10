@@ -1011,3 +1011,43 @@ v3 的核心，不再是“拥有更多技能”，而是：
 - baseline 必须支持分环境、分窗口比较（至少 `rolling_7d` 与 `rolling_30d`）。
 - 必须提供 staging 试运行入口，先覆盖 2~3 类低风险任务。
 - 即使不做完整持久服务，也必须先定义服务边界：调度入口、状态存储、trace 落盘、proposal review 队列。
+
+---
+
+# 29. 方案修正与机制运行表（优化）
+
+为避免“只有流程图、没有运行门控”的问题，新增机制化运行表：
+
+- 文档：`docs/mechanism-runtime-table-2026-03-10.md`
+- 核心价值：对 14 个关键节点补齐 **Mechanism + Threshold + Failure Handling + Audit Fields**。
+- 执行原则：高风险默认 review-only、candidate 不直升 active、失败可回滚且可追溯。
+
+---
+
+# 30. 文件管理与目录库机制（File Governance + Catalog DB）
+
+新增文件治理基础设施要求：
+
+- 文件管理办法：按 `CORE / CONTROLLED / WORKING / GENERATED` 分类治理。
+- 数据库目录：维护 `file_catalog`（路径、分类、风险、可写模式、索引时间、哈希）。
+- 执行前置：`before_task / before_subtask` 必须经过 `catalog_precheck(file_scope)`。
+- 执行硬约束：写入前强制 `catalog_enforce(path, writable_mode)`，不满足直接阻断。
+- 指标接入：回归报告新增 `file_policy_block_count` 与 `unauthorized_write_attempt_count`。
+
+参考文档：`docs/file-management-and-db-catalog-2026-03-10.md`
+参考脚本：`scripts/build_file_catalog_db.py`
+
+---
+
+# 31. 流程缺口补齐（节点机制增强）
+
+在第 29/30 节基础上，新增“流程复盘缺口补齐”：
+
+- 新增机制文档章节：`docs/mechanism-runtime-table-2026-03-10.md` 第五节。
+- 补齐重点节点机制：
+  - Ingress：`Idempotency Key + Rate Limit`
+  - Routing：`Tie-breaker + Abstain Gate`
+  - Execute：`Sandbox + Timeout/Budget`
+  - Governance：`Reviewer Quorum + Freeze Window`
+  - File Governance：`Ownership Lock + Transactional Patch`
+- 补充强制审计字段：`idempotency_key, rule_set_version, abstain_reason, execution_budget, evidence_hash, review_quorum, drift_score` 等。
