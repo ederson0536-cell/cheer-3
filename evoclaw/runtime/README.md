@@ -8,8 +8,13 @@ Core contracts:
 - `contracts/proposal_pipeline.schema.json`
 - `contracts/decision_trace.schema.json`
 - `contracts/canonical_field_dictionary.yaml`
+- `contracts/canonical_object_schema.yaml`
+- `contracts/envelope.schema.json`
+- `contracts/task_outcome.schema.json`
+- `contracts/continuity_resolver.schema.json`
 - `contracts/expectations/failure_injection_expectations.json`
 - `contracts/service/persistence_boundary.yaml`
+- `contracts/regression_rules.yaml`
 
 Regression suites:
 - Golden: `examples/golden/`
@@ -40,3 +45,16 @@ python3 evoclaw/validators/staging_trial_run.py
 - `examples/decision_trace.real_sample.json`
 - `examples/regression_report.json`
 - `examples/staging_trial_report.json`
+
+
+### Canonical 对齐校验
+
+```bash
+python3 evoclaw/validators/validate_canonical_alignment.py
+python3 evoclaw/validators/validate_state_transitions.py
+python3 evoclaw/validators/validate_week2_ingress_continuity.py
+python3 evoclaw/validators/validate_week3_runtime_gates.py
+python3 evoclaw/validators/validate_week4_memory_proposal.py
+python3 evoclaw/validators/validate_week5_file_governance.py
+python3 evoclaw/validators/validate_week6_release_gate.py
+```

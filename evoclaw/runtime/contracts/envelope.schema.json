@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Single Ingress Envelope Schema",
+  "type": "object",
+  "required": [
+    "envelope_id",
+    "source",
+    "event_type",
+    "received_at",
+    "idempotency_key",
+    "session_id",
+    "trace_context"
+  ],
+  "properties": {
+    "envelope_id": {"type": "string"},
+    "source": {"type": "string"},
+    "event_type": {"type": "string", "enum": ["message", "trigger", "proposal_review", "heartbeat"]},
+    "received_at": {"type": "string"},
+    "idempotency_key": {"type": "string"},
+    "session_id": {"type": "string"},
+    "message": {"type": ["string", "null"]},
+    "trace_context": {
+      "type": "object",
+      "required": ["trace_id", "root_task_id", "parent_task_id"],
+      "properties": {
+        "trace_id": {"type": "string"},
+        "root_task_id": {"type": ["string", "null"]},
+        "parent_task_id": {"type": ["string", "null"]}
+      },
+      "additionalProperties": false
+    },
+    "metadata": {"type": "object"}
+  },
+  "additionalProperties": false
+}

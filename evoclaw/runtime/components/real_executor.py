@@ -12,6 +12,8 @@ from pathlib import Path
 from evoclaw.workspace_resolver import resolve_workspace
 from datetime import datetime
 
+from components.file_governance import get_file_governance
+
 WORKSPACE = resolve_workspace(__file__)
 
 
@@ -35,6 +37,14 @@ class RealExecutor:
             "coding_editor": self._exec_coding,
         }
         
+        governor = get_file_governance()
+        file_scope = task.get("file_scope") or []
+        if isinstance(file_scope, str):
+            file_scope = [file_scope]
+        pre = governor.catalog_precheck(file_scope=file_scope, mode=str(task.get("writable_mode", "auto")))
+        if not pre.get("pass", True):
+            return {"success": False, "error": "file_scope_blocked", "details": pre}
+
         executor = executors.get(skill_id)
         if not executor:
             return {
@@ -249,11 +259,34 @@ class RealExecutor:
         }
     
     def _exec_coding(self, task: dict) -> dict:
-        """代码编写"""
-        
+        """代码编写（Week5: patch-first + transactional apply）"""
+
+        target_path = task.get("target_path")
+        patch_content = task.get("patch_content")
+        if target_path and patch_content is not None:
+            governor = get_file_governance()
+            enforce = governor.catalog_enforce(
+                path=target_path,
+                mode=str(task.get("writable_mode", "auto")),
+                operation="patch_apply",
+            )
+            if not enforce.get("allowed"):
+                return {"success": False, "error": "catalog_enforce_blocked", "details": enforce}
+
+            evidence_hash = task.get("evidence_hash") or f"ev_{datetime.now().strftime('%Y%m%d%H%M%S')}"
+            apply_result = governor.transactional_patch_apply(
+                target_path,
+                patch_content,
+                evidence_hash=evidence_hash,
+                policy_version=str(task.get("policy_version", "v1")),
+            )
+            if not apply_result.get("success"):
+                return {"success": False, "error": "patch_apply_failed", "details": apply_result}
+            return {"success": True, "message": f"patch applied: {target_path}", "data": apply_result}
+
         return {
             "success": True,
-            "message": "代码编写需要更多上下文"
+            "message": "代码编写需要更多上下文（可传 target_path + patch_content）"
         }
     
     def _log(self, skill_id: str, task: dict, result: dict):

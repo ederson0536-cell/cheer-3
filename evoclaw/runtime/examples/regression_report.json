@@ -7,8 +7,11 @@
     ],
     "sample_scope": [
       "golden_runtime_regression",
-      "dirty_input_regression"
-    ]
+      "dirty_input_regression",
+      "real_sample_package",
+      "staging_trial"
+    ],
+    "regression_policy_version": "regression_rules_v1"
   },
   "results": [
     {
@@ -65,10 +68,20 @@
       "suite": "dirty",
       "status": "warning",
       "expected": "warning"
+    },
+    {
+      "id": "real_sample_package",
+      "suite": "real_sample",
+      "status": "pass"
+    },
+    {
+      "id": "staging_trial",
+      "suite": "staging",
+      "status": "pass"
     }
   ],
   "summary": {
-    "pass": 7,
+    "pass": 9,
     "warning": 3,
     "fail": 0
   },
@@ -81,5 +94,11 @@
       "task_success_rate": 1.0,
       "rollback_rate": 0.6
     }
+  },
+  "release_gate": {
+    "status": "warning",
+    "action": "manual_review_required",
+    "policy_version": "regression_rules_v1",
+    "total_cases": 12
   }
 }

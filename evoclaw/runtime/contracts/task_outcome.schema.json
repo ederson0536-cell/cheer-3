@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Task Outcome Schema",
+  "type": "object",
+  "required": [
+    "task_id",
+    "interaction_success",
+    "execution_success",
+    "goal_success",
+    "governance_success",
+    "done_criteria_met",
+    "constraint_check_passed",
+    "validation_check_passed",
+    "overall_outcome",
+    "schema_version",
+    "policy_version"
+  ],
+  "properties": {
+    "task_id": {"type": "string"},
+    "subtask_id": {"type": ["string", "null"]},
+    "interaction_success": {"type": "boolean"},
+    "execution_success": {"type": "boolean"},
+    "goal_success": {"type": "boolean"},
+    "governance_success": {"type": "boolean"},
+    "done_criteria_met": {"type": "boolean"},
+    "constraint_check_passed": {"type": "boolean"},
+    "validation_check_passed": {"type": "boolean"},
+    "overall_outcome": {"type": "string", "enum": ["success", "partial", "failure"]},
+    "failure_code": {"type": ["string", "null"]},
+    "trace_id": {"type": ["string", "null"]},
+    "schema_version": {"type": "string"},
+    "policy_version": {"type": "string"},
+    "created_at": {"type": "string"}
+  },
+  "additionalProperties": false
+}

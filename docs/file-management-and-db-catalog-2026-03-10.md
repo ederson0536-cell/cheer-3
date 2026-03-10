@@ -92,3 +92,17 @@ CREATE INDEX idx_file_catalog_mode ON file_catalog(writable_mode);
 你提的方向是对的：
 **“文件管理办法 + 数据库文件目录”** 应该成为 Claw 的基础设施，
 这样系统改文件会更稳、更可控、更可审计。
+
+---
+
+## 6) 字段与对象统一（必须）
+
+为避免“同名不同义 / 不同名同义 / join 不稳定 / 指标口径漂移”，新增两份强制契约：
+
+- `evoclaw/runtime/contracts/canonical_field_dictionary.yaml`
+- `evoclaw/runtime/contracts/canonical_object_schema.yaml`
+
+执行要求：
+1. 新表/新 schema 必须先对齐字段字典，再允许合并。
+2. 所有对象必须使用 canonical object schema 里的必填字段集合。
+3. 发现同义异名字段（如 `job_type/work_type`）一律视为 schema violation。

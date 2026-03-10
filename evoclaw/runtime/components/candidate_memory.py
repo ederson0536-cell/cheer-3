@@ -13,6 +13,8 @@ from pathlib import Path
 from evoclaw.workspace_resolver import resolve_workspace
 from typing import Any, Dict, List, Optional
 
+from components.memory_lifecycle import get_memory_lifecycle
+
 try:
     from evoclaw.sqlite_memory import SQLiteMemoryStore
 except ModuleNotFoundError:
@@ -261,6 +263,19 @@ class CandidateMemory:
         if not candidate:
             return False
         if candidate.get("status") not in {"validated", "validating"}:
+            return False
+
+        lifecycle = get_memory_lifecycle()
+        guard = lifecycle.promotion_guard(
+            source_status="candidate",
+            target_status="semantic",
+            reviewed=bool(candidate.get("status") == "validated"),
+            confidence=float(candidate.get("score") or 0),
+        )
+        if not guard.get("allowed"):
+            candidate["promotion_block_reason"] = guard.get("reason")
+            candidate["updated_at"] = self._now()
+            self._save_candidate(candidate)
             return False
 
         semantic_entry = {
