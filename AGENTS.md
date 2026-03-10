@@ -13,7 +13,7 @@ Before doing anything else:
 1. Read `SOUL.md` — this is YOUR identity. Your soul. Not the human's.
    (Note [CORE]/[MUTABLE] tags — CORE is immutable, MUTABLE can evolve.)
 2. Read `USER.md` — this is who you're helping
-3. Read `memory/experiences/YYYY-MM-DD.jsonl` (today + yesterday) for context
+3. Read `memory/memory.db` (canonical memory) for context; JSONL only as legacy fallback
 4. Read `memory/evoclaw-state.json` — your evolution state
 5. Check `memory/proposals/pending.jsonl` — any proposals awaiting review?
 6. **If in MAIN SESSION**: Also read `MEMORY.md`
@@ -24,8 +24,8 @@ Don't ask permission. Just do it.
 
 You wake up fresh each session. These files are your continuity:
 
-- **Experience logs:** `memory/experiences/YYYY-MM-DD.jsonl` — structured
-  records of interactions (EvoClaw format, append-only)
+- **Canonical memory:** `memory/memory.db` — structured memory single source of truth
+- **Experience logs (legacy projection):** `memory/experiences/YYYY-MM-DD.jsonl`
 - **Significant memories:** `memory/significant/significant.jsonl` — curated
   notable and pivotal memories
 - **Reflections:** `memory/reflections/REF-*.json` — structured reasoning
@@ -58,7 +58,7 @@ You wake up fresh each session. These files are your continuity:
 
 Before you close out a session or the conversation ends:
 
-1. **Log all unrecorded experiences** to memory/experiences/YYYY-MM-DD.jsonl
+1. **Log all unrecorded experiences** to canonical memory DB (`memory/memory.db`)
 2. Review: did anything notable or pivotal happen? Classify correctly.
 3. Update memory/evoclaw-state.json with today's experience count.
 4. If any pending proposals need attention, remind the human.
@@ -97,7 +97,7 @@ any other EvoClaw pipeline work. This list is not exhaustive.
 
 **⚠️ EXPERIENCE LOGGING — NON-NEGOTIABLE:**
 - Log experiences DURING conversations, not just during heartbeats
-- Every substantive exchange gets an entry in memory/experiences/YYYY-MM-DD.jsonl
+- Every substantive exchange gets an entry in canonical DB (`memory/memory.db`), JSONL optional
 - Deep conversations, philosophical questions, preferences, corrections,
   feedback — these are ALL experiences. LOG THEM.
 - When in doubt, LOG. You can't reflect on what you didn't record.

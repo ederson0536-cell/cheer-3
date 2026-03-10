@@ -1,18 +1,15 @@
 """
 Simple Semantic Matching using TF-IDF (no external embedding models needed)
 """
-import json
-import os
 import re
-from pathlib import Path
-
-from evoclaw.workspace_resolver import resolve_workspace
 from collections import Counter
 import math
 
+from evoclaw.workspace_resolver import resolve_workspace
+from evoclaw.sqlite_memory import SQLiteMemoryStore
+
 WORKSPACE = resolve_workspace(__file__)
-EXPERIENCES_PATH = WORKSPACE / "memory" / "experiences"
-SIGNIFICANT_PATH = WORKSPACE / "memory" / "significant"
+MEMORY_DB = WORKSPACE / "memory" / "memory.db"
 
 def tokenize(text):
     """Simple Chinese/English tokenization"""
@@ -70,31 +67,29 @@ def cosine_similarity(vec1, vec2):
     
     return dot_product / (mag1 * mag2)
 
-def load_experiences():
-    """Load all experiences"""
+def load_experiences(limit=5000):
+    """Load experiences from canonical SQLite memory store."""
+    store = SQLiteMemoryStore(MEMORY_DB)
+    store.init_schema()
+    rows = store.query_experiences(limit=limit)
+
     experiences = []
-    
-    # Load daily experiences
-    if EXPERIENCES_PATH.exists():
-        for f in EXPERIENCES_PATH.glob("*.jsonl"):
-            with open(f) as fp:
-                for line in fp:
-                    try:
-                        exp = json.loads(line.strip())
-                        experiences.append(exp)
-                    except:
-                        pass
-    
-    # Load significant experiences
-    if SIGNIFICANT_PATH.exists():
-        with open(SIGNIFICANT_PATH / "significant.jsonl") as fp:
-            for line in fp:
-                try:
-                    exp = json.loads(line.strip())
-                    experiences.append(exp)
-                except:
-                    pass
-    
+    for row in rows:
+        raw = row.get("raw") if isinstance(row.get("raw"), dict) else {}
+        exp = {
+            "id": row.get("id"),
+            "type": row.get("type"),
+            "source": row.get("source"),
+            "content": row.get("content"),
+            "significance": row.get("significance"),
+            "timestamp": row.get("created_at"),
+        }
+        # keep backward-compatible fields when present
+        for k in ("summary", "title", "message", "tags"):
+            if k in raw and raw.get(k) is not None:
+                exp[k] = raw.get(k)
+        experiences.append(exp)
+
     return experiences
 
 def search_similar(query, top_k=5):

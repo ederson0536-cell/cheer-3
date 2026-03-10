@@ -19,6 +19,30 @@ LEGACY_ID_PATTERN = re.compile(r"^EXP-\d{8}-\d{4}$")
 MODERN_ID_PATTERN = re.compile(r"^exp-[a-f0-9]{16}$")
 
 
+def _normalize_entry(entry, line_num):
+    """Backfill legacy fields so historical JSONL logs can still be validated."""
+    normalized = dict(entry)
+    ts = normalized.get("timestamp") or normalized.get("created_at") or normalized.get("ts")
+    normalized["timestamp"] = ts
+    normalized.setdefault("created_at", ts)
+    normalized.setdefault("updated_at", ts)
+
+    # Legacy files often only include summary.
+    if not normalized.get("content") and isinstance(normalized.get("summary"), str):
+        normalized["content"] = normalized["summary"]
+
+    # Legacy files used type=notable/pivotal/routine to indicate significance.
+    if not normalized.get("significance") and normalized.get("type") in VALID_SIGNIFICANCE:
+        normalized["significance"] = normalized.get("type")
+
+    # Accept missing source/id for old records but synthesize safe defaults.
+    normalized.setdefault("source", "other")
+    if not normalized.get("id"):
+        sig = str(normalized.get("significance") or "routine")
+        normalized["id"] = f"legacy-{sig}-{line_num:04d}"
+    return normalized
+
+
 def load_config_sources(config_path):
     extra = set()
     if config_path and os.path.exists(config_path):
@@ -122,7 +146,9 @@ def validate(target, config_path=None, date_filter=None):
             errors.append({"line": line_num, "field": None, "message": entry["_parse_error"]})
             continue
 
-        eid = str(entry.get("id") or "")
+        normalized = _normalize_entry(entry, line_num)
+
+        eid = str(normalized.get("id") or "")
         if not eid:
             errors.append({"line": line_num, "field": "id", "message": "Missing id"})
         elif not (LEGACY_ID_PATTERN.match(eid) or MODERN_ID_PATTERN.match(eid) or eid.startswith("experience-")):
@@ -131,26 +157,26 @@ def validate(target, config_path=None, date_filter=None):
             errors.append({"line": line_num, "field": "id", "message": f"Duplicate ID: {eid}"})
         seen_ids.add(eid)
 
-        ts = entry.get("timestamp") or entry.get("created_at")
+        ts = normalized.get("timestamp") or normalized.get("created_at")
         dt = parse_iso(ts)
         if ts and dt is None:
             errors.append({"line": line_num, "field": "timestamp", "message": f"Invalid ISO-8601 timestamp: {ts}"})
         elif dt and dt.tzinfo and dt > datetime.now(timezone.utc):
             warnings.append({"line": line_num, "message": f"Timestamp is in the future: {ts}"})
 
-        source = str(entry.get("source") or "")
+        source = str(normalized.get("source") or "")
         if not source:
             errors.append({"line": line_num, "field": "source", "message": "source is required"})
         elif source not in valid_sources and "://" not in source:
             warnings.append({"line": line_num, "message": f"Unknown source '{source}' (accepted as custom source)"})
 
-        sig = str(entry.get("significance") or "")
+        sig = str(normalized.get("significance") or "")
         if sig and sig not in VALID_SIGNIFICANCE:
             errors.append({"line": line_num, "field": "significance", "message": f"Invalid significance: {sig}"})
         if sig in {"notable", "pivotal"}:
             notable_pivotal_ids.append(eid)
 
-        content = entry.get("content", "")
+        content = normalized.get("content", "")
         if not isinstance(content, str) or not content.strip():
             errors.append({"line": line_num, "field": "content", "message": "Content is empty"})
 

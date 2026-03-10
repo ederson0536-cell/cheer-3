@@ -28,6 +28,11 @@ from datetime import date
 
 # Resolve paths
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+REPO_ROOT = os.path.dirname(os.path.dirname(SCRIPT_DIR))
+if REPO_ROOT not in sys.path:
+    sys.path.insert(0, REPO_ROOT)
+
+from evoclaw.sqlite_memory import SQLiteMemoryStore
 
 
 def run_validator(script_name, args):
@@ -66,12 +71,20 @@ def main(workspace_root='.'):
     memory_dir = os.path.join(workspace_root, 'memory')
     exp_dir = os.path.join(memory_dir, 'experiences')
     today_file = os.path.join(exp_dir, f'{date.today().isoformat()}.jsonl')
+    memory_db = os.path.join(memory_dir, 'memory.db')
     pending_file = os.path.join(memory_dir, 'proposals', 'pending.jsonl')
     state_file = os.path.join(memory_dir, 'evoclaw-state.json')
     proposals_dir = os.path.join(memory_dir, 'proposals')
 
     results = {}
     any_fail = False
+
+    # Ensure canonical memory DB exists
+    if not os.path.exists(memory_db):
+        try:
+            SQLiteMemoryStore(memory_db).init_schema()
+        except Exception:
+            pass
 
     # 0. Workspace boundary check — MUST pass before anything else
     print('🔍 [0/9] Checking workspace boundary...')
@@ -86,17 +99,18 @@ def main(workspace_root='.'):
         print(json.dumps({'overall': 'FAIL', 'results': results}, default=str), file=sys.stderr)
         return 1
 
-    # 1. Validate today's experiences
+    # 1. Validate today's experiences from canonical DB
     print('🔍 [1/9] Validating experiences...')
-    if os.path.exists(today_file):
+    if os.path.exists(memory_db):
         results['experiences'] = run_validator(
             'validate_experience.py',
-            [today_file, '--config', config_path]
+            [memory_db, '--config', config_path, '--date', date.today().isoformat()]
         )
     else:
         results['experiences'] = {
-            'status': 'SKIP',
-            'message': f'No experience file for today ({date.today().isoformat()})'
+            'status': 'FAIL',
+            'errors': [{'message': f'Canonical memory DB not found: {memory_db}'}],
+            'warnings': []
         }
 
     # 2. Validate all recent reflection files
