@@ -1,10 +1,17 @@
-# TOOLS.md - Local Notes
+# TOOLS.md - Local Tool Ops Notes
 
-Skills define _how_ tools work. This file is for _your_ specifics — the stuff that's unique to your setup.
+Skills define _how_ tools work. This file records this workspace's **local tool facts** so runtime knows what each tool is for and when to update these notes.
+
+## File Purpose & Update Trigger
+
+- **Purpose:** Keep environment-specific tool metadata (paths, versions, aliases, preferred defaults) out of shared skill code.
+- **Update when:**
+  - tool path/version changed,
+  - login/auth method changed,
+  - default execution habits changed,
+  - local infra endpoint/alias changed.
 
 ## What Goes Here
-
-Things like:
 
 - Camera names and locations
 - SSH hosts and aliases
@@ -12,6 +19,12 @@ Things like:
 - Speaker/room names
 - Device nicknames
 - Anything environment-specific
+
+## Operational Rules
+
+- Keep entries concise and actionable.
+- Never store secrets in plaintext (tokens/passwords/private keys).
+- If a tool setting impacts runtime behavior, sync summary into relevant docs/config.
 
 ## Examples
 
@@ -30,14 +43,6 @@ Things like:
 - Preferred voice: "Nova" (warm, slightly British)
 - Default speaker: Kitchen HomePod
 ```
-
-## Why Separate?
-
-Skills are shared. Your setup is yours. Keeping them apart means you can update skills without losing your notes, and share skills without leaking your infrastructure.
-
----
-
-Add whatever helps you do your job. This is your cheat sheet.
 
 ## Codex
 

@@ -20,6 +20,7 @@ sys.path.insert(0, str(WORKSPACE))
 from evoclaw.hooks import before_task, after_task, governance_gate
 from evoclaw.sqlite_memory import SQLiteMemoryStore
 from evoclaw.runtime.observability import increment_metric
+from evoclaw.runtime.ingress_router import route_message
 
 # Keywords for Notable classification
 NOTABLE_KEYWORDS = [
@@ -1374,9 +1375,6 @@ def main():
 def _process_recent_messages():
     """直接处理最近的聊天消息"""
     try:
-        from evoclaw.runtime.message_handler import MessageHandler
-        handler = MessageHandler()
-        
         msg_log = WORKSPACE / "logs/message_handler.jsonl"
         if not msg_log.exists():
             return
@@ -1391,8 +1389,13 @@ def _process_recent_messages():
                 message = msg.get("message", "")
                 if message:
                     try:
-                        handler.handle(message)
-                        print(f"  ✓ Processed: {message[:30]}...")
+                        route_message(
+                            message,
+                            source="cron_runner",
+                            channel="cron_recent_message",
+                            metadata={"session_id": "cron", "sender": "cron_runner"},
+                        )
+                        print(f"  ✓ Processed via ingress: {message[:30]}...")
                     except Exception as handle_err:
                         print(f"  ~ Failed to process recent message: {handle_err}")
     except Exception as recent_err:
@@ -1402,9 +1405,6 @@ def _process_recent_messages():
 def _process_voice_messages():
     """处理新的语音文件"""
     try:
-        from evoclaw.runtime.message_handler import MessageHandler
-        handler = MessageHandler()
-        
         voice_dir = Path("/home/bro/.openclaw/media/inbound")
         if not voice_dir.exists():
             return
@@ -1435,8 +1435,13 @@ def _process_voice_messages():
             
             if text.strip():
                 try:
-                    handler.handle(text.strip())
-                    print(f"  ✓ Voice: {text.strip()[:30]}...")
+                    route_message(
+                        text.strip(),
+                        source="cron_runner",
+                        channel="cron_voice",
+                        metadata={"session_id": "cron", "sender": "voice_transcriber"},
+                    )
+                    print(f"  ✓ Voice via ingress: {text.strip()[:30]}...")
                 except Exception as voice_handle_err:
                     print(f"  ~ Failed to process voice message: {voice_handle_err}")
             

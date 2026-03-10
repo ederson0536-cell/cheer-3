@@ -1,0 +1,35 @@
+{
+  "schema_version": "v1",
+  "directories": [
+    {
+      "path": "memory/experiences",
+      "purpose": "Append-only interaction experiences for reflection and evolution.",
+      "when_to_change": "Append on substantive interactions; do not rewrite historical entries."
+    },
+    {
+      "path": "memory/proposals",
+      "purpose": "Governance proposal queues and lifecycle records.",
+      "when_to_change": "When proposal state changes via review/canary/publish workflow."
+    },
+    {
+      "path": "memory/reflections",
+      "purpose": "Structured reflection outputs used by EvoClaw evolution.",
+      "when_to_change": "After reflection runs produce new REF-* artifacts."
+    },
+    {
+      "path": "memory/tasks",
+      "purpose": "Task execution history for runtime continuity and audits.",
+      "when_to_change": "When runtime creates/updates task events."
+    },
+    {
+      "path": "memory/governance",
+      "purpose": "Governance decisions, file-op audit evidence and release records.",
+      "when_to_change": "On each governance decision or file policy action."
+    },
+    {
+      "path": "memory/working",
+      "purpose": "Temporary workspace artifacts generated during active execution.",
+      "when_to_change": "During runtime execution; stale artifacts may be rotated/archived."
+    }
+  ]
+}
