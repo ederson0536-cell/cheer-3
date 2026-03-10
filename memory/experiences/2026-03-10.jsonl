@@ -6,3 +6,6 @@
 {"ts": "2026-03-10T20:27:37.296567", "type": "notable", "summary": "新增docs/system-user-manual-2026-03-10.md，整理入口、记忆库、反馈接口、文件治理与排障的详细使用手册。", "tags": ["docs", "manual", "operations"]}
 {"ts": "2026-03-10T20:32:11.751406", "type": "notable", "summary": "按要求清理系统运行不依赖的文档文件，删除两份docs手册与memory/README，并同步修正MEMORY.md索引。", "tags": ["cleanup", "docs", "memory"]}
 {"ts": "2026-03-10T20:37:50.113146", "type": "notable", "summary": "新增validate_wiring_coverage校验，验证关键文件都被运行链路消费，避免“只是文件未发挥作用”。", "tags": ["validator", "wiring", "coverage"]}
+{"id": "EXP-20260310-0900", "timestamp": "2026-03-10T21:06:43.803264+00:00", "type": "conversation", "source": "conversation", "content": "用户要求检查系统运行问题、修复并生成详细使用手册；已完成校验器修复与手册编写。", "significance": "routine"}
+{"id": "EXP-20260310-0901", "timestamp": "2026-03-10T21:16:33.947605+00:00", "type": "conversation", "source": "conversation", "content": "用户要求将系统改成完全由数据库读写；已将巡检、RSS写入与语义检索切换到memory.db优先。", "significance": "routine"}
+{"id": "EXP-20260310-0902", "timestamp": "2026-03-10T21:27:27.514391+00:00", "type": "conversation", "source": "conversation", "content": "按要求更新README/AGENTS/MEMORY并清理历史无运行依赖文档文件，完成DB-first说明对齐。", "significance": "routine"}

@@ -5,6 +5,8 @@
 - 根目录 Agent 身份与会话文件（`SOUL.md` / `USER.md` / `AGENTS.md` 等）
 - `evoclaw/` 下的 EvoClaw 运行时契约、验证器、样本集与运行手册
 
+> 运行态已切换为 **DB-first**：`memory/memory.db` 是单一读写源，`memory/*.jsonl` 仅保留为历史归档/迁移输入。
+
 > 如果你要快速上手，请先读：
 > 1) `evoclaw/configure.md`
 > 2) `evoclaw/SKILL.md`
@@ -101,7 +103,15 @@ python3 evoclaw/validators/staging_trial_run.py
 
 ---
 
-## 6) 目录维护原则
+## 6) DB-first 运维命令（推荐）
+
+```bash
+python3 evoclaw/validators/run_all.py
+python3 evoclaw/validators/validate_experience.py memory/memory.db --config evoclaw/config.json --date $(date +%F)
+python3 evoclaw/validators/check_pipeline_ran.py memory --since-minutes 30
+```
+
+## 7) 目录维护原则
 
 - 优先复用既有目录，不新增“临时散落目录”
 - 所有新增契约放 `evoclaw/runtime/contracts/`
