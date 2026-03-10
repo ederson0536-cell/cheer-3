@@ -1,0 +1,61 @@
+{
+  "name": "mindkeeper-openclaw",
+  "version": "0.2.24",
+  "description": "OpenClaw plugin for mindkeeper: auto-snapshot, diff, and rollback for agent context files",
+  "keywords": [
+    "openclaw",
+    "openclaw-plugin",
+    "mindkeeper",
+    "agent",
+    "version-control",
+    "snapshot",
+    "rollback"
+  ],
+  "homepage": "https://github.com/seekcontext/mindkeeper#readme",
+  "bugs": {
+    "url": "https://github.com/seekcontext/mindkeeper/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seekcontext/mindkeeper.git",
+    "directory": "packages/openclaw"
+  },
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "files": [
+    "dist",
+    "skills",
+    "openclaw.plugin.json",
+    "scripts/postinstall-merge-config.cjs",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "node build.mjs",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run clean && npm run build",
+    "postinstall": "node scripts/postinstall-merge-config.cjs"
+  },
+  "openclaw": {
+    "extensions": [
+      "./dist/index.js"
+    ]
+  },
+  "dependencies": {
+    "isomorphic-git": "^1.29.0",
+    "chokidar": "^4.0.0",
+    "diff": "^7.0.0",
+    "minimatch": "^10.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "esbuild": "^0.27.3",
+    "typescript": "^5.7.0"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

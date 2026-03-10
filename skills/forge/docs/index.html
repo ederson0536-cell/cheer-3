@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Forge | Autonomous Skill Auditor</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+</head>
+<body>
+  <div class="page">
+    <button id="theme-toggle" class="floating-toggle" aria-label="Toggle theme">Dark mode</button>
+    <header class="hero">
+      <div>
+        <h1 class="hero-title">Forge</h1>
+        <p class="lede">
+          Observable, auditable skill health for every agent. We profile each run, highlight issues,
+          and ship human-ready insights so your team knows what’s optimal and what needs work.
+        </p>
+        <div class="hero-actions">
+          <a class="btn" href="dashboard.html">Launch control center</a>
+        </div>
+      </div>
+      <div class="visual-stack">
+        <div class="hero-visual">
+          <div class="orb"></div>
+          <div class="orb"></div>
+        </div>
+        <div class="pixel-hero" aria-hidden="true">
+          <div class="pixel-row">
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <div class="pixel-row">
+            <span></span><span class="color-a"></span><span class="color-a"></span><span class="color-a"></span><span></span>
+          </div>
+          <div class="pixel-row">
+            <span class="color-c"></span><span class="color-a"></span><span class="color-b"></span><span class="color-a"></span><span class="color-c"></span>
+          </div>
+          <div class="pixel-row">
+            <span></span><span class="color-b"></span><span class="color-b"></span><span class="color-b"></span><span></span>
+          </div>
+          <div class="pixel-row">
+            <span class="color-b"></span><span class="color-d"></span><span class="color-d"></span><span class="color-d"></span><span class="color-b"></span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="summary" id="summary">
+        <h2>Summary</h2>
+        <div class="summary-grid" id="summary-grid"></div>
+        <div class="control-center" id="control-panel"></div>
+      </section>
+
+      <section class="skills" id="skills-section">
+        <div class="section-heading">
+          <div>
+            <h2>Skill audit board</h2>
+            <p>Every skill is scored against the criteria you care about.</p>
+          </div>
+          <div class="scopes" id="scopes-tags"></div>
+        </div>
+        <div class="skill-grid" id="skill-grid"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="theme.js"></script>
+  <script>
+    const summary = {
+      totalSkills: 21,
+      optimalCount: 14,
+      needsWorkCount: 7,
+      scopesScanned: ['mcp_tool', 'agent_phase']
+    };
+
+    const skills = [
+      {
+        path: 'skills/mcp_tool/web-search',
+        name: 'Web Search Relay',
+        description: 'Aggregates Brave + Tavily results with caching.',
+        lineCount: 432,
+        criteria: [
+          { id: 'latency', name: 'Latency', passed: true, severity: 'low', message: '170ms avg', value: 170, limit: 350 },
+          { id: 'cost', name: 'Token Spend', passed: false, severity: 'medium', message: '4.2k tokens/run', suggestion: 'Trim prompt template', value: 4200, limit: 1800 },
+          { id: 'cache', name: 'Cache Hit Rate', passed: true, severity: 'low', message: '82% hits' }
+        ],
+        score: 0.72,
+        optimal: false
+      },
+      {
+        path: 'skills/agent_phase/time-tracker',
+        name: 'Time Tracker',
+        description: 'Logs work sessions and uploads artifacts.',
+        lineCount: 218,
+        criteria: [
+          { id: 'reliability', name: 'Success Rate', passed: true, severity: 'low', message: '99.2%' },
+          { id: 'tokens', name: 'Tokens Out', passed: true, severity: 'low', message: '520 tokens', limit: 1000 },
+          { id: 'duration', name: 'Duration', passed: true, severity: 'low', message: '1.2s avg' }
+        ],
+        score: 0.94,
+        optimal: true
+      },
+      {
+        path: 'skills/agent_phase/docs-generator',
+        name: 'Docs Generator',
+        description: 'Auto-writes release notes from changelog entries.',
+        lineCount: 389,
+        criteria: [
+          { id: 'consistency', name: 'Style Consistency', passed: false, severity: 'high', message: 'Minor drift in date formats', suggestion: 'Enforce ISO dates' },
+          { id: 'cost', name: 'Token Spend', passed: false, severity: 'medium', message: '3.8k tokens', suggestion: 'Shorten context window' },
+          { id: 'coverage', name: 'Sections Covered', passed: true, severity: 'low', message: 'Intro + Features + Metrics' }
+        ],
+        score: 0.61,
+        optimal: false
+      }
+    ];
+
+    const summaryGrid = document.getElementById('summary-grid');
+    const summaryEntries = [
+      { label: 'Total skills tested', value: summary.totalSkills },
+      { label: 'Optimal', value: summary.optimalCount },
+      { label: 'Needs work', value: summary.needsWorkCount },
+      { label: 'Scopes scanned', value: summary.scopesScanned.join(', ') }
+    ];
+
+    summaryEntries.forEach(entry => {
+      const el = document.createElement('div');
+      el.className = 'summary-card';
+      el.innerHTML = `<p>${entry.label}</p><strong>${entry.value}</strong>`;
+      summaryGrid.appendChild(el);
+    });
+
+    const controlPanel = document.getElementById('control-panel');
+    controlPanel.innerHTML = `
+      <div class="control-box">
+        <p class="control-label">totalSkills</p>
+        <strong>${summary.totalSkills}</strong>
+      </div>
+      <div class="control-box">
+        <p class="control-label">optimal</p>
+        <strong>${summary.optimalCount}</strong>
+      </div>
+      <div class="control-box">
+        <p class="control-label">needsWork</p>
+        <strong>${summary.needsWorkCount}</strong>
+      </div>
+      <div class="control-box">
+        <p class="control-label">scopesScanned</p>
+        <strong>${summary.scopesScanned.join(', ')}</strong>
+      </div>
+    `;
+
+    const scopesTags = document.getElementById('scopes-tags');
+    summary.scopesScanned.forEach(scope => {
+      const tag = document.createElement('span');
+      tag.className = 'tag';
+      tag.textContent = scope;
+      scopesTags.appendChild(tag);
+    });
+
+    const skillGrid = document.getElementById('skill-grid');
+    skills.forEach(skill => {
+      const card = document.createElement('article');
+      card.className = 'skill-card';
+      card.innerHTML = `
+        <header>
+          <div>
+            <p class="skill-path">${skill.path}</p>
+            <h3>${skill.name}</h3>
+            <p class="skill-desc">${skill.description}</p>
+          </div>
+          <span class="skill-score">${(skill.score * 100).toFixed(0)}%</span>
+        </header>
+        <div class="skill-meta">
+          <p>Lines: ${skill.lineCount}</p>
+          <span class="badge ${skill.optimal ? 'badge-optimal' : 'badge-warning'}">
+            ${skill.optimal ? 'Optimal' : 'Needs work'}
+          </span>
+        </div>
+        <div class="criteria">
+          ${skill.criteria
+            .map(criterion => `
+              <div class="criterion ${criterion.passed ? 'passed' : 'failed'}">
+                <div>
+                  <p class="crit-name">${criterion.name}</p>
+                  <p class="crit-msg">${criterion.message}${criterion.suggestion ? ' - ' + criterion.suggestion : ''}</p>
+                </div>
+                <div class="crit-meta">
+                  <span class="severity">${criterion.severity}</span>
+                  ${criterion.value !== undefined ? `<span>${criterion.value}</span>` : ''}
+                  ${criterion.limit !== undefined ? `<span>limit ${criterion.limit}</span>` : ''}
+                </div>
+              </div>
+            `)
+            .join('')}
+        </div>
+      `;
+      skillGrid.appendChild(card);
+    });
+  </script>
+</body>
+</html>

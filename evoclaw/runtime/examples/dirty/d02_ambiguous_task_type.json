@@ -1,0 +1,14 @@
+{
+  "task": {
+    "task_id": "t_dirty_002",
+    "task_type": "unknown",
+    "scenario": "ambiguous_input",
+    "complexity_level": "L0",
+    "risk_level": "low",
+    "file_write_flag": false,
+    "requires_tools": ["search"],
+    "candidate_subtasks": ["search_context"],
+    "uncertainty_level": 0.66
+  },
+  "subtasks": []
+}

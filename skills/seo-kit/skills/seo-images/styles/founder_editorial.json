@@ -1,0 +1,115 @@
+{
+  "style_id": "founder_editorial",
+  "category": "people",
+  "verticals": ["SaaS", "creator", "newsletter", "agency", "startup"],
+  "description": "Cinematic founder/operator portraits. Real people in real environments. Magazine-quality.",
+  "base_prompt": "hyper-realistic fashion portrait of {subject_description}, {environment_description}, cinematic lighting, {mood}, shot on {camera_model}",
+  "schema": {
+    "subject": {
+      "age": "integer, 25-55",
+      "gender": "string",
+      "ethnicity": "string",
+      "body_type": "string",
+      "pose": "string — specific body position, angle, weight distribution. e.g. 'leaning casually on balcony railing, body angled three-quarters toward camera, head turned slightly toward viewer'",
+      "expression": "string — specific facial muscles, eye state, jaw tension. e.g. 'genuine mid-laugh, eyes slightly squinted, relaxed jaw, no teeth showing'"
+    },
+    "wardrobe": {
+      "style": "string — overall aesthetic label. e.g. 'elevated casual streetwear'",
+      "top": "string — fabric weight, fit, color, collar detail. e.g. 'cream-colored heavyweight t-shirt, slightly oversized, thick collar'",
+      "outerwear": "string — material, texture, button state. e.g. 'unbuttoned dark olive bomber jacket, matte nylon, subtle texture'",
+      "bottom": "string — fit, color, distressing level. e.g. 'black slim-fit jeans, no distressing'",
+      "shoes": "string — material, color, branding level. e.g. 'minimal white leather sneakers with subtle branding'",
+      "accessories": ["array of specific items with material, color, placement. e.g. 'thin silver chain bracelet on right wrist', 'matte black Apple Watch Ultra on left wrist'"]
+    },
+    "environment": {
+      "location_type": "string — e.g. 'rooftop bar', 'modern loft office', 'city sidewalk'",
+      "city": "string or null",
+      "time_of_day": "string — specific light condition. e.g. 'golden hour sunset'",
+      "background_elements": ["array of 3-5 specific background items with blur/bokeh notes. e.g. 'softly blurred city skyline with bokeh lights', 'warm string lights overhead'"]
+    },
+    "camera": {
+      "camera_model": "string — specific camera body. e.g. 'Leica M11', 'Sony A7IV', 'Fujifilm X-T5'",
+      "lens_focal_length_mm": "integer — e.g. 35, 50, 85",
+      "aperture": "string — f-stop. e.g. 'f/1.4', 'f/1.8', 'f/2.0'",
+      "shot_type": "enum: extreme_close_up | close_up | medium_close_up | medium | medium_full | full | wide",
+      "perspective": "enum: eye_level | low_angle | high_angle | birds_eye | worms_eye",
+      "depth_of_field": "enum: shallow | moderate | deep"
+    },
+    "lighting": {
+      "key_light": "string — direction, quality, falloff. e.g. 'warm sunset light coming from camera-left, soft falloff across face'",
+      "fill_light": "string — source, intensity. e.g. 'subtle cool fill from city reflections on camera-right'",
+      "rim_light": "string — position, effect. e.g. 'thin highlight on hair and shoulders from low sun behind subject'",
+      "color_temperature": "enum: warm | neutral | cool | mixed"
+    },
+    "color_and_style": {
+      "palette": ["array of 3-5 hex codes. e.g. '#F8EAD8', '#1C1C1F', '#F7931E', '#141414'"],
+      "grade": "string — specific color grading. e.g. 'cinematic teal and orange with soft contrast'",
+      "grain": "string — type and intensity. e.g. 'subtle digital grain, not vintage'",
+      "overall_style": "string — cultural reference. e.g. 'A24 movie still meets luxury streetwear campaign'"
+    },
+    "output_settings": {
+      "aspect_ratio": "string — 4:5, 16:9, 1:1, 3:2",
+      "resolution": {"width": "int", "height": "int"},
+      "format": "png"
+    },
+    "negative_prompt": [
+      "no extra people in foreground",
+      "no sunglasses unless specified",
+      "no logos larger than 1cm",
+      "no motion blur",
+      "no warped hands or fingers",
+      "no over-sharpened skin, avoid plastic look",
+      "no stock photo staging or forced poses"
+    ]
+  },
+  "presets": {
+    "rooftop_golden": {
+      "description": "Golden hour rooftop portrait. Warm, aspirational, NYC energy.",
+      "environment": {
+        "location_type": "rooftop bar",
+        "city": "New York City",
+        "time_of_day": "golden hour sunset",
+        "background_elements": ["softly blurred city skyline with bokeh lights", "warm string lights overhead", "frosted glass railing catching reflections"]
+      },
+      "camera": {"camera_model": "Leica M11", "lens_focal_length_mm": 50, "aperture": "f/1.4", "shot_type": "medium_close_up", "perspective": "eye_level", "depth_of_field": "shallow"},
+      "lighting": {"key_light": "warm sunset light coming from camera-left, soft falloff across face", "fill_light": "subtle cool fill from city reflections on camera-right", "rim_light": "thin highlight on hair and shoulders from low sun behind subject", "color_temperature": "warm"},
+      "color_and_style": {"palette": ["#F8EAD8", "#1C1C1F", "#F7931E", "#141414"], "grade": "cinematic teal and orange with soft contrast", "grain": "subtle digital grain, not vintage", "overall_style": "A24 movie still meets luxury streetwear campaign"}
+    },
+    "office_morning": {
+      "description": "Morning light in modern loft. Professional but not corporate.",
+      "environment": {
+        "location_type": "modern loft office with exposed brick",
+        "city": null,
+        "time_of_day": "early morning, soft diffused daylight through large windows",
+        "background_elements": ["out-of-focus monitor with dark UI on standing desk", "potted monstera plant in ceramic pot", "minimalist floating shelves with few books"]
+      },
+      "camera": {"camera_model": "Sony A7IV", "lens_focal_length_mm": 85, "aperture": "f/1.8", "shot_type": "medium", "perspective": "eye_level", "depth_of_field": "shallow"},
+      "lighting": {"key_light": "large window camera-left, soft wrap across face with gradual falloff", "fill_light": "ambient bounce from white ceiling, very subtle", "rim_light": "none — natural only", "color_temperature": "neutral"},
+      "color_and_style": {"palette": ["#E8E0D4", "#2C2C2C", "#8B7355", "#F5F0EB"], "grade": "desaturated editorial, lifted blacks, slight warmth in midtones", "grain": "minimal, clean digital", "overall_style": "Monocle magazine meets The Information editorial"}
+    },
+    "street_candid": {
+      "description": "Street-level candid. Editorial fashion meets documentary.",
+      "environment": {
+        "location_type": "city sidewalk, upscale neighborhood",
+        "city": null,
+        "time_of_day": "overcast afternoon, flat even light",
+        "background_elements": ["blurred boutique storefronts with warm interior lighting", "wet pavement with subtle reflections", "single passing taxi in deep background blur"]
+      },
+      "camera": {"camera_model": "Fujifilm X-T5", "lens_focal_length_mm": 35, "aperture": "f/2.0", "shot_type": "medium_full", "perspective": "eye_level", "depth_of_field": "moderate"},
+      "lighting": {"key_light": "overcast sky, even soft light from above, no harsh shadows", "fill_light": "ambient city reflections from windows and pavement", "rim_light": "subtle edge light from shop windows behind subject", "color_temperature": "cool"},
+      "color_and_style": {"palette": ["#D4D4D4", "#1A1A1A", "#6B7B8D", "#F0EBE3"], "grade": "muted film stock, slightly lifted shadows, desaturated greens", "grain": "subtle Fujifilm Classic Chrome simulation", "overall_style": "The Face magazine meets Kinfolk street editorial"}
+    },
+    "conference_speaker": {
+      "description": "On-stage or backstage speaker portrait. Authority energy.",
+      "environment": {
+        "location_type": "conference backstage or green room",
+        "city": null,
+        "time_of_day": "indoor, mixed artificial and natural light",
+        "background_elements": ["out-of-focus stage curtain or LED wall with abstract patterns", "production monitors in deep background", "single directional spotlight visible"]
+      },
+      "camera": {"camera_model": "Canon R5", "lens_focal_length_mm": 70, "aperture": "f/2.8", "shot_type": "close_up", "perspective": "slightly_low_angle", "depth_of_field": "shallow"},
+      "lighting": {"key_light": "strong directional light from camera-right, theatrical falloff", "fill_light": "minimal — let shadows be dramatic", "rim_light": "bright edge light from stage lighting behind subject", "color_temperature": "mixed"},
+      "color_and_style": {"palette": ["#0D0D0D", "#F5F5F5", "#FF6B35", "#1A1A2E"], "grade": "high contrast, deep blacks, selective warm highlights on skin", "grain": "none, clean and sharp", "overall_style": "TED speaker portrait meets Rolling Stone editorial"}
+    }
+  }
+}

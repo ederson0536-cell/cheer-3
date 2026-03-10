@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ relative_path }} - EvoClaw Memory UI</title>
+    <style>
+      :root {
+        --bg: #f7fafc;
+        --text: #1f2937;
+        --muted: #6b7280;
+        --card: #ffffff;
+        --line: #e5e7eb;
+        --link: #2563eb;
+        --warn: #b91c1c;
+      }
+      body {
+        margin: 0;
+        padding: 24px;
+        background: var(--bg);
+        color: var(--text);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+      .card {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 20px;
+      }
+      h1 {
+        margin: 8px 0 16px;
+        font-size: 22px;
+      }
+      a {
+        color: var(--link);
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      .warn {
+        color: var(--warn);
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 12px;
+        table-layout: fixed;
+      }
+      th,
+      td {
+        text-align: left;
+        border-bottom: 1px solid var(--line);
+        padding: 8px;
+        vertical-align: top;
+      }
+      th {
+        font-size: 13px;
+        color: var(--muted);
+        white-space: nowrap;
+      }
+      .table-wrap {
+        overflow-x: auto;
+      }
+      .col-name {
+        width: 220px;
+      }
+      .json-cell {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 13px;
+      }
+      .json-cell details {
+        border: 1px solid #dbe3ef;
+        border-radius: 6px;
+        background: #f8fafc;
+        padding: 6px 8px;
+      }
+      .json-cell summary {
+        cursor: pointer;
+        color: #1e3a8a;
+        list-style: none;
+      }
+      .json-cell summary::-webkit-details-marker {
+        display: none;
+      }
+      .json-cell summary::before {
+        content: "▶ ";
+        color: #1e3a8a;
+      }
+      .json-cell details[open] summary::before {
+        content: "▼ ";
+      }
+      .json-value {
+        display: block;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+      .json-pre {
+        margin: 8px 0 0;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+      pre {
+        background: #111827;
+        color: #f3f4f6;
+        border-radius: 8px;
+        padding: 12px;
+        overflow-x: auto;
+        white-space: pre-wrap;
+      }
+      textarea {
+        width: 100%;
+        min-height: 280px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 10px;
+        box-sizing: border-box;
+      }
+      .toolbar {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin: 12px 0;
+      }
+      .toolbar input,
+      .toolbar select,
+      .toolbar button,
+      button {
+        padding: 6px 8px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: #fff;
+      }
+      .pager {
+        margin-top: 8px;
+      }
+      .flash.error {
+        color: var(--warn);
+      }
+      .flash.success {
+        color: #065f46;
+      }
+      .top-actions {
+        margin: 8px 0 12px;
+      }
+      .btn-edit {
+        display: inline-block;
+        background: #1d4ed8;
+        color: #fff;
+        border: 1px solid #1d4ed8;
+        border-radius: 8px;
+        padding: 8px 12px;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .btn-edit:hover {
+        text-decoration: none;
+        background: #1e40af;
+      }
+      .btn-save {
+        background: #065f46;
+        border-color: #065f46;
+        color: #fff;
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <a href="{{ url_for('index') }}">返回首页</a>
+      <h1>{{ relative_path }}</h1>
+      <div class="top-actions">
+        <a class="btn-edit" href="#editor">编辑原始 JSON 内容</a>
+      </div>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      {% for category, message in messages %}
+      <p class="flash {{ category }}">{{ message }}</p>
+      {% endfor %}
+      {% endif %}
+      {% endwith %}
+
+      {% if parse_error %}
+      <p class="warn">JSONL 解析错误：{{ parse_error }}</p>
+      {% endif %}
+
+      {% if rows %}
+      <h2>JSONL 表格视图</h2>
+      <form class="toolbar" method="get" action="{{ url_for('view_file', relative_path=relative_path) }}">
+        <input type="text" name="q" value="{{ q }}" placeholder="关键词搜索（行内容）" />
+        <select name="sort">
+          {% for col in columns %}
+          <option value="{{ col }}" {% if sort == col %}selected{% endif %}>{{ col }}</option>
+          {% endfor %}
+        </select>
+        <select name="order">
+          <option value="desc" {% if order == "desc" %}selected{% endif %}>降序</option>
+          <option value="asc" {% if order == "asc" %}selected{% endif %}>升序</option>
+        </select>
+        <input type="number" name="page_size" min="1" max="500" value="{{ page_size }}" />
+        <button type="submit">应用</button>
+      </form>
+      <p>共 {{ total_count }} 条，当前第 {{ page }} / {{ total_pages }} 页</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              {% for col in columns %}
+              <th class="{% if loop.first %}col-name{% endif %}">{{ col }}</th>
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in rows %}
+            <tr>
+              {% for col in columns %}
+              {% set value = row.get(col, '') %}
+              <td class="json-cell">
+                {% if value is mapping or (value is sequence and value is not string) %}
+                <details>
+                  <summary>{{ value | tojson | truncate(120, True, " ...") }}</summary>
+                  <pre class="json-pre">{{ value | tojson(indent=2) }}</pre>
+                </details>
+                {% else %}
+                <span class="json-value">{{ value }}</span>
+                {% endif %}
+              </td>
+              {% endfor %}
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <div class="pager">
+        {% if page > 1 %}
+        <a href="{{ url_for('view_file', relative_path=relative_path, q=q, sort=sort, order=order, page_size=page_size, page=page-1) }}">上一页</a>
+        {% endif %}
+        {% if page < total_pages %}
+        <a href="{{ url_for('view_file', relative_path=relative_path, q=q, sort=sort, order=order, page_size=page_size, page=page+1) }}">下一页</a>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      <h2 id="editor">原始内容（可编辑）</h2>
+      <form method="post" action="{{ url_for('save_file', relative_path=relative_path) }}">
+        <textarea name="content">{{ content }}</textarea>
+        <p>
+          <button class="btn-save" type="submit">保存修改</button>
+        </p>
+      </form>
+    </div>
+  </body>
+</html>

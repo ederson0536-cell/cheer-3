@@ -1,0 +1,56 @@
+{
+  "meta": {
+    "environment": "staging",
+    "baseline_window": "rolling_30d",
+    "sample_scope": "golden_runtime_regression"
+  },
+  "execution_layer": {
+    "task_success_rate": 1.0,
+    "subtask_success_rate": 1.0,
+    "rework_rate": 0.333
+  },
+  "routing_layer": {
+    "auto_execute_ratio": 0.333,
+    "score_distribution": {
+      "auto_execute": 1,
+      "near_threshold": 2,
+      "reject_auto": 0
+    },
+    "near_threshold_cases": [
+      "st_001",
+      "st_003"
+    ]
+  },
+  "evolution_layer": {
+    "proposal_generation_rate": 1.0,
+    "canary_pass_rate": 0.4,
+    "rollback_rate": 0.6
+  },
+  "memory_layer": {
+    "recall_hit_rate": 1.0,
+    "memory_miss_ratio": 0.2,
+    "candidate_promote_rate": 0.0
+  },
+  "top_failure_modes": [
+    [
+      "memory_miss",
+      1
+    ],
+    [
+      "routing_error",
+      1
+    ],
+    [
+      "tool_error",
+      1
+    ],
+    [
+      "rule_conflict",
+      1
+    ],
+    [
+      "file_scope_error",
+      1
+    ]
+  ]
+}

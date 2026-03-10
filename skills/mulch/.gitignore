@@ -1,0 +1,20 @@
+# Environment and secrets
+.env
+.env.*
+*.env
+.env.local
+.env.*.local
+.secrets
+*.pem
+*.key
+secrets/
+config/local*
+
+# OS and editor
+.DS_Store
+*.swp
+*.swo
+*~
+
+# Dependencies and build
+node_modules/

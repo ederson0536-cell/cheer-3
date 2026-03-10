@@ -1,0 +1,38 @@
+{
+  "skills": [
+    {
+      "skill_id": "skill_a",
+      "skill_name": "Skill A",
+      "domain": "engineering",
+      "supported_task_types": ["coding"],
+      "supported_subtask_types": ["edit_file"],
+      "required_tools": ["filesystem"],
+      "risk_profile": "medium",
+      "trust_level": "medium",
+      "routing_features": {
+        "rule_alignment": 0.75,
+        "success_rate": 0.74,
+        "rework_rate": 0.2,
+        "latency_penalty": 0.15,
+        "scenario_match": 0.72
+      }
+    },
+    {
+      "skill_id": "skill_b",
+      "skill_name": "Skill B",
+      "domain": "engineering",
+      "supported_task_types": ["coding"],
+      "supported_subtask_types": ["edit_file"],
+      "required_tools": ["filesystem"],
+      "risk_profile": "medium",
+      "trust_level": "medium",
+      "routing_features": {
+        "rule_alignment": 0.74,
+        "success_rate": 0.75,
+        "rework_rate": 0.2,
+        "latency_penalty": 0.15,
+        "scenario_match": 0.72
+      }
+    }
+  ]
+}

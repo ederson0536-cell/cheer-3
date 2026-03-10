@@ -1,0 +1,337 @@
+#!/usr/bin/env python3
+"""
+Candidate Memory System
+Manages knowledge candidates through validation lifecycle
+"""
+
+import json
+from pathlib import Path
+from datetime import datetime, timedelta
+from typing import Dict, List, Optional
+from collections import defaultdict
+
+WORKSPACE = "/home/bro/.openclaw/workspace-cheer"
+CANDIDATE_PATH = Path(WORKSPACE) / "memory" / "candidate"
+SEMANTIC_PATH = Path(WORKSPACE) / "memory" / "semantic"
+
+
+class CandidateMemory:
+    """Candidate Memory Manager"""
+    
+    def __init__(self):
+        CANDIDATE_PATH.mkdir(parents=True, exist_ok=True)
+        SEMANTIC_PATH.mkdir(parents=True, exist_ok=True)
+        
+        self.candidates_file = CANDIDATE_PATH / "candidates.jsonl"
+        self.validations_file = CANDIDATE_PATH / "validations.jsonl"
+        
+        # Initialize files
+        if not self.candidates_file.exists():
+            self.candidates_file.touch()
+        if not self.validations_file.exists():
+            self.validations_file.touch()
+    
+    def add_candidate(
+        self, 
+        knowledge: str, 
+        source: str,
+        context: Dict = None
+    ) -> str:
+        """Add a new knowledge candidate"""
+        
+        candidate_id = f"cand_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        
+        candidate = {
+            "candidate_id": candidate_id,
+            "knowledge": knowledge,
+            "source": source,
+            "context": context or {},
+            "status": "validating",
+            "occurrences": 1,
+            "validations": [],
+            "created_at": datetime.now().isoformat(),
+            "updated_at": datetime.now().isoformat()
+        }
+        
+        with open(self.candidates_file, "a") as f:
+            f.write(json.dumps(candidate, ensure_ascii=False) + "\n")
+        
+        return candidate_id
+    
+    def record_validation(
+        self, 
+        candidate_id: str, 
+        task_id: str,
+        success: bool,
+        feedback: str = None
+    ) -> bool:
+        """Record validation result for a candidate"""
+        
+        validation = {
+            "candidate_id": candidate_id,
+            "task_id": task_id,
+            "success": success,
+            "feedback": feedback,
+            "validated_at": datetime.now().isoformat()
+        }
+        
+        # Add to validations
+        with open(self.validations_file, "a") as f:
+            f.write(json.dumps(validation, ensure_ascii=False) + "\n")
+        
+        # Update candidate
+        self._update_candidate_validation(candidate_id, success)
+        
+        return True
+    
+    def _update_candidate_validation(self, candidate_id: str, success: bool):
+        """Update candidate with validation result"""
+        
+        candidates = []
+        
+        if self.candidates_file.exists():
+            with open(self.candidates_file) as f:
+                for line in f:
+                    c = json.loads(line)
+                    if c["candidate_id"] == candidate_id:
+                        c["validations"].append({
+                            "success": success,
+                            "validated_at": datetime.now().isoformat()
+                        })
+                        c["occurrences"] = c.get("occurrences", 0) + 1
+                        c["updated_at"] = datetime.now().isoformat()
+                        
+                        # Check if ready for promotion
+                        if self._check_promotion_ready(c):
+                            c["status"] = "validated"
+                    candidates.append(c)
+        
+        # Rewrite
+        with open(self.candidates_file, "w") as f:
+            for c in candidates:
+                f.write(json.dumps(c, ensure_ascii=False) + "\n")
+    
+    def _check_promotion_ready(self, candidate: Dict) -> bool:
+        """Check if candidate is ready for promotion"""
+        
+        validations = candidate.get("validations", [])
+        
+        if len(validations) < 3:
+            return False
+        
+        # Calculate success rate
+        success_count = sum(1 for v in validations if v.get("success"))
+        success_rate = success_count / len(validations)
+        
+        return success_rate >= 0.7
+    
+    def get_candidates(self, status: str = None) -> List[Dict]:
+        """Get candidates by status"""
+        
+        results = []
+        
+        if self.candidates_file.exists():
+            with open(self.candidates_file) as f:
+                for line in f:
+                    c = json.loads(line)
+                    if status is None or c.get("status") == status:
+                        results.append(c)
+        
+        return results
+    
+    def promote_to_semantic(self, candidate_id: str) -> bool:
+        """Promote validated candidate to semantic memory"""
+        
+        candidates = []
+        promoted = False
+        
+        if self.candidates_file.exists():
+            with open(self.candidates_file) as f:
+                for line in f:
+                    c = json.loads(line)
+                    if c["candidate_id"] == candidate_id:
+                        if c.get("status") != "validated":
+                            return False
+                        
+                        # Create semantic entry
+                        semantic_entry = {
+                            "type": "knowledge",
+                            "content": c["knowledge"],
+                            "source": c["source"],
+                            "promoted_from": candidate_id,
+                            "promoted_at": datetime.now().isoformat(),
+                            "validation_count": len(c.get("validations", []))
+                        }
+                        
+                        # Save to semantic
+                        semantic_file = SEMANTIC_PATH / f"{datetime.now().strftime('%Y-%m')}.jsonl"
+                        with open(semantic_file, "a") as f:
+                            f.write(json.dumps(semantic_entry, ensure_ascii=False) + "\n")
+                        
+                        # Update candidate status
+                        c["status"] = "promoted"
+                        c["promoted_at"] = datetime.now().isoformat()
+                        promoted = True
+                    
+                    candidates.append(c)
+            
+            # Rewrite
+            with open(self.candidates_file, "w") as f:
+                for c in candidates:
+                    f.write(json.dumps(c, ensure_ascii=False) + "\n")
+        
+        return promoted
+    
+    def reject_candidate(self, candidate_id: str, reason: str) -> bool:
+        """Reject a candidate"""
+        
+        candidates = []
+        
+        if self.candidates_file.exists():
+            with open(self.candidates_file) as f:
+                for line in f:
+                    c = json.loads(line)
+                    if c["candidate_id"] == candidate_id:
+                        c["status"] = "rejected"
+                        c["reject_reason"] = reason
+                        c["rejected_at"] = datetime.now().isoformat()
+                    candidates.append(c)
+            
+            with open(self.candidates_file, "w") as f:
+                for c in candidates:
+                    f.write(json.dumps(c, ensure_ascii=False) + "\n")
+        
+        return True
+    
+    def get_promotion_candidates(self) -> List[Dict]:
+        """Get candidates ready for promotion"""
+        
+        return self.get_candidates(status="validated")
+    
+    def get_stats(self) -> Dict:
+        """Get candidate memory statistics"""
+        
+        stats = {
+            "total": 0,
+            "by_status": defaultdict(int),
+            "ready_for_promotion": 0
+        }
+        
+        for c in self.get_candidates():
+            stats["total"] += 1
+            stats["by_status"][c.get("status", "unknown")] += 1
+            
+            if c.get("status") == "validated":
+                stats["ready_for_promotion"] += 1
+        
+        return stats
+
+
+# Global instance
+_candidate_memory = None
+
+def get_candidate_memory() -> CandidateMemory:
+    """Get global candidate memory instance"""
+    global _candidate_memory
+    if _candidate_memory is None:
+        _candidate_memory = CandidateMemory()
+    return _candidate_memory
+
+
+
+    def add_validation(self, candidate_id: str, success: bool, details: str = ""):
+        """Add a validation result to a candidate"""
+        
+        candidates = []
+        
+        with open(self.candidates_file) as f:
+            for line in f:
+                c = json.loads(line)
+                if c["candidate_id"] == candidate_id:
+                    validation = {
+                        "timestamp": datetime.now().isoformat(),
+                        "success": success,
+                        "details": details
+                    }
+                    c.setdefault("validations", []).append(validation)
+                    c["updated_at"] = datetime.now().isoformat()
+                candidates.append(c)
+        
+        with open(self.candidates_file, "w") as f:
+            for c in candidates:
+                f.write(json.dumps(c, ensure_ascii=False) + "\n")
+    
+    def get_promotion_candidates(self) -> List[Dict]:
+        """Get candidates ready for promotion (3+ validations)"""
+        
+        candidates = []
+        
+        with open(self.candidates_file) as f:
+            for line in f:
+                c = json.loads(line)
+                validations = c.get("validations", [])
+                
+                if len(validations) >= 3:
+                    candidates.append(c)
+        
+        return candidates
+
+
+if __name__ == "__main__":
+    import sys
+    
+    cm = get_candidate_memory()
+    
+    if len(sys.argv) > 1:
+        cmd = sys.argv[1]
+        
+        if cmd == "stats":
+            print(json.dumps(cm.get_stats(), indent=2))
+        
+        elif cmd == "list":
+            status = sys.argv[2] if len(sys.argv) > 2 else None
+            for c in cm.get_candidates(status):
+                print(f"- {c['candidate_id']}: {c['knowledge'][:50]} [{c['status']}]")
+        
+        elif cmd == "promote" and len(sys.argv) > 2:
+            cm.promote_to_semantic(sys.argv[2])
+            print(f"Promoted: {sys.argv[2]}")
+    else:
+        print("Usage: candidate_memory.py stats|list|promote <id>")
+
+    def add_validation(self, candidate_id: str, success: bool, details: str = ""):
+        """Add a validation result to a candidate"""
+        
+        candidates = []
+        
+        with open(self.candidates_file) as f:
+            for line in f:
+                c = json.loads(line)
+                if c["candidate_id"] == candidate_id:
+                    validation = {
+                        "timestamp": datetime.now().isoformat(),
+                        "success": success,
+                        "details": details
+                    }
+                    c.setdefault("validations", []).append(validation)
+                    c["updated_at"] = datetime.now().isoformat()
+                candidates.append(c)
+        
+        with open(self.candidates_file, "w") as f:
+            for c in candidates:
+                f.write(json.dumps(c, ensure_ascii=False) + "\n")
+    
+    def get_promotion_candidates(self) -> List[Dict]:
+        """Get candidates ready for promotion (3+ validations)"""
+        
+        candidates = []
+        
+        with open(self.candidates_file) as f:
+            for line in f:
+                c = json.loads(line)
+                validations = c.get("validations", [])
+                
+                if len(validations) >= 3:
+                    candidates.append(c)
+        
+        return candidates

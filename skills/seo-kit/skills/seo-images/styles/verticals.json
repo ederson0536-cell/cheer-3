@@ -1,0 +1,159 @@
+{
+  "description": "Vertical-specific style recommendations. Maps article type → best style + preset + customization notes.",
+
+  "saas": {
+    "label": "SaaS / Software / Dev Tools",
+    "examples": ["OpenClaw guide", "Linear case study", "Stripe teardown", "API product review"],
+    "hero_image": {
+      "primary": "dark_data",
+      "preset": "performance_card",
+      "notes": "Lead with the metric that matters. ARR, time saved, efficiency gain. Dark glass card with green or purple accent."
+    },
+    "inline_images": {
+      "primary": "cinematic_scene",
+      "preset": "late_night_office",
+      "notes": "Founder-at-screen moments. The person behind the product. Blue monitor glow, isolation, focus."
+    },
+    "social_share": {
+      "primary": "social_card",
+      "preset": "neon_accent",
+      "notes": "Monospace font, terminal energy but clean. Green accent (#00FF88) for dev tools, purple (#6C5CE7) for design tools."
+    },
+    "color_direction": "Dark backgrounds, accent pops. Never bright/airy — SaaS content reads as authoritative in dark mode.",
+    "avoid": ["warm_lifestyle", "product_lifestyle with bright surfaces"]
+  },
+
+  "dtc_ecommerce": {
+    "label": "DTC / E-Commerce / Consumer Products",
+    "examples": ["Ridge Wallet breakdown", "Perfect White Tee analysis", "Bombas vs Gymshark", "DTC ad creative teardown"],
+    "hero_image": {
+      "primary": "product_lifestyle",
+      "preset": "moody_dark",
+      "notes": "Product as hero but in context. Dark walnut, dramatic light, single specular highlight on product. Luxury feel."
+    },
+    "inline_images": {
+      "primary": "product_lifestyle",
+      "preset": "lifestyle_kitchen",
+      "notes": "Product in use. Real environments. Morning light, lived-in spaces. Show the life the product fits into."
+    },
+    "social_share": {
+      "primary": "social_card",
+      "preset": "warm_editorial",
+      "notes": "Cream background, dark serif text. Editorial newsletter feel. DTC audience responds to warmth not tech-dark."
+    },
+    "comparison_hero": {
+      "primary": "dark_data",
+      "preset": "performance_card",
+      "notes": "When comparing brands (Ridge vs Bellroy), use dark data card with split metrics. Two accent colors, one per brand."
+    },
+    "color_direction": "Warm earth tones for lifestyle shots. Dark and premium for product heroes. Never clinical/sterile.",
+    "avoid": ["cinematic_scene (too dramatic for product content)", "neon accents"]
+  },
+
+  "newsletter_creator": {
+    "label": "Newsletter / Creator Economy / Personal Brand",
+    "examples": ["Big Players articles", "creator monetization", "newsletter growth", "audience building"],
+    "hero_image": {
+      "primary": "founder_editorial",
+      "preset": "office_morning",
+      "notes": "The person writing the newsletter. Editorial portrait, natural light, real workspace. Builds parasocial trust."
+    },
+    "inline_images": {
+      "primary": "dark_data",
+      "preset": "revenue_card",
+      "notes": "Subscriber counts, open rates, revenue milestones. Green sparklines. The metrics creators care about."
+    },
+    "social_share": {
+      "primary": "social_card",
+      "preset": "dark_bold",
+      "notes": "Maximum contrast. White on black. The headline IS the image. Works at thumbnail size on X and LinkedIn."
+    },
+    "author_headshot": {
+      "primary": "founder_editorial",
+      "preset": "rooftop_golden",
+      "notes": "Golden hour, aspirational but real. Not corporate headshot energy — more magazine profile."
+    },
+    "color_direction": "Mix of warm editorial (cream/serif for sophistication) and dark bold (for scroll-stopping social). Author shots always warm.",
+    "avoid": ["product_lifestyle (no physical product)", "overly corporate anything"]
+  },
+
+  "agency_marketing": {
+    "label": "Agency / Marketing Services / Growth",
+    "examples": ["Emerald Digital case studies", "client results", "marketing strategy guides", "ad creative analysis"],
+    "hero_image": {
+      "primary": "cinematic_scene",
+      "preset": "deal_room",
+      "notes": "Authority and stakes. Conference room energy, afternoon light through blinds. The weight of real business."
+    },
+    "inline_images": {
+      "primary": "dark_data",
+      "preset": "savings_card",
+      "notes": "Client results as dark dashboard cards. ROAS, CPA, revenue lift. Red accent for urgency, green for wins."
+    },
+    "social_share": {
+      "primary": "social_card",
+      "preset": "gradient_purple",
+      "notes": "Modern SaaS aesthetic signals competence. Purple gradient says 'we understand tech' without being developer-bro."
+    },
+    "team_culture": {
+      "primary": "warm_lifestyle",
+      "preset": "cozy_workspace",
+      "notes": "Behind the scenes of the agency. Real workspaces, real people. Warm, productive, not corporate."
+    },
+    "color_direction": "Professional but not corporate. Dark for results/data, warm for people/culture. Purple and deep blue as accent colors.",
+    "avoid": ["anything that looks like stock photography", "generic office setups"]
+  },
+
+  "ai_tech": {
+    "label": "AI / Automation / Agent Ecosystem",
+    "examples": ["OpenClaw tutorials", "AI agent guides", "automation workflows", "tool reviews"],
+    "hero_image": {
+      "primary": "cinematic_scene",
+      "preset": "late_night_office",
+      "notes": "The builder at work. Monitor glow as key light. Multiple screens showing dashboards/code. Fincher palette."
+    },
+    "inline_images": {
+      "primary": "dark_data",
+      "preset": "time_saved_card",
+      "notes": "Before/after efficiency metrics. Time saved, tasks automated, cost reduced. Blue/cyan accent for AI content."
+    },
+    "social_share": {
+      "primary": "social_card",
+      "preset": "neon_accent",
+      "notes": "Monospace font, green-on-black. Terminal aesthetic but polished — Supabase marketing level, not hacker movie."
+    },
+    "workflow_diagram": {
+      "primary": "dark_data",
+      "notes": "Custom — use dark_data base but describe a flow/pipeline instead of a single metric. Nodes and arrows on dark glass."
+    },
+    "color_direction": "Dark mode everything. Blue (#4FACFE) for AI/intelligence, green (#00FF88) for automation/efficiency, cyan for data. Never warm/earthy.",
+    "avoid": ["warm_lifestyle", "product_lifestyle", "anything that feels analog or handmade"]
+  },
+
+  "finance_revenue": {
+    "label": "Finance / Revenue / Business Strategy",
+    "examples": ["Revenue breakdowns", "funding analysis", "market sizing", "business model teardowns"],
+    "hero_image": {
+      "primary": "dark_data",
+      "preset": "revenue_card",
+      "notes": "The big number. Revenue, valuation, market size. Green accent for growth, white on near-black. Bloomberg energy."
+    },
+    "inline_images": {
+      "primary": "dark_data",
+      "preset": "performance_card",
+      "notes": "Multiple metric cards for comparisons. Different accent colors per metric. Keep consistent dark base."
+    },
+    "social_share": {
+      "primary": "social_card",
+      "preset": "dark_bold",
+      "notes": "The number IS the headline. '$200M/Year' in massive white Impact. Nothing else competing."
+    },
+    "executive_portrait": {
+      "primary": "founder_editorial",
+      "preset": "conference_speaker",
+      "notes": "When the article is about a person (CEO, founder). Dramatic stage/backstage lighting. Authority energy."
+    },
+    "color_direction": "Dark and serious. Green for revenue/growth, red for losses/risk, white for maximum contrast. No playful colors.",
+    "avoid": ["warm_lifestyle", "anything casual or cozy", "bright backgrounds"]
+  }
+}

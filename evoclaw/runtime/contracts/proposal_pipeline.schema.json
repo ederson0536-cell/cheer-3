@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openclaw.local/runtime/contracts/proposal_pipeline.schema.json",
+  "title": "Proposal -> Review -> Publish Pipeline",
+  "type": "object",
+  "required": ["proposal", "review", "publish"],
+  "properties": {
+    "proposal": {
+      "type": "object",
+      "required": ["proposal_id", "source", "candidate_type", "payload", "status"],
+      "properties": {
+        "proposal_id": {"type": "string", "pattern": "^pp_[A-Za-z0-9_-]+$"},
+        "source": {"type": "string", "enum": ["after_task", "after_subtask"]},
+        "candidate_type": {
+          "type": "string",
+          "enum": ["rule_update_candidate", "routing_weight_update_candidate", "memory_policy_update_candidate"]
+        },
+        "payload": {"type": "object"},
+        "status": {
+          "type": "string",
+          "enum": ["draft", "candidate", "review_pending", "canary", "active", "rejected", "rolled_back", "archived"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "review": {
+      "type": "object",
+      "required": ["review_id", "proposal_id", "decision", "reviewer"],
+      "properties": {
+        "review_id": {"type": "string", "pattern": "^rv_[A-Za-z0-9_-]+$"},
+        "proposal_id": {"type": "string", "pattern": "^pp_[A-Za-z0-9_-]+$"},
+        "decision": {"type": "string", "enum": ["reject", "canary_only", "approve"]},
+        "reviewer": {"type": "string"},
+        "notes": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "publish": {
+      "type": "object",
+      "required": ["publish_id", "proposal_id", "action", "status"],
+      "properties": {
+        "publish_id": {"type": "string", "pattern": "^pb_[A-Za-z0-9_-]+$"},
+        "proposal_id": {"type": "string", "pattern": "^pp_[A-Za-z0-9_-]+$"},
+        "action": {"type": "string", "enum": ["canary", "publish", "rollback"]},
+        "status": {"type": "string", "enum": ["queued", "running", "succeeded", "failed"]},
+        "canary_report_id": {"type": ["string", "null"]},
+        "rollback_reason": {"type": ["string", "null"]}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,14 @@
+{
+  "task": {
+    "task_id": "t_dirty_001",
+    "task_type": "coding",
+    "scenario": "write_without_scope",
+    "complexity_level": "L1",
+    "risk_level": "medium",
+    "file_write_flag": true,
+    "requires_tools": ["filesystem"],
+    "candidate_subtasks": ["edit_file"],
+    "uncertainty_level": 0.21
+  },
+  "subtasks": []
+}

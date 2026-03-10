@@ -1,0 +1,30 @@
+{
+  "total_calls": 26,
+  "updated_at": "2026-03-08T22:57:39.164424",
+  "tracks": {
+    "rules": {
+      "hit": 26,
+      "miss": 0
+    },
+    "episodic": {
+      "hit": 24,
+      "miss": 2
+    },
+    "semantic": {
+      "hit": 0,
+      "miss": 26
+    },
+    "memories": {
+      "hit": 3,
+      "miss": 23
+    },
+    "candidate": {
+      "hit": 0,
+      "miss": 26
+    },
+    "graph": {
+      "hit": 0,
+      "miss": 26
+    }
+  }
+}

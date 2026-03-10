@@ -1,0 +1,2 @@
+# Optional HTTP client — install with: pip install deep-recall[http]
+# httpx>=0.27

@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Skill Forge Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="bg-animation"></div>
+  <div class="dashboard">
+    <header class="dashboard-header">
+      <div>
+        <p class="pretitle">Skill Forge Control Panel</p>
+        <h1>Live Optimization Status</h1>
+      </div>
+      <div class="header-actions">
+        <span class="status-pill status-active" id="status-pill">Loading…</span>
+        <span class="status-pill status-warm" id="skills-pill">—</span>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">Dark mode</button>
+      </div>
+    </header>
+
+    <section class="dashboard-grid">
+      <article class="panel panel-metrics">
+        <h2>Real-time metrics</h2>
+        <div class="metric-cards">
+          <div class="metric-card">
+            <p>Skills Tracked</p>
+            <span id="metric-skills" class="metric-value">—</span>
+            <div class="sparkline" id="spark-skills"></div>
+          </div>
+          <div class="metric-card">
+            <p>Tokens Saved</p>
+            <span id="metric-tokens" class="metric-value">—</span>
+            <div class="sparkline" id="spark-tokens"></div>
+          </div>
+          <div class="metric-card">
+            <p>Avg. Runtime</p>
+            <span id="metric-runtime" class="metric-value">—</span>
+            <div class="sparkline" id="spark-runtime"></div>
+          </div>
+          <div class="metric-card">
+            <p>Total Runs</p>
+            <span id="metric-runs" class="metric-value">—</span>
+            <div class="sparkline" id="spark-runs"></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel panel-timeline">
+        <h2>Optimization timeline</h2>
+        <ul class="timeline" id="timeline"></ul>
+      </article>
+
+      <article class="panel panel-breakdown">
+        <h2>Per skill view</h2>
+        <div id="skill-list"></div>
+      </article>
+
+      <article class="panel panel-console">
+        <h2>System console</h2>
+        <div class="console" id="console"></div>
+      </article>
+    </section>
+
+    <footer class="dashboard-footer">
+      <p id="last-update">Loading data…</p>
+      <a href="index.html" class="btn btn-secondary">Back to Landing Page</a>
+    </footer>
+  </div>
+
+  <style>
+    .metric-value {
+      display: block;
+      font-size: 1.8rem;
+      font-weight: 700;
+      transition: all 0.3s ease;
+    }
+    .metric-value.flash {
+      color: #2acfb4;
+      text-shadow: 0 0 20px rgba(42, 207, 180, 0.5);
+    }
+    .sparkline {
+      height: 24px;
+      margin-top: 8px;
+      display: flex;
+      align-items: flex-end;
+      gap: 2px;
+    }
+    .sparkline .bar {
+      flex: 1;
+      background: linear-gradient(to top, rgba(42, 207, 180, 0.3), rgba(42, 207, 180, 0.7));
+      border-radius: 2px 2px 0 0;
+      transition: height 0.5s ease;
+      min-width: 3px;
+    }
+    .sparkline .bar.new {
+      animation: barPulse 0.6s ease;
+    }
+    @keyframes barPulse {
+      0% { opacity: 0; transform: scaleY(0); }
+      50% { opacity: 1; transform: scaleY(1.2); }
+      100% { transform: scaleY(1); }
+    }
+    .skill-row {
+      transition: background 0.3s ease;
+    }
+    .skill-row:hover {
+      background: rgba(255, 255, 255, 0.03);
+    }
+    .progress-bar {
+      height: 4px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 2px;
+      margin-top: 6px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 1s ease;
+    }
+    .progress-fill.good { background: #2acfb4; }
+    .progress-fill.warn { background: #ff9f0d; }
+    .progress-fill.bad { background: #e11d48; }
+    .timeline li {
+      animation: slideIn 0.3s ease;
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-10px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    .console p {
+      animation: consoleLine 0.2s ease;
+    }
+    @keyframes consoleLine {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .console { max-height: 300px; overflow-y: auto; }
+  </style>
+
+  <script>
+    // ── Sparkline history ──
+    const sparkData = { skills: [], tokens: [], runtime: [], runs: [] };
+    const MAX_BARS = 20;
+
+    function addSparkBar(containerId, dataKey, value) {
+      sparkData[dataKey].push(value);
+      if (sparkData[dataKey].length > MAX_BARS) sparkData[dataKey].shift();
+
+      const container = document.getElementById(containerId);
+      container.innerHTML = '';
+      const max = Math.max(...sparkData[dataKey], 1);
+      sparkData[dataKey].forEach((v, i) => {
+        const bar = document.createElement('div');
+        bar.className = 'bar' + (i === sparkData[dataKey].length - 1 ? ' new' : '');
+        bar.style.height = Math.max(2, (v / max) * 24) + 'px';
+        container.appendChild(bar);
+      });
+    }
+
+    // ── Animate metric counter ──
+    function animateValue(el, target, suffix = '') {
+      const current = parseFloat(el.textContent) || 0;
+      if (current === target) return;
+      el.classList.add('flash');
+      setTimeout(() => el.classList.remove('flash'), 600);
+
+      const steps = 30;
+      const increment = (target - current) / steps;
+      let step = 0;
+      const timer = setInterval(() => {
+        step++;
+        const val = current + increment * step;
+        el.textContent = (suffix === 's' || suffix === 'ms'
+          ? val.toFixed(1) : Math.round(val)) + suffix;
+        if (step >= steps) {
+          el.textContent = (suffix === 's' || suffix === 'ms'
+            ? target.toFixed(1) : Math.round(target)) + suffix;
+          clearInterval(timer);
+        }
+      }, 20);
+    }
+
+    // ── Render timeline ──
+    function renderTimeline(events) {
+      const el = document.getElementById('timeline');
+      el.innerHTML = '';
+      events.slice(0, 15).forEach(evt => {
+        const time = new Date(evt.timestamp).toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit' });
+        const moduleMap = { profiler: 'Profiler', analyzer: 'Analyzer', optimizer: 'Optimizer', validator: 'Validator', forge: 'Forge Core' };
+        const li = document.createElement('li');
+        li.innerHTML = `<div class="timeline-time">${time}</div><div><strong>${moduleMap[evt.module] || evt.module}</strong> ${evt.action} <em>${evt.skillId}</em>. ${evt.details || ''}</div>`;
+        el.appendChild(li);
+      });
+    }
+
+    // ── Render skills ──
+    function renderSkills(skills) {
+      const el = document.getElementById('skill-list');
+      el.innerHTML = '';
+      skills.forEach(s => {
+        const score = Math.min(100, Math.round(
+          (s.avgTokensIn + s.avgTokensOut > 2000 ? 30 : 0) +
+          (s.avgExecutionMs > 2000 ? 25 : 0) +
+          (s.failureRate > 0.05 ? 15 : 0)
+        ));
+        const status = score >= 50 ? 'Needs optimization' : score >= 25 ? 'Monitoring' : 'Healthy';
+        const statusClass = score >= 50 ? 'pending' : 'success';
+        const progressClass = score >= 50 ? 'bad' : score >= 25 ? 'warn' : 'good';
+
+        const row = document.createElement('div');
+        row.className = 'skill-row';
+        row.innerHTML = `
+          <div>
+            <p class="skill-name">${s.skillId}</p>
+            <p class="skill-meta">Tokens ${Math.round(s.avgTokensIn)}→${Math.round(s.avgTokensOut)} | Runtime ${s.avgExecutionMs.toFixed(0)}ms | ${s.totalRuns} runs | Fail ${(s.failureRate * 100).toFixed(0)}%</p>
+            <div class="progress-bar"><div class="progress-fill ${progressClass}" style="width: ${score}%"></div></div>
+          </div>
+          <div class="skill-status ${statusClass}">${status}</div>
+        `;
+        el.appendChild(row);
+      });
+    }
+
+    // ── Console ──
+    function renderConsole(events) {
+      const el = document.getElementById('console');
+      el.innerHTML = '';
+      events.slice(0, 20).forEach(evt => {
+        const time = new Date(evt.timestamp).toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        const p = document.createElement('p');
+        p.innerHTML = `<span class="console-time">${time}</span> [${evt.module}] ${evt.action}: ${evt.skillId} — ${evt.details || ''}`;
+        el.appendChild(p);
+      });
+      el.scrollTop = el.scrollHeight;
+    }
+
+    // ── Load data ──
+    async function loadData() {
+      try {
+        const res = await fetch('data/dashboard.json');
+        if (!res.ok) throw new Error('No data yet');
+        const data = await res.json();
+
+        // Update status
+        document.getElementById('status-pill').textContent = 'Active';
+        document.getElementById('skills-pill').textContent = `Watching ${data.summary.skillsTracked} skills`;
+
+        // Metrics
+        animateValue(document.getElementById('metric-skills'), data.summary.skillsTracked);
+        animateValue(document.getElementById('metric-tokens'), data.summary.avgTokenSavings, '%');
+        animateValue(document.getElementById('metric-runtime'), data.summary.avgRuntime / 1000, 's');
+        animateValue(document.getElementById('metric-runs'), data.summary.totalRuns);
+
+        // Sparklines
+        addSparkBar('spark-skills', 'skills', data.summary.skillsTracked);
+        addSparkBar('spark-tokens', 'tokens', data.summary.avgTokenSavings);
+        addSparkBar('spark-runtime', 'runtime', data.summary.avgRuntime);
+        addSparkBar('spark-runs', 'runs', data.summary.totalRuns);
+
+        // Timeline + Skills + Console
+        renderTimeline(data.events);
+        renderSkills(data.skills);
+        renderConsole(data.events);
+
+        document.getElementById('last-update').textContent =
+          `Last updated: ${new Date(data.timestamp).toLocaleTimeString()} | Auto-refresh every 5s`;
+      } catch (e) {
+        document.getElementById('status-pill').textContent = 'No data';
+        document.getElementById('last-update').textContent = 'Run `npm run forge` to generate data → demo/data/dashboard.json';
+
+        // Show demo data
+        renderDemoData();
+      }
+    }
+
+    function renderDemoData() {
+      // Fallback: show realistic demo data for GitHub Pages
+      const demo = {
+        summary: { skillsTracked: 8, totalRuns: 72, avgTokenSavings: 34, avgRuntime: 1800 },
+        skills: [
+          { skillId: 'time-tracker', avgTokensIn: 2100, avgTokensOut: 1500, avgExecutionMs: 3400, totalRuns: 15, failureRate: 0.02, p95ExecutionMs: 5200 },
+          { skillId: 'docs-generator', avgTokensIn: 1800, avgTokensOut: 1200, avgExecutionMs: 2700, totalRuns: 12, failureRate: 0.08, p95ExecutionMs: 4100 },
+          { skillId: 'solana-research', avgTokensIn: 3300, avgTokensOut: 2400, avgExecutionMs: 4500, totalRuns: 18, failureRate: 0.01, p95ExecutionMs: 6800 },
+          { skillId: 'dropbox-sync', avgTokensIn: 800, avgTokensOut: 400, avgExecutionMs: 1200, totalRuns: 27, failureRate: 0.0, p95ExecutionMs: 1800 },
+        ],
+        events: [
+          { timestamp: Date.now() - 300000, module: 'profiler', action: 'batch-complete', skillId: 'time-tracker', details: 'Profiled 15 iterations' },
+          { timestamp: Date.now() - 240000, module: 'analyzer', action: 'optimize', skillId: 'solana-research', details: 'Score 68: High token usage' },
+          { timestamp: Date.now() - 180000, module: 'optimizer', action: 'optimized', skillId: 'solana-research', details: 'Saved ~225 tokens (28%)' },
+          { timestamp: Date.now() - 120000, module: 'validator', action: 'passed', skillId: 'solana-research', details: 'Similarity: 89%, Speed: 15% faster' },
+          { timestamp: Date.now() - 60000, module: 'forge', action: 'promoted', skillId: 'solana-research', details: 'v2 promoted after validation' },
+          { timestamp: Date.now() - 30000, module: 'analyzer', action: 'optimize', skillId: 'docs-generator', details: 'Score 52: High failure rate 8%' },
+          { timestamp: Date.now() - 15000, module: 'optimizer', action: 'optimized', skillId: 'docs-generator', details: 'Saved ~150 tokens (22%)' },
+          { timestamp: Date.now(), module: 'validator', action: 'testing', skillId: 'docs-generator', details: 'A/B test in progress...' },
+        ],
+      };
+
+      animateValue(document.getElementById('metric-skills'), demo.summary.skillsTracked);
+      animateValue(document.getElementById('metric-tokens'), demo.summary.avgTokenSavings, '%');
+      animateValue(document.getElementById('metric-runtime'), demo.summary.avgRuntime / 1000, 's');
+      animateValue(document.getElementById('metric-runs'), demo.summary.totalRuns);
+
+      addSparkBar('spark-skills', 'skills', demo.summary.skillsTracked);
+      addSparkBar('spark-tokens', 'tokens', demo.summary.avgTokenSavings);
+      addSparkBar('spark-runtime', 'runtime', demo.summary.avgRuntime);
+      addSparkBar('spark-runs', 'runs', demo.summary.totalRuns);
+
+      renderTimeline(demo.events);
+      renderSkills(demo.skills);
+      renderConsole(demo.events);
+
+      document.getElementById('status-pill').textContent = 'Demo Mode';
+    }
+
+    // Initial load + auto-refresh
+    loadData();
+    setInterval(loadData, 5000);
+  </script>
+  <script src="theme.js"></script>
+</body>
+</html>

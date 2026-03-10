@@ -1,0 +1,11 @@
+{
+  "suite_name": "dirty_input_regression",
+  "environment": "staging",
+  "samples": [
+    {"id": "d01_missing_file_scope", "path": "evoclaw/runtime/examples/dirty/d01_missing_file_scope.json", "expected": "fail"},
+    {"id": "d02_ambiguous_task_type", "path": "evoclaw/runtime/examples/dirty/d02_ambiguous_task_type.json", "expected": "fail"},
+    {"id": "d03_subtask_overlap", "path": "evoclaw/runtime/examples/dirty/d03_subtask_overlap.json", "expected": "warning"},
+    {"id": "d04_near_threshold_skills", "path": "evoclaw/runtime/examples/dirty/d04_near_threshold_skills.json", "expected": "warning"},
+    {"id": "d05_weak_proposal_evidence", "path": "evoclaw/runtime/examples/dirty/d05_weak_proposal_evidence.json", "expected": "warning"}
+  ]
+}

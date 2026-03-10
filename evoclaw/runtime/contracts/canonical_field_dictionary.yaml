@@ -1,0 +1,41 @@
+version: 1
+name: canonical_field_dictionary
+
+canonical_fields:
+  task_id:
+    type: string
+    meaning: unique task identifier
+    used_in: [task_subtask, decision_trace]
+  subtask_id:
+    type: string
+    meaning: unique subtask identifier
+    used_in: [task_subtask, decision_trace]
+  risk_level:
+    type: enum(low|medium|high)
+    meaning: runtime task/subtask risk for current operation
+    used_in: [task_subtask, memory_contract]
+  risk_profile:
+    type: enum(low|medium|high|critical)
+    meaning: static skill risk capability profile
+    used_in: [skill_registry]
+  trust_level:
+    type: enum(unverified|low|medium|high)
+    meaning: skill trust grade controlled by governance
+    used_in: [skill_registry, routing_score]
+  file_scope:
+    type: array<string>
+    meaning: allowed file paths/scope for operation
+    used_in: [task_subtask, memory_contract]
+  routing_score:
+    type: number(0..1)
+    meaning: final weighted routing score
+    used_in: [routing_score, decision_trace]
+  uncertainty_level:
+    type: number(0..1)
+    meaning: confidence uncertainty of task understanding
+    used_in: [task_subtask]
+
+naming_rules:
+  - prefer *_level for runtime numeric/ordinal signal
+  - prefer *_profile for static capability classification
+  - avoid synonyms for same concept across contracts

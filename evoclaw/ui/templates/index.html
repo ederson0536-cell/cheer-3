@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EvoClaw Memory UI</title>
+    <style>
+      :root {
+        --bg: #f7fafc;
+        --text: #1f2937;
+        --muted: #6b7280;
+        --card: #ffffff;
+        --line: #e5e7eb;
+        --link: #2563eb;
+      }
+      body {
+        margin: 0;
+        padding: 24px;
+        background: var(--bg);
+        color: var(--text);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+      .card {
+        max-width: 1100px;
+        margin: 0 auto;
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 20px;
+      }
+      h1 {
+        margin: 0 0 8px;
+        font-size: 24px;
+      }
+      p {
+        color: var(--muted);
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        text-align: left;
+        border-bottom: 1px solid var(--line);
+        padding: 10px 8px;
+        vertical-align: top;
+      }
+      code {
+        background: #f3f4f6;
+        padding: 2px 5px;
+        border-radius: 4px;
+      }
+      a {
+        color: var(--link);
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      .small {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .toolbar {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin: 16px 0;
+      }
+      .toolbar input,
+      .toolbar select,
+      .toolbar button {
+        padding: 6px 8px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: #fff;
+      }
+      .pager {
+        margin-top: 12px;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+      .actions {
+        white-space: nowrap;
+      }
+      .btn-edit {
+        display: inline-block;
+        border: 1px solid #1d4ed8;
+        background: #1d4ed8;
+        color: #fff;
+        border-radius: 6px;
+        padding: 4px 10px;
+        font-size: 12px;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .btn-edit:hover {
+        text-decoration: none;
+        background: #1e40af;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1>EvoClaw Memory Web UI</h1>
+      <p>
+        当前仅展示 <code>memory/</code> 下文件。重点目录：
+        <code>experiences</code>, <code>significant</code>, <code>semantic</code>,
+        <code>candidate</code>, <code>rules</code>, <code>proposals</code>。
+      </p>
+
+      <form class="toolbar" method="get" action="{{ url_for('index') }}">
+        <input type="text" name="q" value="{{ q }}" placeholder="关键词搜索（路径/目录）" />
+        <select name="sort">
+          <option value="modified" {% if sort == "modified" %}selected{% endif %}>按修改时间</option>
+          <option value="path" {% if sort == "path" %}selected{% endif %}>按路径</option>
+          <option value="directory" {% if sort == "directory" %}selected{% endif %}>按目录</option>
+          <option value="size" {% if sort == "size" %}selected{% endif %}>按大小</option>
+        </select>
+        <select name="order">
+          <option value="desc" {% if order == "desc" %}selected{% endif %}>降序</option>
+          <option value="asc" {% if order == "asc" %}selected{% endif %}>升序</option>
+        </select>
+        <input type="number" name="page_size" min="1" max="500" value="{{ page_size }}" />
+        <button type="submit">应用</button>
+      </form>
+      <p class="small">共 {{ total_count }} 条，当前第 {{ page }} / {{ total_pages }} 页</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>路径</th>
+            <th>目录</th>
+            <th>大小</th>
+            <th>修改时间</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for f in files %}
+          <tr>
+            <td><a href="{{ url_for('view_file', relative_path=f.path) }}">{{ f.path }}</a></td>
+            <td>{{ f.directory }}{% if f.focused %} (重点){% endif %}</td>
+            <td>{{ f.size }}</td>
+            <td>{{ f.modified }}</td>
+            <td class="actions">
+              <a class="btn-edit" href="{{ url_for('view_file', relative_path=f.path) }}#editor">编辑</a>
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="5" class="small">memory/ 下暂无文件</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <div class="pager">
+        {% if page > 1 %}
+        <a href="{{ url_for('index', q=q, sort=sort, order=order, page_size=page_size, page=page-1) }}">上一页</a>
+        {% endif %}
+        {% if page < total_pages %}
+        <a href="{{ url_for('index', q=q, sort=sort, order=order, page_size=page_size, page=page+1) }}">下一页</a>
+        {% endif %}
+      </div>
+
+      <h2>目录结构</h2>
+      <ul>
+        {% for d in directories %}
+        <li><code>{{ d }}/</code>{% if d.split('/')[0] in focus_dirs %} (重点){% endif %}</li>
+        {% else %}
+        <li class="small">暂无目录</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </body>
+</html>

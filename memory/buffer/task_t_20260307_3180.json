@@ -1,0 +1,459 @@
+{
+  "key": "task_t_20260307_3180",
+  "value": {
+    "task": {
+      "task_id": "t_20260307_3180",
+      "parent_task_id": null,
+      "task_type": "writing",
+      "scenario": "writing_general",
+      "complexity_level": "L0",
+      "risk_level": "low",
+      "file_write_flag": true,
+      "file_scope": [
+        "上传到Notion"
+      ],
+      "requires_tools": [
+        "filesystem"
+      ],
+      "candidate_subtasks": [
+        "gather_information",
+        "organize_content",
+        "write_output"
+      ],
+      "uncertainty_level": 0.6,
+      "priority": "P2",
+      "tags": [
+        "writing",
+        "notion",
+        "writing_general"
+      ],
+      "created_at": "2026-03-07T02:39:01.621363",
+      "raw_message": "上传到Notion"
+    },
+    "rules": {
+      "hard_rules": [
+        "ask_before_external_actions",
+        "private_data_stays_private",
+        "verify_facts_before_publishing",
+        "no_personal_data_leakage",
+        "respect_copyright",
+        "no_exfiltration"
+      ],
+      "task_rules": [
+        "basic_validation",
+        "match_target_format",
+        "use_clear_structure",
+        "proofread_before_finish"
+      ],
+      "guidelines": [
+        "Format for readability",
+        "Write concisely",
+        "Use appropriate tone",
+        "Proceed with standard approach"
+      ],
+      "sources": [
+        "task_type:writing",
+        "risk_level:low"
+      ]
+    },
+    "experience": {
+      "similar_tasks": [
+        {
+          "task_id": "t_20260307_3297",
+          "event": "started",
+          "timestamp": "2026-03-07T01:40:31.610149",
+          "parent_task_id": null,
+          "task_type": "writing",
+          "scenario": "news_summary",
+          "complexity_level": "L0",
+          "risk_level": "low",
+          "file_write_flag": false,
+          "file_scope": null,
+          "requires_tools": [
+            "conversation"
+          ],
+          "candidate_subtasks": [
+            "gather_information",
+            "organize_content",
+            "write_output"
+          ],
+          "uncertainty_level": 0.6,
+          "priority": "P2",
+          "tags": [
+            "writing",
+            "news_summary"
+          ],
+          "created_at": "2026-03-07T01:40:31.609367",
+          "raw_message": "news_summary",
+          "outcome": "success",
+          "completed_at": "2026-03-07T01:40:31.610235",
+          "similarity_score": 0.5
+        },
+        {
+          "task_id": "t_20260307_8bff",
+          "event": "started",
+          "timestamp": "2026-03-07T01:45:02.610454",
+          "parent_task_id": null,
+          "task_type": "writing",
+          "scenario": "news_summary",
+          "complexity_level": "L0",
+          "risk_level": "low",
+          "file_write_flag": false,
+          "file_scope": null,
+          "requires_tools": [
+            "conversation"
+          ],
+          "candidate_subtasks": [
+            "gather_information",
+            "organize_content",
+            "write_output"
+          ],
+          "uncertainty_level": 0.6,
+          "priority": "P2",
+          "tags": [
+            "writing",
+            "news_summary"
+          ],
+          "created_at": "2026-03-07T01:45:02.605062",
+          "raw_message": "news_summary",
+          "outcome": "success",
+          "completed_at": "2026-03-07T01:45:02.610535",
+          "similarity_score": 0.5
+        },
+        {
+          "task_id": "t_20260307_fc95",
+          "event": "started",
+          "timestamp": "2026-03-07T01:56:45.886493",
+          "parent_task_id": null,
+          "task_type": "writing",
+          "scenario": "news_summary",
+          "complexity_level": "L0",
+          "risk_level": "low",
+          "file_write_flag": false,
+          "file_scope": null,
+          "requires_tools": [
+            "conversation"
+          ],
+          "candidate_subtasks": [
+            "gather_information",
+            "organize_content",
+            "write_output"
+          ],
+          "uncertainty_level": 0.6,
+          "priority": "P2",
+          "tags": [
+            "writing",
+            "news_summary"
+          ],
+          "created_at": "2026-03-07T01:56:45.884681",
+          "raw_message": "news_summary",
+          "outcome": "success",
+          "completed_at": "2026-03-07T01:56:45.886566",
+          "similarity_score": 0.5
+        },
+        {
+          "task_id": "t_20260307_799b",
+          "event": "started",
+          "timestamp": "2026-03-07T01:59:43.478439",
+          "parent_task_id": null,
+          "task_type": "writing",
+          "scenario": "news_summary",
+          "complexity_level": "L0",
+          "risk_level": "low",
+          "file_write_flag": false,
+          "file_scope": null,
+          "requires_tools": [
+            "conversation"
+          ],
+          "candidate_subtasks": [
+            "gather_information",
+            "organize_content",
+            "write_output"
+          ],
+          "uncertainty_level": 0.6,
+          "priority": "P2",
+          "tags": [
+            "news_summary",
+            "writing"
+          ],
+          "created_at": "2026-03-07T01:59:43.475738",
+          "raw_message": "news_summary",
+          "outcome": "success",
+          "completed_at": "2026-03-07T01:59:43.478500",
+          "similarity_score": 0.5
+        },
+        {
+          "task_id": "t_20260307_6afe",
+          "event": "started",
+          "timestamp": "2026-03-07T02:01:48.386727",
+          "parent_task_id": null,
+          "task_type": "writing",
+          "scenario": "news_summary",
+          "complexity_level": "L0",
+          "risk_level": "low",
+          "file_write_flag": false,
+          "file_scope": null,
+          "requires_tools": [
+            "conversation"
+          ],
+          "candidate_subtasks": [
+            "gather_information",
+            "organize_content",
+            "write_output"
+          ],
+          "uncertainty_level": 0.6,
+          "priority": "P2",
+          "tags": [
+            "writing",
+            "news_summary"
+          ],
+          "created_at": "2026-03-07T02:01:48.383397",
+          "raw_message": "news_summary",
+          "outcome": "success",
+          "completed_at": "2026-03-07T02:01:48.386806",
+          "similarity_score": 0.5
+        },
+        {
+          "task_id": "t_20260307_3297",
+          "task_type": "writing",
+          "scenario": "unknown",
+          "outcome": "success",
+          "risk_level": "low",
+          "tags": [],
+          "timestamp": "2026-03-07T01:40:31.610235",
+          "error": null,
+          "feedback": null,
+          "completed_at": "2026-03-07T01:40:31.610235",
+          "similarity_score": 0.4
+        },
+        {
+          "task_id": "t_20260307_8bff",
+          "task_type": "writing",
+          "scenario": "unknown",
+          "outcome": "success",
+          "risk_level": "low",
+          "tags": [],
+          "timestamp": "2026-03-07T01:45:02.610535",
+          "error": null,
+          "feedback": null,
+          "completed_at": "2026-03-07T01:45:02.610535",
+          "similarity_score": 0.4
+        },
+        {
+          "task_id": "t_20260307_fc95",
+          "task_type": "writing",
+          "scenario": "unknown",
+          "outcome": "success",
+          "risk_level": "low",
+          "tags": [],
+          "timestamp": "2026-03-07T01:56:45.886566",
+          "error": null,
+          "feedback": null,
+          "completed_at": "2026-03-07T01:56:45.886566",
+          "similarity_score": 0.4
+        },
+        {
+          "task_id": "t_20260307_799b",
+          "task_type": "writing",
+          "scenario": "unknown",
+          "outcome": "success",
+          "risk_level": "low",
+          "tags": [],
+          "timestamp": "2026-03-07T01:59:43.478500",
+          "error": null,
+          "feedback": null,
+          "completed_at": "2026-03-07T01:59:43.478500",
+          "similarity_score": 0.4
+        },
+        {
+          "task_id": "t_20260307_6afe",
+          "task_type": "writing",
+          "scenario": "unknown",
+          "outcome": "success",
+          "risk_level": "low",
+          "tags": [],
+          "timestamp": "2026-03-07T02:01:48.386806",
+          "error": null,
+          "feedback": null,
+          "completed_at": "2026-03-07T02:01:48.386806",
+          "similarity_score": 0.4
+        }
+      ],
+      "success_patterns": [
+        {
+          "task_id": "t_20260307_3297",
+          "task_type": "writing",
+          "outcome": "success",
+          "timestamp": "2026-03-07T01:40:31.610149",
+          "factors": [
+            "Type: writing",
+            "Risk: low"
+          ]
+        },
+        {
+          "task_id": "t_20260307_8bff",
+          "task_type": "writing",
+          "outcome": "success",
+          "timestamp": "2026-03-07T01:45:02.610454",
+          "factors": [
+            "Type: writing",
+            "Risk: low"
+          ]
+        },
+        {
+          "task_id": "t_20260307_fc95",
+          "task_type": "writing",
+          "outcome": "success",
+          "timestamp": "2026-03-07T01:56:45.886493",
+          "factors": [
+            "Type: writing",
+            "Risk: low"
+          ]
+        },
+        {
+          "task_id": "t_20260307_799b",
+          "task_type": "writing",
+          "outcome": "success",
+          "timestamp": "2026-03-07T01:59:43.478439",
+          "factors": [
+            "Type: writing",
+            "Risk: low"
+          ]
+        },
+        {
+          "task_id": "t_20260307_6afe",
+          "task_type": "writing",
+          "outcome": "success",
+          "timestamp": "2026-03-07T02:01:48.386727",
+          "factors": [
+            "Type: writing",
+            "Risk: low"
+          ]
+        },
+        {
+          "task_id": "t_20260307_3297",
+          "task_type": "writing",
+          "outcome": "success",
+          "timestamp": "2026-03-07T01:40:31.610235",
+          "factors": [
+            "Type: writing",
+            "Risk: low"
+          ]
+        },
+        {
+          "task_id": "t_20260307_8bff",
+          "task_type": "writing",
+          "outcome": "success",
+          "timestamp": "2026-03-07T01:45:02.610535",
+          "factors": [
+            "Type: writing",
+            "Risk: low"
+          ]
+        },
+        {
+          "task_id": "t_20260307_fc95",
+          "task_type": "writing",
+          "outcome": "success",
+          "timestamp": "2026-03-07T01:56:45.886566",
+          "factors": [
+            "Type: writing",
+            "Risk: low"
+          ]
+        },
+        {
+          "task_id": "t_20260307_799b",
+          "task_type": "writing",
+          "outcome": "success",
+          "timestamp": "2026-03-07T01:59:43.478500",
+          "factors": [
+            "Type: writing",
+            "Risk: low"
+          ]
+        },
+        {
+          "task_id": "t_20260307_6afe",
+          "task_type": "writing",
+          "outcome": "success",
+          "timestamp": "2026-03-07T02:01:48.386806",
+          "factors": [
+            "Type: writing",
+            "Risk: low"
+          ]
+        }
+      ],
+      "failure_patterns": [],
+      "learned_lessons": [
+        "Historical success rate: 100% (10/10)"
+      ],
+      "skill_recommendations": [],
+      "confidence": 1.0
+    },
+    "plan": {
+      "task_id": "t_20260307_3180",
+      "total_subtasks": 2,
+      "subtasks": [
+        {
+          "subtask_id": "st_001",
+          "type": "research",
+          "goal": "收集素材",
+          "required_tool": "web_fetch",
+          "status": "pending",
+          "dependencies": [],
+          "done_criteria": [
+            "素材已收集",
+            "来源可靠"
+          ]
+        },
+        {
+          "subtask_id": "st_002",
+          "type": "outline",
+          "goal": "构思结构",
+          "required_tool": "memory",
+          "status": "pending",
+          "dependencies": [
+            "research"
+          ],
+          "done_criteria": [
+            "结构已完成",
+            "逻辑清晰"
+          ]
+        }
+      ],
+      "execution_order": [
+        "st_001",
+        "st_002"
+      ],
+      "can_parallel": false,
+      "estimated_duration": "1分钟",
+      "created_at": "2026-03-07T02:39:01.621958"
+    },
+    "routing": {
+      "skill_id": "notion_api",
+      "skill_name": "Notion API",
+      "routing_score": 0.821,
+      "alternatives": [
+        {
+          "skill_id": "tts_skill",
+          "score": 0.782
+        },
+        {
+          "skill_id": "email_skill",
+          "score": 0.72
+        }
+      ],
+      "reason": "选中原因: 高成功率, 高可信度, 场景匹配, 低返工率",
+      "ready_to_execute": true,
+      "hard_constraint_pass": true
+    },
+    "result": {
+      "success": true,
+      "data": {
+        "blocks_added": 1
+      },
+      "message": "已更新Notion页面"
+    }
+  },
+  "created_at": "2026-03-07T02:39:02.452820",
+  "ttl": 3600,
+  "expires_at": "2026-03-07T03:39:02.452821"
+}

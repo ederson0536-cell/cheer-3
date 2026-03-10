@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forge | Self-Optimizing Agent System</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="bg-animation"></div>
+    
+    <nav class="navbar">
+        <div class="logo">
+            <span class="logo-icon">🔥</span>
+            <span class="logo-text">Forge</span>
+        </div>
+        <div class="nav-links">
+            <a href="#demo">Live Demo</a>
+            <a href="#how-it-works">How It Works</a>
+            <a href="https://github.com/minicarlo/forge" target="_blank">GitHub</a>
+        </div>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">Dark mode</button>
+    </nav>
+
+    <header class="hero">
+        <div class="hero-content">
+            <div class="badge">
+                <span class="badge-dot"></span>
+                Built at OpenClaw Community Event 2026
+            </div>
+            <h1 class="hero-title">
+                Your Agent.<br>
+                <span class="gradient-text">Self-Improving.</span>
+            </h1>
+            <p class="hero-subtitle">
+                Forge tracks performance, detects inefficiencies, 
+                and auto-generates improved skill versions. 
+                The first self-optimizing system for OpenClaw agents.
+            </p>
+            <div class="hero-buttons">
+                <a href="dashboard.html" class="btn btn-primary">
+                    <span>See Live Demo</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+                <a href="https://github.com/minicarlo/forge" class="btn btn-secondary">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                    <span>View on GitHub</span>
+                </a>
+            </div>
+        </div>
+        <div class="feature-grid">
+            <article>
+                <h3>Adaptive automation</h3>
+                <p>Forge tunes itself in five steps: profile, analyze, optimize, validate, deploy.</p>
+            </article>
+            <article>
+                <h3>LLM-powered rewrites</h3>
+                <p>Prompt templates distill performance data into precise rewrite requests.</p>
+            </article>
+            <article>
+                <h3>Confidence gating</h3>
+                <p>Only promote versions that pass validation and keep a full history for rollback.</p>
+            </article>
+        </div>
+        <div class="hero-visual">
+            <div class="forge-animation">
+                <div class="forge-ring"></div>
+                <div class="forge-ring"></div>
+                <div class="forge-ring"></div>
+                <div class="forge-center">⚡</div>
+            </div>
+        </div>
+    </header>
+
+    <section class="stats-bar">
+        <div class="stat">
+            <div class="stat-number" id="skills-optimized">0</div>
+            <div class="stat-label">Skills Optimized</div>
+        </div>
+        <div class="stat">
+            <div class="stat-number" id="tokens-saved">0%</div>
+            <div class="stat-label">Tokens Saved</div>
+        </div>
+        <div class="stat">
+            <div class="stat-number" id="time-reduced">0%</div>
+            <div class="stat-label">Time Reduced</div>
+        </div>
+        <div class="stat">
+            <div class="stat-number">7</div>
+            <div class="stat-label">Team Members</div>
+        </div>
+    </section>
+
+    <section id="how-it-works" class="how-it-works">
+        <div class="container">
+            <h2 class="section-title">How It Works</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">01</div>
+                    <div class="step-icon">📊</div>
+                    <h3>Profile</h3>
+                    <p>Track every skill execution. Measure time, tokens, success rates.</p>
+                </div>
+                <div class="step-arrow">→</div>
+                <div class="step">
+                    <div class="step-number">02</div>
+                    <div class="step-icon">🔍</div>
+                    <h3>Analyze</h3>
+                    <p>Detect slow or inefficient skills. Rank by optimization potential.</p>
+                </div>
+                <div class="step-arrow">→</div>
+                <div class="step">
+                    <div class="step-number">03</div>
+                    <div class="step-icon">⚡</div>
+                    <h3>Optimize</h3>
+                    <p>Generate improved versions using LLM. Reduce tokens, improve speed.</p>
+                </div>
+                <div class="step-arrow">→</div>
+                <div class="step">
+                    <div class="step-number">04</div>
+                    <div class="step-icon">✅</div>
+                    <h3>Validate</h3>
+                    <p>A/B test original vs optimized. Only promote if outputs match.</p>
+                </div>
+                <div class="step-arrow">→</div>
+                <div class="step">
+                    <div class="step-number">05</div>
+                    <div class="step-icon">🚀</div>
+                    <h3>Deploy</h3>
+                    <p>Auto-promote proven improvements. Keep history for rollback.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="demo" class="demo-section">
+        <div class="container">
+            <h2 class="section-title">Live Architecture</h2>
+            <div class="architecture">
+                <div class="arch-layer">
+                    <div class="arch-box profiler">
+                        <div class="arch-icon">📊</div>
+                        <div class="arch-title">Profiler</div>
+                        <div class="arch-team">P1 + P2</div>
+                    </div>
+                    <div class="arch-arrow">→</div>
+                    <div class="arch-box analyzer">
+                        <div class="arch-icon">🔍</div>
+                        <div class="arch-title">Analyzer</div>
+                        <div class="arch-team">P3</div>
+                    </div>
+                    <div class="arch-arrow">→</div>
+                    <div class="arch-box optimizer">
+                        <div class="arch-icon">⚡</div>
+                        <div class="arch-title">Optimizer</div>
+                        <div class="arch-team">P4 + P5</div>
+                    </div>
+                    <div class="arch-arrow">→</div>
+                    <div class="arch-box validator">
+                        <div class="arch-icon">✅</div>
+                        <div class="arch-title">Validator</div>
+                        <div class="arch-team">P6</div>
+                    </div>
+                    <div class="arch-arrow">→</div>
+                    <div class="arch-box core">
+                        <div class="arch-icon">🔥</div>
+                        <div class="arch-title">Forge Core</div>
+                        <div class="arch-team">P7</div>
+                    </div>
+                </div>
+            </div>
+            <div class="demo-cta">
+                <a href="dashboard.html" class="btn btn-primary btn-large">
+                    Watch the Forge in Action →
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="team-section">
+        <div class="container">
+            <h2 class="section-title">Built By</h2>
+            <div class="team-grid">
+                <div class="team-member">
+                    <div class="team-avatar">P1</div>
+                    <div class="team-name">Profiler Core</div>
+                    <div class="team-role">Metrics Collection</div>
+                </div>
+                <div class="team-member">
+                    <div class="team-avatar">P2</div>
+                    <div class="team-name">Profiler DB</div>
+                    <div class="team-role">Data Storage</div>
+                </div>
+                <div class="team-member">
+                    <div class="team-avatar">P3</div>
+                    <div class="team-name">Analyzer</div>
+                    <div class="team-role">Pattern Detection</div>
+                </div>
+                <div class="team-member">
+                    <div class="team-avatar">P4</div>
+                    <div class="team-name">Optimizer Prompts</div>
+                    <div class="team-role">LLM Engineering</div>
+                </div>
+                <div class="team-member">
+                    <div class="team-avatar">P5</div>
+                    <div class="team-name">Optimizer Runner</div>
+                    <div class="team-role">Code Generation</div>
+                </div>
+                <div class="team-member">
+                    <div class="team-avatar">P6</div>
+                    <div class="team-name">Validator</div>
+                    <div class="team-role">A/B Testing</div>
+                </div>
+                <div class="team-member highlight">
+                    <div class="team-avatar">You</div>
+                    <div class="team-name">Forge Core</div>
+                    <div class="team-role">Orchestrator</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <span class="logo-icon">🔥</span>
+                    <span>Forge</span>
+                </div>
+                <p class="footer-text">
+                    Built in 60 minutes by 7 humans + 7 agents at the OpenClaw Community Event.<br>
+                    Making agents smarter, together.
+                </p>
+                <div class="footer-links">
+                    <a href="https://github.com/minicarlo/forge">GitHub</a>
+                    <a href="dashboard.html">Live Demo</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Animate stats on load
+        function animateNumber(element, target, suffix = '') {
+            let current = 0;
+            const increment = target / 50;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                element.textContent = Math.floor(current) + suffix;
+            }, 30);
+        }
+
+        window.addEventListener('load', () => {
+            animateNumber(document.getElementById('skills-optimized'), 42);
+            animateNumber(document.getElementById('tokens-saved'), 34, '%');
+            animateNumber(document.getElementById('time-reduced'), 28, '%');
+        });
+    </script>
+    <script src="theme.js"></script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+{
+  "style_id": "product_lifestyle",
+  "category": "product",
+  "verticals": ["ecommerce", "DTC", "CPG", "beauty", "food", "fashion", "tech_hardware"],
+  "description": "Premium product photography in editorial lifestyle contexts. Phase One quality. The product is hero but the environment sells the story.",
+  "base_prompt": "hyper-realistic commercial product photograph of {product_description} styled in {scene_description}, {lighting_description}, shot on {camera_model}",
+  "schema": {
+    "product": {
+      "item": "string — exact product description with material and finish. e.g. 'matte black titanium Ridge wallet, slim profile, showing card slot texture'",
+      "material": "string — surface finish detail. e.g. 'brushed titanium with subtle directional grain, fingerprint-free'",
+      "color": "string — exact color with hex if known. e.g. 'matte black (#1A1A1A) with gunmetal grey hardware'",
+      "size_reference": "string — what it's next to for scale. e.g. 'sitting next to an espresso cup for scale'",
+      "label_text": "string or null — any text on the product. e.g. '\"RIDGE\" debossed in small sans-serif on front plate'",
+      "hero_angle": "string — which side faces camera. e.g. 'three-quarter front view, slight tilt to show thickness, card peeking out of top slot'"
+    },
+    "scene": {
+      "surface": "string — e.g. 'honed white Carrara marble countertop with subtle grey veining, polished to satin finish'",
+      "setting": "string — e.g. 'sunlit Scandinavian kitchen, morning, floor-to-ceiling windows in background'",
+      "props": ["array of 2-4 complementary items. e.g. 'single stem white peony in clear glass bud vase, camera-left', 'folded linen napkin in cream, slightly behind product', 'brass key ring with two keys, partially visible at frame edge'"],
+      "negative_space": "string — where to leave room for text overlay. e.g. 'upper third of frame is clean background, suitable for headline overlay'"
+    },
+    "camera": {
+      "camera_model": "string — e.g. 'Phase One IQ4 150MP' for maximum detail",
+      "lens_focal_length_mm": "integer — typically 80-120 for product",
+      "aperture": "string — e.g. 'f/4' for product (sharper) or 'f/2.8' for lifestyle blur",
+      "shot_type": "string — e.g. 'close_up product hero' or '45-degree overhead flat lay'",
+      "angle": "string — e.g. 'product at bottom-right third, 45-degree overhead, looking into the scene'",
+      "depth_of_field": "string — e.g. 'product tack-sharp front to back, background props at f/4 softness'"
+    },
+    "lighting": {
+      "key_light": "string — e.g. 'large softbox camera-right, mimicking window light, soft wrap with gradual falloff across product surface'",
+      "fill_light": "string — e.g. 'white bounce card camera-left, opening shadows just enough to see surface detail'",
+      "highlights": "string — e.g. 'single specular highlight on metallic surface, controlled, not blown. Small catch light on glass prop.'",
+      "color_temperature": "string — e.g. 'warm daylight, 5600K, consistent across scene'"
+    },
+    "color_and_style": {
+      "palette": ["5 hex codes: background, surface, product, accent prop, text-overlay-safe area"],
+      "grade": "string — e.g. 'warm and airy, lifted shadows, slight warmth in highlights, skin-tone-accurate if hands visible'",
+      "overall_style": "string — e.g. 'Aesop product campaign meets Kinfolk editorial flat lay'"
+    },
+    "output_settings": {
+      "aspect_ratio": "string — 1:1, 4:5, 16:9, 3:2",
+      "resolution": {"width": "int", "height": "int"},
+      "format": "png"
+    },
+    "negative_prompt": [
+      "no floating products on void backgrounds",
+      "no pure white seamless studio look",
+      "no visible studio equipment or light stands",
+      "no unrealistic reflections or caustics",
+      "no oversaturated colors",
+      "no plastic-looking surfaces on natural materials",
+      "no cluttered messy background"
+    ]
+  },
+  "presets": {
+    "minimal_marble": {
+      "description": "Clean marble surface, minimal props, premium feel.",
+      "scene": {"surface": "honed white Carrara marble countertop with subtle grey veining", "setting": "bright neutral studio environment implying high-end kitchen", "negative_space": "upper 40% of frame is clean, suitable for text"},
+      "camera": {"camera_model": "Phase One IQ4 150MP", "lens_focal_length_mm": 100, "aperture": "f/5.6", "shot_type": "45-degree overhead", "depth_of_field": "deep, everything sharp"},
+      "lighting": {"key_light": "large overhead softbox slightly camera-right, even diffused light", "fill_light": "white surface bounce from marble itself", "color_temperature": "neutral daylight 5500K"},
+      "color_and_style": {"palette": ["#FFFFFF", "#E8E0D4", "#1A1A1A", "#C4A882", "#F5F0EB"], "grade": "bright, clean, neutral whites, no color cast", "overall_style": "Apple product page meets Aesop minimalism"}
+    },
+    "moody_dark": {
+      "description": "Dark, dramatic product shot. Luxury/premium feel.",
+      "scene": {"surface": "dark walnut wood surface with visible grain, oiled finish", "setting": "dramatic studio with black background falling off to shadow", "negative_space": "left third of frame fades to black, suitable for light text"},
+      "camera": {"camera_model": "Hasselblad X2D", "lens_focal_length_mm": 90, "aperture": "f/2.8", "shot_type": "eye-level hero, product centered", "depth_of_field": "shallow, rear of product slightly soft"},
+      "lighting": {"key_light": "single hard light from camera-right, dramatic falloff, Rembrandt-style", "fill_light": "minimal, let shadows go deep", "highlights": "sharp specular on metal/glass surfaces", "color_temperature": "warm tungsten 3200K"},
+      "color_and_style": {"palette": ["#0D0D0D", "#2C1810", "#F5F0EB", "#C4A882", "#1A1A1A"], "grade": "deep shadows, warm highlights, lifted midtones slightly, rich and moody", "overall_style": "Tom Ford campaign meets luxury watch advertisement"}
+    },
+    "lifestyle_kitchen": {
+      "description": "Product in use in a real kitchen. Warm and lived-in.",
+      "scene": {"surface": "light butcher block countertop with subtle knife marks", "setting": "modern farmhouse kitchen, morning light through window, herbs growing on windowsill", "props": ["ceramic pour-over coffee maker with dark coffee, camera-left", "small stack of plates, off-white, behind product", "fresh sourdough bread on cutting board, partially out of frame"], "negative_space": "upper portion above window line"},
+      "camera": {"camera_model": "Sony A7IV", "lens_focal_length_mm": 35, "aperture": "f/2.8", "shot_type": "environmental, product in context", "depth_of_field": "moderate, product sharp, kitchen details pleasantly soft"},
+      "lighting": {"key_light": "morning sun through kitchen window, camera-left, casting warm patches", "fill_light": "ambient kitchen bounce, warm and soft", "color_temperature": "warm morning 4800K"},
+      "color_and_style": {"palette": ["#F8EAD8", "#DEB887", "#4A3728", "#FFFFFF", "#8B7355"], "grade": "warm and inviting, Portra-like warmth, gentle highlights", "overall_style": "Kinfolk magazine kitchen spread meets Food52 editorial"}
+    }
+  }
+}

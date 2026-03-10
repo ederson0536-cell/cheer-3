@@ -1,0 +1,86 @@
+{
+  "name": "dojo.md",
+  "version": "0.3.2",
+  "description": "University for AI agents. 125 courses, 6,250+ scenarios. Train any model, benchmark with arena mode, graduate with a proven SKILL.md. Works with Claude Code, OpenClaw, Cursor, Windsurf, OpenRouter, and any MCP-compatible agent.",
+  "type": "module",
+  "bin": {
+    "dojo": "./dist/cli/index.js",
+    "dojo.md": "./dist/cli/index.js"
+  },
+  "main": "./dist/engine/model-client.js",
+  "exports": {
+    ".": "./dist/engine/model-client.js",
+    "./engine/*": "./dist/engine/*.js",
+    "./types": "./dist/types/index.js",
+    "./mocks/*": "./dist/mocks/*.js",
+    "./evaluator/*": "./dist/evaluator/*.js",
+    "./generator/*": "./dist/generator/*.js"
+  },
+  "files": [
+    "dist",
+    "courses",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "dev": "tsx src/cli/index.ts",
+    "build": "tsc",
+    "start": "node dist/cli/index.js",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/edholofy/dojo.md"
+  },
+  "homepage": "https://dojo.md",
+  "author": "Eduard Cristea <eduard@holofy.io>",
+  "keywords": [
+    "ai-agents",
+    "agent-training",
+    "skill-md",
+    "skill-generation",
+    "mcp",
+    "model-context-protocol",
+    "llm",
+    "llm-evaluation",
+    "llm-as-judge",
+    "claude-code",
+    "claude",
+    "anthropic",
+    "openrouter",
+    "openclaw",
+    "agent-skills",
+    "curriculum-learning",
+    "prompt-engineering",
+    "ai-testing",
+    "agent-benchmark",
+    "arena",
+    "model-comparison",
+    "knowledge-distillation"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0",
+    "@modelcontextprotocol/sdk": "^1.11.0",
+    "better-sqlite3": "^11.7.0",
+    "chalk": "^5.4.1",
+    "commander": "^13.1.0",
+    "dotenv": "^17.3.1",
+    "js-yaml": "^4.1.0",
+    "openai": "^6.25.0",
+    "ora": "^8.2.0",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.12",
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^22.13.4",
+    "tsx": "^4.19.3",
+    "typescript": "^5.7.3",
+    "vitest": "^3.0.5"
+  }
+}

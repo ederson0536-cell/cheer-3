@@ -1,0 +1,160 @@
+#!/usr/bin/env node
+
+/**
+ * Mulch CLI - Code Mode Edition
+ * 
+ * Usage:
+ *   mulch search "filter code"
+ *   mulch execute --action record --domain api --type failure --description "..."
+ *   mulch query api
+ *   mulch init
+ */
+
+const fs = require('fs');
+const path = require('path');
+
+const MULCH_DIR = '.mulch';
+
+// Simple command parser
+const args = process.argv.slice(2);
+const command = args[0];
+
+async function main() {
+  switch (command) {
+    case 'search':
+      await handleSearch(args.slice(1).join(' '));
+      break;
+      
+    case 'execute':
+      await handleExecute(args.slice(1));
+      break;
+      
+    case 'query':
+      await handleQuery(args[1]);
+      break;
+      
+    case 'init':
+      handleInit();
+      break;
+      
+    case 'add':
+      handleAdd(args[1]);
+      break;
+      
+    default:
+      console.log(`
+Mulch CLI - Code Mode Edition 🌱
+
+Usage:
+  mulch init                    Initialize .mulch directory
+  mulch add <domain>            Add a domain
+  mulch search "filter code"    Search memories
+  mulch query <domain>          Query domain
+  mulch execute --action record --domain api --type failure --description "..."
+
+Examples:
+  mulch search "r.type === 'failure'"
+  mulch query api
+  mulch execute --action record --domain api --type failure --description "OpenRouter 404" --resolution "Use Ollama"
+`);
+  }
+}
+
+async function handleSearch(code) {
+  if (!fs.existsSync(MULCH_DIR)) {
+    console.log('No .mulch directory. Run: mulch init');
+    return;
+  }
+  
+  const learnings = [];
+  const files = fs.readdirSync(MULCH_DIR).filter(f => f.endsWith('.jsonl'));
+  
+  for (const file of files) {
+    const domain = file.replace('.jsonl', '');
+    const lines = fs.readFileSync(path.join(MULCH_DIR, file), 'utf-8').split('\n').filter(Boolean);
+    
+    for (const line of lines) {
+      try {
+        const record = JSON.parse(line);
+        learnings.push({ ...record, domain });
+      } catch (e) {}
+    }
+  }
+  
+  try {
+    const filterFn = new Function('learnings', `return ${code}`);
+    const result = filterFn(learnings);
+    console.log(JSON.stringify(result.slice(0, 10), null, 2));
+  } catch (e) {
+    console.error('Filter error:', e.message);
+  }
+}
+
+async function handleExecute(args) {
+  const params = {};
+  
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i];
+    if (arg.startsWith('--')) {
+      const key = arg.replace('--', '');
+      params[key] = args[i + 1];
+      i++;
+    }
+  }
+  
+  const { action, domain, type, description, resolution } = params;
+  
+  if (action === 'record') {
+    const id = `${domain}:${Date.now()}`;
+    const record = { id, type, timestamp: new Date().toISOString(), description, resolution };
+    
+    if (!fs.existsSync(MULCH_DIR)) {
+      fs.mkdirSync(MULCH_DIR, { recursive: true });
+    }
+    
+    const filePath = path.join(MULCH_DIR, `${domain}.jsonl`);
+    fs.appendFileSync(filePath, JSON.stringify(record) + '\n');
+    
+    console.log(`✅ Recorded: ${id}`);
+  }
+}
+
+async function handleQuery(domain) {
+  const filePath = path.join(MULCH_DIR, `${domain}.jsonl`);
+  
+  if (!fs.existsSync(filePath)) {
+    console.log(`No domain: ${domain}`);
+    return;
+  }
+  
+  const lines = fs.readFileSync(filePath, 'utf-8').split('\n').filter(Boolean);
+  const learnings = lines.map(line => JSON.parse(line));
+  
+  console.log(JSON.stringify(learnings, null, 2));
+}
+
+function handleInit() {
+  if (!fs.existsSync(MULCH_DIR)) {
+    fs.mkdirSync(MULCH_DIR, { recursive: true });
+    console.log('✅ Initialized .mulch directory');
+  } else {
+    console.log('✅ .mulch directory already exists');
+  }
+}
+
+function handleAdd(domain) {
+  if (!fs.existsSync(MULCH_DIR)) {
+    fs.mkdirSync(MULCH_DIR, { recursive: true });
+  }
+  
+  const filePath = path.join(MULCH_DIR, `${domain}.jsonl`);
+  
+  if (!fs.existsSync(filePath)) {
+    fs.writeFileSync(filePath, '');
+    console.log(`✅ Added domain: ${domain}`);
+  } else {
+    console.log(`Domain already exists: ${domain}`);
+  }
+}
+
+main();

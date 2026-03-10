@@ -1,0 +1,11 @@
+# EvoClaw runtime scheduled checks (example)
+# Install with: crontab evoclaw/runtime/examples/cron.schedule.example
+
+SHELL=/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+# Daily staging health run
+10 9 * * * cd /workspace/cheer && python3 evoclaw/validators/validate_runtime_contracts.py && python3 evoclaw/validators/test_runtime_loops.py && python3 evoclaw/validators/test_real_sample_package.py && python3 evoclaw/validators/generate_regression_report.py && python3 evoclaw/validators/staging_trial_run.py
+
+# Weekly regression summary refresh
+30 9 * * 1 cd /workspace/cheer && python3 evoclaw/validators/generate_regression_report.py

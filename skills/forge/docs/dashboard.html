@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Forge Dashboard</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+</head>
+<body>
+  <div class="page">
+    <button id="theme-toggle" class="floating-toggle" aria-label="Toggle theme">Dark mode</button>
+
+    <header class="hero">
+      <div>
+        <p class="skill-path">FORGE CONTROL CENTER</p>
+        <h1 class="hero-title">Dashboard</h1>
+        <p class="lede">Live optimization telemetry styled to match the main Forge experience.</p>
+        <div class="hero-actions">
+          <a href="index.html" class="btn">Back to Home</a>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="orb"></div>
+        <div class="orb"></div>
+      </div>
+    </header>
+
+    <main>
+      <section class="summary" id="summary">
+        <h2>Live summary</h2>
+        <div class="summary-grid" id="summary-grid"></div>
+      </section>
+
+      <section class="skills" id="skills-section">
+        <div class="section-heading">
+          <div>
+            <h2>Skill optimization board</h2>
+            <p id="last-update" class="skill-desc">Loading data…</p>
+          </div>
+          <div class="scopes">
+            <span id="status-pill" class="tag">Loading…</span>
+            <span id="skills-pill" class="tag">—</span>
+          </div>
+        </div>
+        <div class="skill-grid" id="skill-grid"></div>
+      </section>
+
+      <section class="skills" id="timeline-section">
+        <div class="section-heading">
+          <div>
+            <h2>Timeline</h2>
+            <p class="skill-desc">Recent system events</p>
+          </div>
+        </div>
+        <div class="criteria" id="timeline"></div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    async function loadData() {
+      try {
+        const res = await fetch('data/dashboard.json');
+        if (!res.ok) throw new Error('No data yet');
+        const data = await res.json();
+
+        document.getElementById('status-pill').textContent = 'Active';
+        document.getElementById('skills-pill').textContent = `Watching ${data.summary.skillsTracked} skills`;
+
+        renderSummary(data.summary);
+        renderSkills(data.skills);
+        renderTimeline(data.events);
+
+        document.getElementById('last-update').textContent =
+          `Last updated: ${new Date(data.timestamp).toLocaleTimeString()} | Auto-refresh every 5s`;
+      } catch (e) {
+        document.getElementById('status-pill').textContent = 'Demo Mode';
+        document.getElementById('skills-pill').textContent = 'Using fallback data';
+        renderDemoData();
+      }
+    }
+
+    function renderSummary(summary) {
+      const summaryGrid = document.getElementById('summary-grid');
+      summaryGrid.innerHTML = '';
+      const entries = [
+        { label: 'Skills tracked', value: summary.skillsTracked },
+        { label: 'Total runs', value: summary.totalRuns },
+        { label: 'Avg token savings', value: `${Math.round(summary.avgTokenSavings)}%` },
+        { label: 'Avg runtime', value: `${(summary.avgRuntime / 1000).toFixed(1)}s` }
+      ];
+
+      entries.forEach(entry => {
+        const el = document.createElement('div');
+        el.className = 'summary-card';
+        el.innerHTML = `<p>${entry.label}</p><strong>${entry.value}</strong>`;
+        summaryGrid.appendChild(el);
+      });
+    }
+
+    function renderSkills(skills) {
+      const grid = document.getElementById('skill-grid');
+      grid.innerHTML = '';
+
+      skills.forEach(s => {
+        const score = Math.min(100, Math.round(
+          (s.avgTokensIn + s.avgTokensOut > 2000 ? 30 : 0) +
+          (s.avgExecutionMs > 2000 ? 25 : 0) +
+          (s.failureRate > 0.05 ? 15 : 0)
+        ));
+        const status = score >= 50 ? 'Needs optimization' : score >= 25 ? 'Monitoring' : 'Healthy';
+        const optimal = score < 25;
+
+        const card = document.createElement('article');
+        card.className = 'skill-card';
+        card.innerHTML = `
+          <header>
+            <div>
+              <p class="skill-path">skill/${s.skillId}</p>
+              <h3>${s.skillId}</h3>
+              <p class="skill-desc">Tokens ${Math.round(s.avgTokensIn)} → ${Math.round(s.avgTokensOut)} | Runtime ${s.avgExecutionMs.toFixed(0)}ms | ${s.totalRuns} runs</p>
+            </div>
+            <span class="skill-score">${score}%</span>
+          </header>
+          <div class="skill-meta">
+            <p>Fail rate: ${(s.failureRate * 100).toFixed(1)}%</p>
+            <span class="badge ${optimal ? 'badge-optimal' : 'badge-warning'}">${status}</span>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function renderTimeline(events) {
+      const timeline = document.getElementById('timeline');
+      timeline.innerHTML = '';
+
+      events.slice(0, 12).forEach(evt => {
+        const time = new Date(evt.timestamp).toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        const row = document.createElement('div');
+        row.className = 'criterion';
+        row.innerHTML = `
+          <div>
+            <p class="crit-name">[${evt.module}] ${evt.action}</p>
+            <p class="crit-msg">${evt.skillId} — ${evt.details || ''}</p>
+          </div>
+          <div class="crit-meta">
+            <span class="severity">event</span>
+            <span>${time}</span>
+          </div>
+        `;
+        timeline.appendChild(row);
+      });
+    }
+
+    function renderDemoData() {
+      const demo = {
+        summary: { skillsTracked: 8, totalRuns: 72, avgTokenSavings: 34, avgRuntime: 1800 },
+        skills: [
+          { skillId: 'time-tracker', avgTokensIn: 2100, avgTokensOut: 1500, avgExecutionMs: 3400, totalRuns: 15, failureRate: 0.02 },
+          { skillId: 'docs-generator', avgTokensIn: 1800, avgTokensOut: 1200, avgExecutionMs: 2700, totalRuns: 12, failureRate: 0.08 },
+          { skillId: 'solana-research', avgTokensIn: 3300, avgTokensOut: 2400, avgExecutionMs: 4500, totalRuns: 18, failureRate: 0.01 },
+          { skillId: 'dropbox-sync', avgTokensIn: 800, avgTokensOut: 400, avgExecutionMs: 1200, totalRuns: 27, failureRate: 0.0 }
+        ],
+        events: [
+          { timestamp: Date.now() - 300000, module: 'profiler', action: 'batch-complete', skillId: 'time-tracker', details: 'Profiled 15 iterations' },
+          { timestamp: Date.now() - 240000, module: 'analyzer', action: 'optimize', skillId: 'solana-research', details: 'Score 68: High token usage' },
+          { timestamp: Date.now() - 180000, module: 'optimizer', action: 'optimized', skillId: 'solana-research', details: 'Saved ~225 tokens (28%)' },
+          { timestamp: Date.now() - 120000, module: 'validator', action: 'passed', skillId: 'solana-research', details: 'Similarity: 89%, Speed: 15% faster' },
+          { timestamp: Date.now() - 60000, module: 'forge', action: 'promoted', skillId: 'solana-research', details: 'v2 promoted after validation' },
+          { timestamp: Date.now() - 30000, module: 'analyzer', action: 'optimize', skillId: 'docs-generator', details: 'Score 52: High failure rate 8%' },
+          { timestamp: Date.now() - 15000, module: 'optimizer', action: 'optimized', skillId: 'docs-generator', details: 'Saved ~150 tokens (22%)' },
+          { timestamp: Date.now(), module: 'validator', action: 'testing', skillId: 'docs-generator', details: 'A/B test in progress...' }
+        ]
+      };
+
+      renderSummary(demo.summary);
+      renderSkills(demo.skills);
+      renderTimeline(demo.events);
+      document.getElementById('last-update').textContent = 'Demo data loaded | Auto-refresh every 5s';
+    }
+
+    loadData();
+    setInterval(loadData, 5000);
+  </script>
+  <script src="theme.js"></script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+{
+  "environment": "dev",
+  "config_version": "cfg_20260307_001",
+  "routing_weights": {
+    "w1": 0.2,
+    "w2": 0.25,
+    "w3": 0.15,
+    "w4": 0.1,
+    "w5": 0.15,
+    "w6": 0.15
+  },
+  "auto_execute_thresholds": {
+    "routing_score_min": 0.75,
+    "uncertainty_max": 0.3,
+    "allowed_risk_levels": [
+      "low"
+    ],
+    "min_trust_level": "medium"
+  },
+  "review_thresholds": {
+    "routing_score_min": 0.6,
+    "routing_score_max": 0.75,
+    "uncertainty_min": 0.3,
+    "allowed_risk_levels": [
+      "medium"
+    ]
+  },
+  "canary_thresholds": {
+    "max_fail_rate_delta": 0.15,
+    "min_sample_size": 50,
+    "observation_window_minutes": 60
+  },
+  "rollback_thresholds": {
+    "rework_rate_delta": 0.2,
+    "repeat_error_rate_delta": 0.1,
+    "success_rate_delta": -0.15
+  },
+  "promotion_thresholds": {
+    "min_occurrences": 3,
+    "max_validation_days": 7,
+    "success_threshold": 0.7,
+    "max_rework_rate": 0.15
+  }
+}

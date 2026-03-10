@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openclaw.local/runtime/contracts/skill_registry.schema.json",
+  "title": "Skill Registry + Routing Inputs Contract",
+  "type": "object",
+  "required": ["skills"],
+  "properties": {
+    "skills": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/skill"}
+    }
+  },
+  "$defs": {
+    "skill": {
+      "type": "object",
+      "required": [
+        "skill_id",
+        "skill_name",
+        "domain",
+        "supported_task_types",
+        "supported_subtask_types",
+        "required_tools",
+        "risk_profile",
+        "trust_level",
+        "routing_features"
+      ],
+      "properties": {
+        "skill_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9_-]*$"},
+        "skill_name": {"type": "string"},
+        "domain": {"type": "string"},
+        "supported_task_types": {"type": "array", "items": {"type": "string"}},
+        "supported_subtask_types": {"type": "array", "items": {"type": "string"}},
+        "supported_scenarios": {"type": "array", "items": {"type": "string"}, "default": []},
+        "required_tools": {"type": "array", "items": {"type": "string"}},
+        "writable_scope": {"type": "array", "items": {"type": "string"}, "default": []},
+        "risk_profile": {"type": "string", "enum": ["low", "medium", "high", "critical"]},
+        "compatible_rules": {"type": "array", "items": {"type": "string"}, "default": []},
+        "incompatible_rules": {"type": "array", "items": {"type": "string"}, "default": []},
+        "trust_level": {"type": "string", "enum": ["unverified", "low", "medium", "high"]},
+        "routing_features": {
+          "type": "object",
+          "required": [
+            "rule_alignment",
+            "success_rate",
+            "rework_rate",
+            "latency_penalty",
+            "scenario_match"
+          ],
+          "properties": {
+            "rule_alignment": {"type": "number", "minimum": 0, "maximum": 1},
+            "success_rate": {"type": "number", "minimum": 0, "maximum": 1},
+            "rework_rate": {"type": "number", "minimum": 0, "maximum": 1},
+            "latency_penalty": {"type": "number", "minimum": 0, "maximum": 1},
+            "scenario_match": {"type": "number", "minimum": 0, "maximum": 1}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

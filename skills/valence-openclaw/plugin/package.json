@@ -1,0 +1,39 @@
+{
+  "name": "@ourochronos/memory-valence",
+  "version": "0.1.1",
+  "description": "OpenClaw memory plugin backed by Valence knowledge substrate — beliefs, sessions, patterns",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ourochronos/valence-openclaw.git",
+    "directory": "plugin"
+  },
+  "keywords": [
+    "openclaw",
+    "openclaw-plugin",
+    "valence",
+    "memory",
+    "knowledge-base",
+    "beliefs"
+  ],
+  "files": [
+    "index.ts",
+    "client.ts",
+    "config.ts",
+    "session-hooks.ts",
+    "openclaw.plugin.json",
+    "package.json"
+  ],
+  "dependencies": {
+    "@sinclair/typebox": "0.34.48"
+  },
+  "openclaw": {
+    "extensions": [
+      "./index.ts"
+    ]
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  }
+}

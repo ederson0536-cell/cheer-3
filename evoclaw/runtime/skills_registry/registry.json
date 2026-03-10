@@ -1,0 +1,411 @@
+{
+  "web_fetch": {
+    "skill_id": "web_fetch",
+    "skill_name": "Web Fetch",
+    "domain": "research",
+    "description": "Fetch data from web APIs and pages",
+    "supported_task_types": [
+      "research",
+      "information"
+    ],
+    "supported_subtask_types": [
+      "fetch"
+    ],
+    "supported_scenarios": [
+      "news_search",
+      "weather_query",
+      "web_scrape"
+    ],
+    "required_tools": [
+      "curl",
+      "wget",
+      "requests"
+    ],
+    "writable_scope": null,
+    "read_only": true,
+    "risk_profile": "low",
+    "trust_level": "high",
+    "compatible_rules": [
+      "verify_source",
+      "cite_sources"
+    ],
+    "incompatible_rules": [],
+    "capabilities": [
+      "http_get",
+      "http_post",
+      "parse_json",
+      "parse_html"
+    ],
+    "performance": {
+      "avg_success_rate": 0.92,
+      "avg_latency_ms": 3000,
+      "avg_rework_rate": 0.05,
+      "total_executions": 0
+    },
+    "failure_modes": [
+      "network_timeout",
+      "auth_error",
+      "parse_error"
+    ],
+    "metadata": {
+      "version": "1.0",
+      "author": "system",
+      "created_at": "2026-03-07T02:46:27.986023"
+    }
+  },
+  "weather_api": {
+    "skill_id": "weather_api",
+    "skill_name": "Weather API",
+    "domain": "information",
+    "description": "Query weather information from APIs",
+    "supported_task_types": [
+      "information"
+    ],
+    "supported_subtask_types": [
+      "fetch"
+    ],
+    "supported_scenarios": [
+      "weather_query"
+    ],
+    "required_tools": [
+      "curl",
+      "wttr"
+    ],
+    "writable_scope": null,
+    "read_only": true,
+    "risk_profile": "low",
+    "trust_level": "high",
+    "compatible_rules": [
+      "verify_source"
+    ],
+    "incompatible_rules": [],
+    "capabilities": [
+      "query_weather",
+      "forecast"
+    ],
+    "performance": {
+      "avg_success_rate": 0.95,
+      "avg_latency_ms": 2000,
+      "avg_rework_rate": 0.02,
+      "total_executions": 0
+    },
+    "failure_modes": [
+      "api_error",
+      "location_not_found"
+    ],
+    "metadata": {
+      "version": "1.0",
+      "created_at": "2026-03-07T02:46:27.986052"
+    }
+  },
+  "notion_api": {
+    "skill_id": "notion_api",
+    "skill_name": "Notion API",
+    "domain": "automation",
+    "description": "Interact with Notion workspace",
+    "supported_task_types": [
+      "writing",
+      "automation"
+    ],
+    "supported_subtask_types": [
+      "write_output",
+      "coordinate"
+    ],
+    "supported_scenarios": [
+      "notion_update",
+      "notion_create"
+    ],
+    "required_tools": [
+      "notion_client",
+      "api"
+    ],
+    "writable_scope": [
+      "notion_pages"
+    ],
+    "read_only": false,
+    "risk_profile": "medium",
+    "trust_level": "medium",
+    "compatible_rules": [
+      "verify_format",
+      "backup_before"
+    ],
+    "incompatible_rules": [],
+    "capabilities": [
+      "create_page",
+      "update_block",
+      "append_children"
+    ],
+    "performance": {
+      "avg_success_rate": 0.88,
+      "avg_latency_ms": 4000,
+      "avg_rework_rate": 0.1,
+      "total_executions": 0
+    },
+    "failure_modes": [
+      "auth_error",
+      "rate_limit",
+      "invalid_block"
+    ],
+    "metadata": {
+      "version": "1.0",
+      "created_at": "2026-03-07T02:46:27.986058"
+    }
+  },
+  "cron_scheduler": {
+    "skill_id": "cron_scheduler",
+    "skill_name": "Cron Scheduler",
+    "domain": "automation",
+    "description": "Schedule automated tasks",
+    "supported_task_types": [
+      "automation",
+      "planning"
+    ],
+    "supported_subtask_types": [
+      "coordinate",
+      "schedule"
+    ],
+    "supported_scenarios": [
+      "scheduled_task",
+      "cron_job"
+    ],
+    "required_tools": [
+      "crontab",
+      "systemd"
+    ],
+    "writable_scope": [
+      "cron.d",
+      "systemd_timers"
+    ],
+    "read_only": false,
+    "risk_profile": "high",
+    "trust_level": "medium",
+    "compatible_rules": [
+      "backup_before",
+      "log_actions",
+      "rollback_capability"
+    ],
+    "incompatible_rules": [],
+    "capabilities": [
+      "create_cron",
+      "delete_cron",
+      "list_crons"
+    ],
+    "performance": {
+      "avg_success_rate": 0.82,
+      "avg_latency_ms": 3000,
+      "avg_rework_rate": 0.15,
+      "total_executions": 0
+    },
+    "failure_modes": [
+      "syntax_error",
+      "permission_denied"
+    ],
+    "metadata": {
+      "version": "1.0",
+      "created_at": "2026-03-07T02:46:27.986060"
+    }
+  },
+  "filesystem": {
+    "skill_id": "filesystem",
+    "skill_name": "Filesystem Operations",
+    "domain": "engineering",
+    "description": "Read, write, and manage files",
+    "supported_task_types": [
+      "coding",
+      "writing"
+    ],
+    "supported_subtask_types": [
+      "edit_file",
+      "write_output"
+    ],
+    "supported_scenarios": [
+      "code_edit",
+      "file_write"
+    ],
+    "required_tools": [
+      "read",
+      "write",
+      "edit"
+    ],
+    "writable_scope": [
+      "workspace/*",
+      "scripts/*"
+    ],
+    "read_only": false,
+    "risk_profile": "medium",
+    "trust_level": "high",
+    "compatible_rules": [
+      "preserve_original",
+      "backup_before"
+    ],
+    "incompatible_rules": [
+      "no_delete_system"
+    ],
+    "capabilities": [
+      "read_file",
+      "write_file",
+      "edit_file",
+      "list_dir"
+    ],
+    "performance": {
+      "avg_success_rate": 0.9,
+      "avg_latency_ms": 1000,
+      "avg_rework_rate": 0.08,
+      "total_executions": 0
+    },
+    "failure_modes": [
+      "permission_denied",
+      "file_not_found",
+      "disk_full"
+    ],
+    "metadata": {
+      "version": "1.0",
+      "created_at": "2026-03-07T02:46:27.986063"
+    }
+  },
+  "browser": {
+    "skill_id": "browser",
+    "skill_name": "Browser Automation",
+    "domain": "research",
+    "description": "Automate browser interactions",
+    "supported_task_types": [
+      "research",
+      "automation"
+    ],
+    "supported_subtask_types": [
+      "fetch",
+      "analyze"
+    ],
+    "supported_scenarios": [
+      "web_automation",
+      "form_fill"
+    ],
+    "required_tools": [
+      "playwright",
+      "selenium"
+    ],
+    "writable_scope": null,
+    "read_only": true,
+    "risk_profile": "medium",
+    "trust_level": "medium",
+    "compatible_rules": [
+      "verify_page_load"
+    ],
+    "incompatible_rules": [],
+    "capabilities": [
+      "navigate",
+      "click",
+      "type",
+      "screenshot"
+    ],
+    "performance": {
+      "avg_success_rate": 0.85,
+      "avg_latency_ms": 8000,
+      "avg_rework_rate": 0.15,
+      "total_executions": 0
+    },
+    "failure_modes": [
+      "element_not_found",
+      "timeout",
+      "page_crash"
+    ],
+    "metadata": {
+      "version": "1.0",
+      "created_at": "2026-03-07T02:46:27.986066"
+    }
+  },
+  "code_analysis": {
+    "skill_id": "code_analysis",
+    "skill_name": "Code Analysis",
+    "domain": "engineering",
+    "description": "Analyze and review code",
+    "supported_task_types": [
+      "coding",
+      "analysis"
+    ],
+    "supported_subtask_types": [
+      "analyze",
+      "validate"
+    ],
+    "supported_scenarios": [
+      "code_review",
+      "bug_analysis"
+    ],
+    "required_tools": [
+      "grep",
+      "ast",
+      "linter"
+    ],
+    "writable_scope": null,
+    "read_only": true,
+    "risk_profile": "low",
+    "trust_level": "high",
+    "compatible_rules": [
+      "verify_syntax"
+    ],
+    "incompatible_rules": [],
+    "capabilities": [
+      "lint",
+      "find_bugs",
+      "analyze_complexity"
+    ],
+    "performance": {
+      "avg_success_rate": 0.88,
+      "avg_latency_ms": 5000,
+      "avg_rework_rate": 0.05,
+      "total_executions": 0
+    },
+    "failure_modes": [
+      "parse_error",
+      "large_file"
+    ],
+    "metadata": {
+      "version": "1.0",
+      "created_at": "2026-03-07T02:46:27.986069"
+    }
+  },
+  "tts": {
+    "skill_id": "tts",
+    "skill_name": "Text to Speech",
+    "domain": "communication",
+    "description": "Convert text to speech",
+    "supported_task_types": [
+      "writing",
+      "information"
+    ],
+    "supported_subtask_types": [
+      "write_output"
+    ],
+    "supported_scenarios": [
+      "voice_output"
+    ],
+    "required_tools": [
+      "elevenlabs",
+      "gtts"
+    ],
+    "writable_scope": null,
+    "read_only": true,
+    "risk_profile": "low",
+    "trust_level": "high",
+    "compatible_rules": [],
+    "incompatible_rules": [],
+    "capabilities": [
+      "text_to_speech",
+      "voice_generation"
+    ],
+    "performance": {
+      "avg_success_rate": 0.95,
+      "avg_latency_ms": 5000,
+      "avg_rework_rate": 0.02,
+      "total_executions": 0
+    },
+    "failure_modes": [
+      "api_error",
+      "voice_not_found"
+    ],
+    "metadata": {
+      "version": "1.0",
+      "created_at": "2026-03-07T02:46:27.986072"
+    }
+  }
+}

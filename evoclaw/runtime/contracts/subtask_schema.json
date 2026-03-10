@@ -1,0 +1,20 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Subtask Schema",
+  "type": "object",
+  "required": ["subtask_id", "parent_task_id", "subtask_type", "goal", "local_scenario", "required_tools", "done_criteria"],
+  "properties": {
+    "subtask_id": {"type": "string"},
+    "parent_task_id": {"type": "string"},
+    "subtask_type": {"type": "string", "enum": ["analyze", "fetch", "edit_file", "run_validation", "write_output", "coordinate", "review", "plan"]},
+    "goal": {"type": "string"},
+    "local_scenario": {"type": "string"},
+    "required_tools": {"type": "array", "items": {"type": "string"}},
+    "required_skill": {"type": ["string", "null"]},
+    "constraints": {"type": "array", "items": {"type": "string"}},
+    "file_scope": {"type": ["array", "null"], "items": {"type": "string"}},
+    "done_criteria": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+    "dependencies": {"type": "array", "items": {"type": "string"}},
+    "status": {"type": "string", "enum": ["pending", "in_progress", "completed", "failed"]}
+  }
+}

@@ -1,0 +1,82 @@
+{
+  "style_id": "warm_lifestyle",
+  "category": "people_and_spaces",
+  "verticals": ["health", "wellness", "real_estate", "creator", "coaching", "hospitality", "food"],
+  "description": "Bright, warm, aspirational lifestyle photography. Real people in beautiful spaces. Natural light, earth tones, film-stock quality. The opposite of dark tech.",
+  "base_prompt": "hyper-realistic lifestyle photograph of {subject} in {space}, {lighting_description}, {mood}, shot on {camera_model}",
+  "schema": {
+    "subject": {
+      "description": "string — person or group, what they're doing. e.g. 'a woman in her early 30s doing morning yoga on a mat'",
+      "pose": "string — natural, candid-feeling. e.g. 'mid-stretch in warrior II pose, arms extended, looking calmly toward camera-left, weight balanced'",
+      "expression": "string — genuine emotion. e.g. 'peaceful half-smile, eyes soft and unfocused, completely relaxed jaw'",
+      "wardrobe": {
+        "description": "string — fabrics, fits, colors. e.g. 'sage green ribbed tank top, high-waisted cream linen pants, bare feet on natural fiber mat'",
+        "jewelry": "string or null — e.g. 'single thin gold necklace with small pendant, small gold hoop earrings'",
+        "hair": "string — e.g. 'dark brown hair in loose low bun, few pieces falling around face naturally'"
+      }
+    },
+    "space": {
+      "type": "string — e.g. 'open-plan mid-century modern living room'",
+      "architecture": "string — e.g. 'floor-to-ceiling windows on two walls, exposed Douglas fir ceiling beams, polished concrete floor with wool area rug'",
+      "furnishings": ["array of specific items. e.g. 'low-profile cream linen sofa with wooden frame', 'round walnut coffee table with single book and ceramic cup', 'woven rattan accent chair in corner'"],
+      "plants": "string or null — e.g. 'large fiddle leaf fig in ribbed terracotta pot by window, trailing pothos on floating shelf, small succulent arrangement on coffee table'",
+      "outside_visible": "string or null — e.g. 'lush green garden with mature trees visible through windows, dappled light on foliage'"
+    },
+    "camera": {
+      "camera_model": "string — e.g. 'Contax T2' for film vibe, 'Canon R5' for crisp digital, 'Mamiya RZ67' for medium format",
+      "lens_focal_length_mm": "integer — 35 for environmental, 50 for balanced, 85 for intimate",
+      "aperture": "string — e.g. 'f/2.0' for soft background, 'f/4' for more context",
+      "shot_type": "string — e.g. 'medium-wide environmental, subject in lower-right third'",
+      "film_stock": "string or null — e.g. 'Kodak Portra 400 emulation' or 'Fujifilm Pro 400H look'"
+    },
+    "lighting": {
+      "source": "string — e.g. 'morning sun streaming through east-facing floor-to-ceiling windows'",
+      "quality": "string — e.g. 'soft and diffused through sheer linen curtains, creating gentle warm patches on floor and wall, dust motes visible in light beams'",
+      "color_temperature": "warm",
+      "shadows": "string — e.g. 'gentle and open, no harsh contrast, shadows filled by ambient bounce from light walls and ceiling'"
+    },
+    "color_and_style": {
+      "palette": ["5 hex codes — warm earth tones. e.g. '#F8EAD8', '#DEB887', '#556B2F', '#FFFFFF', '#8B7355'"],
+      "grade": "string — e.g. 'warm and airy, slightly lifted blacks revealing shadow detail, gentle highlight roll-off, +10 warmth in midtones'",
+      "grain": "string — e.g. 'subtle Portra-style grain, organic texture visible at 100% but not distracting at web size'",
+      "overall_style": "string — e.g. 'Cereal magazine meets Jenni Kayne lifestyle campaign'"
+    },
+    "output_settings": {
+      "aspect_ratio": "string — 16:9, 4:5, 3:2, 9:16",
+      "resolution": {"width": "int", "height": "int"},
+      "format": "png"
+    },
+    "negative_prompt": [
+      "no harsh flash lighting or on-camera flash look",
+      "no cold blue-toned color grading",
+      "no cluttered or messy spaces",
+      "no plastic or synthetic-looking skin texture",
+      "no stock photo staging or forced smiles",
+      "no over-saturated Instagram filter look",
+      "no visible brand logos on furniture or decor"
+    ]
+  },
+  "presets": {
+    "morning_yoga": {
+      "description": "Peaceful morning yoga/wellness scene. Warm, serene.",
+      "space": {"type": "bright airy studio or living room", "architecture": "large windows, light wood floors, white walls, minimal furniture"},
+      "camera": {"camera_model": "Contax T2", "lens_focal_length_mm": 38, "aperture": "f/2.8", "film_stock": "Kodak Portra 400 emulation"},
+      "lighting": {"source": "early morning sun through east windows", "quality": "soft golden light, long shadows, peaceful"},
+      "color_and_style": {"palette": ["#F8EAD8", "#E8D5C0", "#556B2F", "#FFFFFF", "#C4A882"], "grade": "warm, lifted shadows, gentle Portra warmth", "overall_style": "Alo Yoga campaign meets Kinfolk editorial"}
+    },
+    "cozy_workspace": {
+      "description": "Creator/coach workspace. Warm, personal, productive.",
+      "space": {"type": "home office with personality", "architecture": "built-in bookshelves, desk near window, warm wood tones", "furnishings": ["walnut writing desk with brass lamp", "ergonomic chair with cream cushion", "small stack of design books", "ceramic mug with coffee"]},
+      "camera": {"camera_model": "Fujifilm X-T5", "lens_focal_length_mm": 23, "aperture": "f/2.0", "film_stock": "Fujifilm Classic Chrome simulation"},
+      "lighting": {"source": "afternoon side light through window with wooden blinds creating stripe shadows", "quality": "warm and directional, interesting shadow patterns"},
+      "color_and_style": {"palette": ["#F0E6D4", "#8B7355", "#2C2C2C", "#DEB887", "#FFFFFF"], "grade": "muted warmth, slightly desaturated, editorial calm", "overall_style": "The Gentlewoman magazine meets Cereal travel editorial"}
+    },
+    "kitchen_gathering": {
+      "description": "People together in a kitchen. Warmth, community, food.",
+      "space": {"type": "modern farmhouse kitchen with island", "architecture": "open shelving, subway tile, butcher block island, pendant lights"},
+      "camera": {"camera_model": "Canon R5", "lens_focal_length_mm": 35, "aperture": "f/2.8", "film_stock": null},
+      "lighting": {"source": "combination of window light and warm pendant bulbs above island", "quality": "mixed warm sources, cozy and inviting"},
+      "color_and_style": {"palette": ["#F8EAD8", "#8B4513", "#556B2F", "#FFFFF0", "#D4A574"], "grade": "rich and warm, food-photography warmth, appetizing tones", "overall_style": "Bon Appétit at-home feature meets Food52 community cooking"}
+    }
+  }
+}

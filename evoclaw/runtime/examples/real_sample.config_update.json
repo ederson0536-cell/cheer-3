@@ -1,0 +1,51 @@
+{
+  "task": {
+    "task_id": "t_real_001",
+    "parent_task_id": null,
+    "task_type": "coding",
+    "scenario": "modify_config_file",
+    "complexity_level": "L1",
+    "risk_level": "medium",
+    "file_write_flag": true,
+    "file_scope": ["evoclaw/config.json"],
+    "requires_tools": ["filesystem", "search"],
+    "candidate_subtasks": ["analyze_config", "edit_config", "validate_config"],
+    "uncertainty_level": 0.18
+  },
+  "subtasks": [
+    {
+      "subtask_id": "st_real_001",
+      "parent_task_id": "t_real_001",
+      "subtask_type": "analyze",
+      "goal": "inspect current config keys",
+      "local_scenario": "read_existing_config",
+      "required_tools": ["filesystem", "search"],
+      "constraints": ["read_only"],
+      "done_criteria": ["required keys identified"]
+    },
+    {
+      "subtask_id": "st_real_002",
+      "parent_task_id": "t_real_001",
+      "subtask_type": "edit_file",
+      "goal": "update config threshold",
+      "local_scenario": "update_existing_module",
+      "required_tools": ["filesystem"],
+      "required_skill": "coding_editor_v1",
+      "constraints": ["no_cross_directory_write"],
+      "file_scope": ["evoclaw/config.json"],
+      "done_criteria": ["config updated", "json remains valid"]
+    },
+    {
+      "subtask_id": "st_real_003",
+      "parent_task_id": "t_real_001",
+      "subtask_type": "run_validation",
+      "goal": "validate config parses correctly",
+      "local_scenario": "validate_json_file",
+      "required_tools": ["filesystem"],
+      "required_skill": "generic_helper_v1",
+      "constraints": ["no_write"],
+      "file_scope": ["evoclaw/config.json"],
+      "done_criteria": ["validation passes"]
+    }
+  ]
+}

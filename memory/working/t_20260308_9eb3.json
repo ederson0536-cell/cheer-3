@@ -1,0 +1,337 @@
+{
+  "hook": "before_task",
+  "timestamp": "2026-03-08T21:00:01.910835",
+  "task": {
+    "task_id": "t_20260308_9eb3",
+    "parent_task_id": null,
+    "task_type": "automation",
+    "scenario": "automation_setup",
+    "complexity_level": "L0",
+    "risk_level": "low",
+    "file_write_flag": false,
+    "file_scope": null,
+    "requires_tools": [
+      "conversation"
+    ],
+    "candidate_subtasks": [
+      "design_workflow",
+      "implement_script",
+      "setup_schedule"
+    ],
+    "uncertainty_level": 0.6,
+    "priority": "P2",
+    "tags": [
+      "scheduled",
+      "automation_setup",
+      "automation"
+    ],
+    "created_at": "2026-03-08T21:00:01.905393",
+    "raw_message": "cron-learning-cycle"
+  },
+  "memory_retrieval": {
+    "timestamp": "2026-03-08T21:00:01.910826",
+    "rules_track": {
+      "task_type": "automation",
+      "scenario": "automation_setup",
+      "risk_level": "low",
+      "rules": {
+        "P0_HARD": [
+          {
+            "id": "p0_001",
+            "name": "private_data_stays_private",
+            "description": "Private data must never be exfiltrated",
+            "priority": "P0",
+            "enforced": true
+          },
+          {
+            "id": "p0_002",
+            "name": "no_unauthorized_write",
+            "description": "Cannot write outside allowed file scope",
+            "priority": "P0",
+            "enforced": true
+          },
+          {
+            "id": "p0_003",
+            "name": "ask_before_external_actions",
+            "description": "Must ask before sending emails, tweets, etc",
+            "priority": "P0",
+            "enforced": true
+          },
+          {
+            "id": "p0_004",
+            "name": "high_risk_requires_approval",
+            "description": "High risk tasks require explicit approval",
+            "priority": "P0",
+            "enforced": true
+          },
+          {
+            "id": "rule-002",
+            "source_proposal_id": "",
+            "created_at": "",
+            "enabled": true,
+            "priority": "P0",
+            "action": "suggest"
+          }
+        ],
+        "P1_GOVERNANCE": [],
+        "P2_TASK_TYPE": [
+          {
+            "id": "p2_a001",
+            "name": "backup_before",
+            "rule": "Create backup before automation"
+          },
+          {
+            "id": "p2_a002",
+            "name": "log_actions",
+            "rule": "Log all automated actions"
+          },
+          {
+            "id": "p2_a003",
+            "name": "rollback_capability",
+            "rule": "Include rollback capability"
+          }
+        ],
+        "P3_SCENARIO": [
+          {
+            "id": "rule-001",
+            "source_proposal_id": "",
+            "created_at": "2026-03-08T17:15:00",
+            "enabled": true,
+            "priority": "P3",
+            "action": "suggest",
+            "text": "优先使用中文回复"
+          }
+        ],
+        "P4_SUGGESTION": [
+          {
+            "id": "p4_001",
+            "name": "use_cache",
+            "rule": "Consider caching results"
+          },
+          {
+            "id": "p4_002",
+            "name": "log_performance",
+            "rule": "Log performance metrics"
+          }
+        ]
+      },
+      "governance": {
+        "level": "advisory",
+        "auto_approve_categories": [
+          "scenario_discovery",
+          "knowledge"
+        ],
+        "auto_approve_min_confidence": 0.8
+      }
+    },
+    "experience_track": {
+      "episodic": {
+        "similar_tasks": [
+          {
+            "task_id": "t_20260308_4efd",
+            "event": "started",
+            "timestamp": "2026-03-08T20:55:01.185114",
+            "task_type": "automation",
+            "scenario": "automation_setup",
+            "risk_level": "low",
+            "tags": [
+              "automation",
+              "automation_setup",
+              "scheduled"
+            ],
+            "uncertainty": 0.6,
+            "similarity_score": 1.0
+          }
+        ],
+        "success_patterns": [],
+        "failure_patterns": [
+          {
+            "task_id": "t_20260308_4efd",
+            "task_type": "automation",
+            "outcome": null,
+            "timestamp": "2026-03-08T20:55:01.185114",
+            "reasons": [
+              "Unknown"
+            ]
+          }
+        ],
+        "learned_lessons": [
+          "Historical success rate: 0% (0/1)",
+          "Common issues to avoid:",
+          "  • unknown... (1x)"
+        ],
+        "skill_recommendations": [],
+        "confidence": 0.0
+      },
+      "semantic": [],
+      "memories": [],
+      "candidate": [],
+      "graph": []
+    },
+    "context_summary": "📊 经验:\n   • Historical success rate: 0% (0/1)\n   • Common issues to avoid:\n   •   • unknown... (1x)\n\n⚠️ 注意:\n   • 历史有 1 次失败记录",
+    "hits": {
+      "rules": true,
+      "episodic": true,
+      "semantic": false,
+      "memories": false,
+      "candidate": false,
+      "graph": false
+    },
+    "retrieval_stats": {
+      "total_calls": 2,
+      "updated_at": "2026-03-08T21:00:01.910609",
+      "tracks": {
+        "rules": {
+          "hit": 2,
+          "miss": 0
+        },
+        "episodic": {
+          "hit": 1,
+          "miss": 1
+        },
+        "semantic": {
+          "hit": 0,
+          "miss": 2
+        },
+        "memories": {
+          "hit": 0,
+          "miss": 2
+        },
+        "candidate": {
+          "hit": 0,
+          "miss": 2
+        },
+        "graph": {
+          "hit": 0,
+          "miss": 2
+        }
+      }
+    }
+  },
+  "rules": {
+    "P0_HARD": [
+      {
+        "id": "p0_001",
+        "name": "private_data_stays_private",
+        "description": "Private data must never be exfiltrated",
+        "priority": "P0",
+        "enforced": true
+      },
+      {
+        "id": "p0_002",
+        "name": "no_unauthorized_write",
+        "description": "Cannot write outside allowed file scope",
+        "priority": "P0",
+        "enforced": true
+      },
+      {
+        "id": "p0_003",
+        "name": "ask_before_external_actions",
+        "description": "Must ask before sending emails, tweets, etc",
+        "priority": "P0",
+        "enforced": true
+      },
+      {
+        "id": "p0_004",
+        "name": "high_risk_requires_approval",
+        "description": "High risk tasks require explicit approval",
+        "priority": "P0",
+        "enforced": true
+      },
+      {
+        "id": "rule-002",
+        "source_proposal_id": "",
+        "created_at": "",
+        "enabled": true,
+        "priority": "P0",
+        "action": "suggest"
+      }
+    ],
+    "P1_GOVERNANCE": [],
+    "P2_TASK_TYPE": [
+      {
+        "id": "p2_a001",
+        "name": "backup_before",
+        "rule": "Create backup before automation"
+      },
+      {
+        "id": "p2_a002",
+        "name": "log_actions",
+        "rule": "Log all automated actions"
+      },
+      {
+        "id": "p2_a003",
+        "name": "rollback_capability",
+        "rule": "Include rollback capability"
+      }
+    ],
+    "P3_SCENARIO": [
+      {
+        "id": "rule-001",
+        "source_proposal_id": "",
+        "created_at": "2026-03-08T17:15:00",
+        "enabled": true,
+        "priority": "P3",
+        "action": "suggest",
+        "text": "优先使用中文回复"
+      }
+    ],
+    "P4_SUGGESTION": [
+      {
+        "id": "p4_001",
+        "name": "use_cache",
+        "rule": "Consider caching results"
+      },
+      {
+        "id": "p4_002",
+        "name": "log_performance",
+        "rule": "Log performance metrics"
+      }
+    ]
+  },
+  "rule_constraints": {
+    "blocking_rules": [],
+    "blocking_count": 0
+  },
+  "rule_description": "P0:5 P1:0 P2:3 P3:1",
+  "experience": {
+    "similar_tasks": [
+      {
+        "task_id": "t_20260308_4efd",
+        "event": "started",
+        "timestamp": "2026-03-08T20:55:01.185114",
+        "task_type": "automation",
+        "scenario": "automation_setup",
+        "risk_level": "low",
+        "tags": [
+          "automation",
+          "automation_setup",
+          "scheduled"
+        ],
+        "uncertainty": 0.6,
+        "similarity_score": 1.0
+      }
+    ],
+    "success_patterns": [],
+    "failure_patterns": [
+      {
+        "task_id": "t_20260308_4efd",
+        "task_type": "automation",
+        "outcome": null,
+        "timestamp": "2026-03-08T20:55:01.185114",
+        "reasons": [
+          "Unknown"
+        ]
+      }
+    ],
+    "learned_lessons": [
+      "Historical success rate: 0% (0/1)",
+      "Common issues to avoid:",
+      "  • unknown... (1x)"
+    ],
+    "skill_recommendations": [],
+    "confidence": 0.0
+  },
+  "context_summary": "📊 经验:\n   • Historical success rate: 0% (0/1)\n   • Common issues to avoid:\n   •   • unknown... (1x)\n\n⚠️ 注意:\n   • 历史有 1 次失败记录",
+  "ready_to_execute": true
+}

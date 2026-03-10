@@ -1,0 +1,29 @@
+{
+  "proposal": {
+    "proposal_id": "pp_001",
+    "source": "after_subtask",
+    "candidate_type": "routing_weight_update_candidate",
+    "payload": {
+      "target": "coding_editor_v1",
+      "delta": {
+        "w2": 0.02
+      }
+    },
+    "status": "candidate"
+  },
+  "review": {
+    "review_id": "rv_001",
+    "proposal_id": "pp_001",
+    "decision": "canary_only",
+    "reviewer": "governance_gate",
+    "notes": "limited rollout"
+  },
+  "publish": {
+    "publish_id": "pb_001",
+    "proposal_id": "pp_001",
+    "action": "canary",
+    "status": "queued",
+    "canary_report_id": null,
+    "rollback_reason": null
+  }
+}

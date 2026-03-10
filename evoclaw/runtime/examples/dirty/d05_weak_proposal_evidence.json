@@ -1,0 +1,24 @@
+{
+  "proposal": {
+    "proposal_id": "pp_dirty_005",
+    "source": "after_task",
+    "candidate_type": "routing_weight_update_candidate",
+    "payload": {"target": "coding_editor_v1", "evidence_count": 0},
+    "status": "review_pending"
+  },
+  "review": {
+    "review_id": "rv_dirty_005",
+    "proposal_id": "pp_dirty_005",
+    "decision": "canary_only",
+    "reviewer": "governance_gate",
+    "notes": "evidence weak"
+  },
+  "publish": {
+    "publish_id": "pb_dirty_005",
+    "proposal_id": "pp_dirty_005",
+    "action": "canary",
+    "status": "queued",
+    "canary_report_id": null,
+    "rollback_reason": null
+  }
+}

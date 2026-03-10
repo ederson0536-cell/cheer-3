@@ -1,0 +1,25 @@
+{
+  "hooks": {
+    "enabled": true,
+    "path": "/hooks",
+    "token": "evoclaw-secret-2026",
+    "mappings": [
+      {
+        "id": "evoclaw-runtime",
+        "match": {
+          "path": "evoclaw"
+        },
+        "action": "http",
+        "url": "http://localhost:8899/message",
+        "method": "POST",
+        "timeoutSeconds": 60,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "transform": {
+          "module": "~/.openclaw/hooks/evoclaw-transform.js"
+        }
+      }
+    ]
+  }
+}

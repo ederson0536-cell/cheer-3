@@ -1,0 +1,145 @@
+{
+  "version": "2026-03-09",
+  "policy": {
+    "single_write_source": "memory.db",
+    "json_projection_only": true,
+    "notes": [
+      "memory/*.json and memory/*.jsonl are no longer canonical state stores.",
+      "JSON/JSONL outputs are allowed only as projection, debug report, or archive snapshots."
+    ]
+  },
+  "tables": {
+    "memories": {
+      "owner": "runtime.message_handler",
+      "purpose": "canonical interaction and experience memory events",
+      "field_sources": {
+        "id": "stable id from ingress payload",
+        "category": "ingress/message classification",
+        "type": "event type from runtime handlers",
+        "content": "user/agent payload content",
+        "source": "transport source (telegram/api/cli/cron)",
+        "created_at": "ingress timestamp",
+        "updated_at": "write/update timestamp",
+        "significance": "runtime scoring",
+        "tags_json": "runtime tags",
+        "metadata_json": "hook/runtime metadata",
+        "raw_json": "raw ingress payload snapshot"
+      }
+    },
+    "proposals": {
+      "owner": "runtime.components.proposal_processor",
+      "purpose": "governance proposals and lifecycle",
+      "field_sources": {
+        "id": "proposal id",
+        "type": "proposal type",
+        "content": "proposal body",
+        "source": "proposal source pipeline",
+        "created_at": "proposal creation time",
+        "updated_at": "proposal update time",
+        "status": "pending/approved/rejected/published",
+        "priority": "governance priority",
+        "approved_at": "approval timestamp",
+        "tags_json": "proposal tags",
+        "metadata_json": "proposal metadata"
+      }
+    },
+    "reflections": {
+      "owner": "runtime.components.passive_learning",
+      "purpose": "structured reflection outputs",
+      "field_sources": {
+        "id": "reflection id",
+        "timestamp": "reflection execution timestamp",
+        "trigger": "reflection trigger source",
+        "notable_count": "aggregated notable experience count",
+        "analysis_json": "reflection analysis",
+        "proposals_json": "proposal suggestions from reflection",
+        "created_at": "record creation timestamp"
+      }
+    },
+    "graph_entities": {
+      "owner": "runtime.components.graph_memory",
+      "purpose": "knowledge graph entities",
+      "field_sources": {
+        "id": "entity id",
+        "entity_type": "entity classification",
+        "properties_json": "entity properties",
+        "created_at": "insert timestamp"
+      }
+    },
+    "graph_relations": {
+      "owner": "runtime.components.graph_memory",
+      "purpose": "knowledge graph relations",
+      "field_sources": {
+        "id": "relation id",
+        "source_id": "source entity id",
+        "target_id": "target entity id",
+        "relation_type": "relation type",
+        "properties_json": "relation metadata",
+        "created_at": "insert timestamp"
+      }
+    },
+    "soul_history": {
+      "owner": "runtime.components.governance",
+      "purpose": "SOUL mutation audit trail",
+      "field_sources": {
+        "id": "change id",
+        "change_type": "change category",
+        "old_value": "pre-change value",
+        "new_value": "post-change value",
+        "created_at": "change timestamp",
+        "approved": "governance approval flag"
+      }
+    },
+    "rules": {
+      "owner": "runtime.components.rule_engine",
+      "purpose": "active runtime rules",
+      "field_sources": {
+        "id": "rule id",
+        "content": "rule text",
+        "source_proposal_id": "linked proposal id",
+        "created_at": "rule publish timestamp",
+        "enabled": "rule enabled state"
+      }
+    },
+    "candidates": {
+      "owner": "runtime.components.candidate_memory",
+      "purpose": "candidate skills and promotion tracking",
+      "field_sources": {
+        "id": "candidate id",
+        "skill_id": "skill identifier",
+        "task_type": "task category",
+        "status": "candidate/promoted/rejected",
+        "source": "candidate source subsystem",
+        "score": "computed candidate score",
+        "created_at": "candidate created timestamp",
+        "updated_at": "candidate updated timestamp",
+        "metadata_json": "candidate metrics",
+        "raw_json": "raw candidate payload"
+      }
+    },
+    "system_state": {
+      "owner": "runtime.state_manager",
+      "purpose": "small structured runtime state kv",
+      "field_sources": {
+        "key": "state key",
+        "value_json": "state payload",
+        "updated_at": "state update timestamp"
+      }
+    },
+    "system_logs": {
+      "owner": "runtime.logging",
+      "purpose": "structured operational logs and write-failure records",
+      "field_sources": {
+        "id": "log id",
+        "log_type": "log classification",
+        "source": "subsystem source",
+        "content": "message body",
+        "created_at": "event timestamp",
+        "updated_at": "update timestamp",
+        "level": "info/warn/error",
+        "metadata_json": "structured metadata",
+        "raw_json": "raw payload"
+      }
+    }
+  }
+}

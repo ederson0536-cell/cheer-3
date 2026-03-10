@@ -1,0 +1,528 @@
+{
+  "key": "task_t_20260307_1414",
+  "value": {
+    "task": {
+      "task_id": "t_20260307_1414",
+      "parent_task_id": null,
+      "task_type": "research",
+      "scenario": "news_summary",
+      "complexity_level": "L0",
+      "risk_level": "low",
+      "file_write_flag": false,
+      "file_scope": null,
+      "requires_tools": [
+        "web_fetch"
+      ],
+      "candidate_subtasks": [
+        "fetch_information",
+        "analyze_data",
+        "summarize_findings"
+      ],
+      "uncertainty_level": 0.6,
+      "priority": "P2",
+      "tags": [
+        "news_summary",
+        "tech",
+        "research"
+      ],
+      "created_at": "2026-03-07T02:39:01.498134",
+      "raw_message": "搜索科技新闻"
+    },
+    "rules": {
+      "hard_rules": [
+        "cross_reference_multiple_sources",
+        "ask_before_external_actions",
+        "avoid_hallucination",
+        "private_data_stays_private",
+        "cite_sources_in_output",
+        "verify_source_reliability",
+        "no_exfiltration"
+      ],
+      "task_rules": [
+        "include_source_links",
+        "basic_validation",
+        "prioritize_authoritative_sources",
+        "fetch_latest_data",
+        "summarize_key_points"
+      ],
+      "guidelines": [
+        "Provide source attribution",
+        "Verify facts from multiple sources",
+        "Proceed with standard approach",
+        "Use web_fetch for information retrieval"
+      ],
+      "sources": [
+        "task_type:research",
+        "risk_level:low"
+      ]
+    },
+    "experience": {
+      "similar_tasks": [
+        {
+          "task_id": "t_20260307_f8cc",
+          "event": "started",
+          "timestamp": "2026-03-07T01:21:01.223903",
+          "parent_task_id": null,
+          "task_type": "research",
+          "scenario": "news_summary",
+          "complexity_level": "L0",
+          "risk_level": "low",
+          "file_write_flag": false,
+          "file_scope": null,
+          "requires_tools": [
+            "web_fetch"
+          ],
+          "candidate_subtasks": [
+            "fetch_information",
+            "analyze_data",
+            "summarize_findings"
+          ],
+          "uncertainty_level": 0.5,
+          "priority": "P2",
+          "tags": [
+            "news_summary",
+            "research",
+            "tech"
+          ],
+          "created_at": "2026-03-07T01:21:01.222882",
+          "raw_message": "帮我搜索今天的科技新闻并总结",
+          "outcome": "success",
+          "completed_at": "2026-03-07T01:21:01.227987",
+          "similarity_score": 1.0
+        },
+        {
+          "task_id": "t_20260307_db6b",
+          "event": "started",
+          "timestamp": "2026-03-07T01:30:36.899149",
+          "parent_task_id": null,
+          "task_type": "research",
+          "scenario": "news_summary",
+          "complexity_level": "L0",
+          "risk_level": "low",
+          "file_write_flag": false,
+          "file_scope": null,
+          "requires_tools": [
+            "web_fetch"
+          ],
+          "candidate_subtasks": [
+            "fetch_information",
+            "analyze_data",
+            "summarize_findings"
+          ],
+          "uncertainty_level": 0.5,
+          "priority": "P2",
+          "tags": [
+            "news_summary",
+            "research",
+            "tech"
+          ],
+          "created_at": "2026-03-07T01:30:36.898778",
+          "raw_message": "帮我搜索今天的科技新闻",
+          "outcome": "success",
+          "completed_at": "2026-03-07T01:30:36.900702",
+          "similarity_score": 1.0
+        },
+        {
+          "task_id": "t_20260307_2337",
+          "event": "started",
+          "timestamp": "2026-03-07T01:38:12.698603",
+          "parent_task_id": null,
+          "task_type": "research",
+          "scenario": "news_summary",
+          "complexity_level": "L0",
+          "risk_level": "low",
+          "file_write_flag": false,
+          "file_scope": null,
+          "requires_tools": [
+            "web_fetch"
+          ],
+          "candidate_subtasks": [
+            "fetch_information",
+            "analyze_data",
+            "summarize_findings"
+          ],
+          "uncertainty_level": 0.5,
+          "priority": "P2",
+          "tags": [
+            "tech",
+            "research",
+            "news_summary"
+          ],
+          "created_at": "2026-03-07T01:38:12.697195",
+          "raw_message": "帮我搜索科技新闻",
+          "outcome": "success",
+          "completed_at": "2026-03-07T01:38:12.701034",
+          "similarity_score": 1.0
+        },
+        {
+          "task_id": "t_20260307_1f3e",
+          "event": "started",
+          "timestamp": "2026-03-07T02:23:04.366567",
+          "task_type": "research",
+          "scenario": "news_summary",
+          "risk_level": "low",
+          "tags": [
+            "news_summary",
+            "tech",
+            "research"
+          ],
+          "uncertainty": 0.5,
+          "similarity_score": 1.0
+        },
+        {
+          "task_id": "t_20260307_51e9",
+          "event": "started",
+          "timestamp": "2026-03-07T02:23:15.423191",
+          "task_type": "research",
+          "scenario": "news_summary",
+          "risk_level": "low",
+          "tags": [
+            "news_summary",
+            "research",
+            "tech"
+          ],
+          "uncertainty": 0.5,
+          "similarity_score": 1.0
+        },
+        {
+          "task_id": "t_20260307_a508",
+          "event": "started",
+          "timestamp": "2026-03-07T00:58:21.290664",
+          "parent_task_id": null,
+          "task_type": "research",
+          "scenario": "news_summary",
+          "complexity_level": "L0",
+          "risk_level": "low",
+          "file_write_flag": true,
+          "file_scope": [
+            "上传到Notion",
+            "帮我搜索今天的新闻总结"
+          ],
+          "requires_tools": [
+            "web_fetch",
+            "filesystem"
+          ],
+          "candidate_subtasks": [
+            "fetch_information",
+            "analyze_data",
+            "summarize_findings"
+          ],
+          "uncertainty_level": 0.19999999999999998,
+          "priority": "P2",
+          "tags": [
+            "news_summary",
+            "research",
+            "notion"
+          ],
+          "created_at": "2026-03-07T00:58:21.287831",
+          "raw_message": "帮我搜索今天的新闻总结，上传到Notion",
+          "similarity_score": 0.8999999999999999
+        },
+        {
+          "task_id": "t_20260307_a89b",
+          "event": "started",
+          "timestamp": "2026-03-07T00:58:49.369655",
+          "parent_task_id": null,
+          "task_type": "research",
+          "scenario": "news_summary",
+          "complexity_level": "L0",
+          "risk_level": "low",
+          "file_write_flag": true,
+          "file_scope": [
+            "上传到Notion",
+            "帮我搜索今天的新闻总结"
+          ],
+          "requires_tools": [
+            "filesystem",
+            "web_fetch"
+          ],
+          "candidate_subtasks": [
+            "fetch_information",
+            "analyze_data",
+            "summarize_findings"
+          ],
+          "uncertainty_level": 0.19999999999999998,
+          "priority": "P2",
+          "tags": [
+            "research",
+            "notion",
+            "news_summary"
+          ],
+          "created_at": "2026-03-07T00:58:49.368823",
+          "raw_message": "帮我搜索今天的新闻总结，上传到Notion",
+          "outcome": "success",
+          "completed_at": "2026-03-07T00:58:52.709679",
+          "similarity_score": 0.8999999999999999
+        },
+        {
+          "task_id": "t_20260307_ff94",
+          "event": "started",
+          "timestamp": "2026-03-07T01:06:39.381288",
+          "parent_task_id": null,
+          "task_type": "research",
+          "scenario": "news_summary",
+          "complexity_level": "L0",
+          "risk_level": "low",
+          "file_write_flag": true,
+          "file_scope": [
+            "帮我搜索新闻上传到Notion"
+          ],
+          "requires_tools": [
+            "web_fetch",
+            "filesystem"
+          ],
+          "candidate_subtasks": [
+            "fetch_information",
+            "analyze_data",
+            "summarize_findings"
+          ],
+          "uncertainty_level": 0.5,
+          "priority": "P2",
+          "tags": [
+            "research",
+            "news_summary",
+            "notion"
+          ],
+          "created_at": "2026-03-07T01:06:39.380560",
+          "raw_message": "帮我搜索新闻上传到Notion",
+          "outcome": "success",
+          "completed_at": "2026-03-07T01:06:47.296887",
+          "similarity_score": 0.8999999999999999
+        },
+        {
+          "task_id": "t_20260307_f210",
+          "event": "started",
+          "timestamp": "2026-03-07T01:13:16.520932",
+          "parent_task_id": null,
+          "task_type": "research",
+          "scenario": "news_summary",
+          "complexity_level": "L0",
+          "risk_level": "low",
+          "file_write_flag": false,
+          "file_scope": null,
+          "requires_tools": [
+            "web_fetch"
+          ],
+          "candidate_subtasks": [
+            "fetch_information",
+            "analyze_data",
+            "summarize_findings"
+          ],
+          "uncertainty_level": 0.5,
+          "priority": "P2",
+          "tags": [
+            "news_summary",
+            "finance",
+            "research"
+          ],
+          "created_at": "2026-03-07T01:13:16.520467",
+          "raw_message": "帮我搜索今天的经济新闻",
+          "similarity_score": 0.8999999999999999
+        },
+        {
+          "task_id": "t_20260307_1a68",
+          "event": "started",
+          "timestamp": "2026-03-07T01:13:36.371775",
+          "parent_task_id": null,
+          "task_type": "research",
+          "scenario": "news_summary",
+          "complexity_level": "L0",
+          "risk_level": "low",
+          "file_write_flag": false,
+          "file_scope": null,
+          "requires_tools": [
+            "web_fetch"
+          ],
+          "candidate_subtasks": [
+            "fetch_information",
+            "analyze_data",
+            "summarize_findings"
+          ],
+          "uncertainty_level": 0.5,
+          "priority": "P2",
+          "tags": [
+            "research",
+            "finance",
+            "news_summary"
+          ],
+          "created_at": "2026-03-07T01:13:36.371209",
+          "raw_message": "帮我搜索今天的经济新闻",
+          "outcome": "success",
+          "completed_at": "2026-03-07T01:13:36.375000",
+          "similarity_score": 0.8999999999999999
+        }
+      ],
+      "success_patterns": [
+        {
+          "task_id": "t_20260307_f8cc",
+          "task_type": "research",
+          "outcome": "success",
+          "timestamp": "2026-03-07T01:21:01.223903",
+          "factors": [
+            "Type: research",
+            "Risk: low"
+          ]
+        },
+        {
+          "task_id": "t_20260307_db6b",
+          "task_type": "research",
+          "outcome": "success",
+          "timestamp": "2026-03-07T01:30:36.899149",
+          "factors": [
+            "Type: research",
+            "Risk: low"
+          ]
+        },
+        {
+          "task_id": "t_20260307_2337",
+          "task_type": "research",
+          "outcome": "success",
+          "timestamp": "2026-03-07T01:38:12.698603",
+          "factors": [
+            "Type: research",
+            "Risk: low"
+          ]
+        },
+        {
+          "task_id": "t_20260307_a89b",
+          "task_type": "research",
+          "outcome": "success",
+          "timestamp": "2026-03-07T00:58:49.369655",
+          "factors": [
+            "Type: research",
+            "Risk: low"
+          ]
+        },
+        {
+          "task_id": "t_20260307_ff94",
+          "task_type": "research",
+          "outcome": "success",
+          "timestamp": "2026-03-07T01:06:39.381288",
+          "factors": [
+            "Type: research",
+            "Risk: low"
+          ]
+        },
+        {
+          "task_id": "t_20260307_1a68",
+          "task_type": "research",
+          "outcome": "success",
+          "timestamp": "2026-03-07T01:13:36.371775",
+          "factors": [
+            "Type: research",
+            "Risk: low"
+          ]
+        }
+      ],
+      "failure_patterns": [
+        {
+          "task_id": "t_20260307_1f3e",
+          "task_type": "research",
+          "outcome": null,
+          "timestamp": "2026-03-07T02:23:04.366567",
+          "reasons": [
+            "Unknown"
+          ]
+        },
+        {
+          "task_id": "t_20260307_51e9",
+          "task_type": "research",
+          "outcome": null,
+          "timestamp": "2026-03-07T02:23:15.423191",
+          "reasons": [
+            "Unknown"
+          ]
+        },
+        {
+          "task_id": "t_20260307_a508",
+          "task_type": "research",
+          "outcome": null,
+          "timestamp": "2026-03-07T00:58:21.290664",
+          "reasons": [
+            "Unknown"
+          ]
+        },
+        {
+          "task_id": "t_20260307_f210",
+          "task_type": "research",
+          "outcome": null,
+          "timestamp": "2026-03-07T01:13:16.520932",
+          "reasons": [
+            "Unknown"
+          ]
+        }
+      ],
+      "learned_lessons": [
+        "Historical success rate: 60% (6/10)",
+        "Common issues to avoid:",
+        "  • unknown... (4x)"
+      ],
+      "skill_recommendations": [],
+      "confidence": 1.0
+    },
+    "plan": {
+      "task_id": "t_20260307_1414",
+      "total_subtasks": 2,
+      "subtasks": [
+        {
+          "subtask_id": "st_001",
+          "type": "fetch",
+          "goal": "获取信息",
+          "required_tool": "web_fetch",
+          "status": "pending",
+          "dependencies": [],
+          "done_criteria": [
+            "数据已获取",
+            "来源已验证"
+          ]
+        },
+        {
+          "subtask_id": "st_002",
+          "type": "analyze",
+          "goal": "分析内容",
+          "required_tool": "memory",
+          "status": "pending",
+          "dependencies": [
+            "fetch"
+          ],
+          "done_criteria": [
+            "分析完成",
+            "要点已提取"
+          ]
+        }
+      ],
+      "execution_order": [
+        "st_001",
+        "st_002"
+      ],
+      "can_parallel": false,
+      "estimated_duration": "1分钟",
+      "created_at": "2026-03-07T02:39:01.498782"
+    },
+    "routing": {
+      "skill_id": "web_fetch_skill",
+      "skill_name": "Web Fetch",
+      "routing_score": 0.934,
+      "alternatives": [
+        {
+          "skill_id": "browser_skill",
+          "score": 0.724
+        }
+      ],
+      "reason": "选中原因: 高成功率, 高可信度, 场景匹配, 低返工率",
+      "ready_to_execute": true,
+      "hard_constraint_pass": true
+    },
+    "result": {
+      "success": true,
+      "data": {
+        "items": 1,
+        "raw": ""
+      },
+      "message": "已获取 1 条内容"
+    }
+  },
+  "created_at": "2026-03-07T02:39:01.620355",
+  "ttl": 3600,
+  "expires_at": "2026-03-07T03:39:01.620357"
+}

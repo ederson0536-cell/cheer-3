@@ -1,0 +1,26 @@
+version: 1
+name: runtime_persistence_service_boundary
+
+scheduler_entry:
+  command: "python3 evoclaw/validators/staging_trial_run.py"
+  accepted_task_categories: [safe_write, coding_modify, research_planning]
+  environment: staging
+
+state_storage:
+  runtime_state: logs/runtime/
+  decision_traces: evoclaw/runtime/examples/
+  baseline_dashboard: evoclaw/runtime/examples/baseline.layered_dashboard.json
+  regression_report: evoclaw/runtime/examples/regression_report.json
+
+trace_persistence:
+  required_outputs:
+    - decision_trace.loop_test.json
+    - decision_trace.real_sample.json
+    - decision_trace.from_routing.json
+  retention_policy: "append snapshots per run"
+
+proposal_review_queue:
+  queue_file: logs/runtime/proposal_review_queue.jsonl
+  producer: [runtime, processor]
+  consumer: [governance_gate, publisher]
+  required_fields: [proposal_id, candidate_type, status, created_at]

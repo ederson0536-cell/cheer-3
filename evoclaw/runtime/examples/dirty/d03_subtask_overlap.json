@@ -1,0 +1,38 @@
+{
+  "task": {
+    "task_id": "t_dirty_003",
+    "task_type": "coding",
+    "scenario": "overlapping_subtasks",
+    "complexity_level": "L2",
+    "risk_level": "medium",
+    "file_write_flag": true,
+    "file_scope": ["src/core.py"],
+    "requires_tools": ["filesystem", "search"],
+    "candidate_subtasks": ["edit_file", "edit_file"],
+    "uncertainty_level": 0.31
+  },
+  "subtasks": [
+    {
+      "subtask_id": "st_dirty_003_1",
+      "parent_task_id": "t_dirty_003",
+      "subtask_type": "edit_file",
+      "goal": "first edit",
+      "local_scenario": "update_existing_module",
+      "required_tools": ["filesystem"],
+      "constraints": ["no_cross_directory_write"],
+      "file_scope": ["src/core.py"],
+      "done_criteria": ["edit done"]
+    },
+    {
+      "subtask_id": "st_dirty_003_2",
+      "parent_task_id": "t_dirty_003",
+      "subtask_type": "edit_file",
+      "goal": "second overlapping edit",
+      "local_scenario": "update_existing_module",
+      "required_tools": ["filesystem"],
+      "constraints": ["no_cross_directory_write"],
+      "file_scope": ["src/core.py"],
+      "done_criteria": ["edit done"]
+    }
+  ]
+}

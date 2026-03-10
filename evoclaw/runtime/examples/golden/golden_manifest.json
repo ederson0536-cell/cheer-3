@@ -1,0 +1,12 @@
+{
+  "suite_name": "golden_runtime_regression",
+  "window": "rolling_30d",
+  "environment": "staging",
+  "samples": [
+    {"id": "01_safe_file_write", "path": "evoclaw/runtime/examples/golden/01_safe_file_write.json", "category": "safe_write"},
+    {"id": "02_coding_modify", "path": "evoclaw/runtime/examples/golden/02_coding_modify.json", "category": "coding_modify"},
+    {"id": "03_research_planning", "path": "evoclaw/runtime/examples/golden/03_research_planning.json", "category": "research_planning"},
+    {"id": "04_multi_subtask_dependency", "path": "evoclaw/runtime/examples/golden/04_multi_subtask_dependency.json", "category": "multi_subtask_dependency"},
+    {"id": "05_high_risk_rollback", "path": "evoclaw/runtime/examples/golden/05_high_risk_rollback.json", "category": "high_risk_rollback"}
+  ]
+}

@@ -1,0 +1,81 @@
+{
+  "style_id": "social_card",
+  "category": "typography",
+  "verticals": ["universal"],
+  "description": "High-impact text-forward cards for blog OG images, tweet cards, LinkedIn headers. Text is the hero. Designed to stop the scroll at thumbnail size.",
+  "base_prompt": "bold typographic design poster on {background_description}, large text \"{headline}\" in {headline_font}, {subtitle_treatment}, {layout_description}, designed as a digital share card",
+  "schema": {
+    "text": {
+      "headline": "string — the main text, in quotes for rendering. e.g. '\"The Agent That Never Sleeps\"'",
+      "headline_font": "string — specific font, weight, size, color, tracking. e.g. 'extra bold white Helvetica Neue, -2% letter-spacing, 96pt equivalent, all caps'",
+      "headline_alignment": "enum: center | left-aligned-with-left-padding | right",
+      "headline_position": "string — where on the card. e.g. 'vertically centered, left-aligned with 10% left margin'",
+      "subtitle": "string or null — secondary text. e.g. '\"How AI Replaced 90 Minutes of Ads Manager\"'",
+      "subtitle_font": "string — e.g. 'regular weight Inter, 50% opacity white, 24pt, sentence case'",
+      "subtitle_position": "string — e.g. 'directly below headline with 16px gap'",
+      "byline": "string or null — source attribution. e.g. '\"bigplayers.co\" in small caps, bottom-right, 30% opacity'",
+      "text_effects": {
+        "shadow": "string or null — e.g. 'subtle black text shadow, 2px offset down-right, 12px gaussian blur'",
+        "highlight": "string or null — e.g. 'headline word \"Never\" has accent color background highlight bar behind it'",
+        "gradient_text": "string or null — e.g. 'headline uses gradient from white to accent color left-to-right'"
+      }
+    },
+    "background": {
+      "type": "enum: solid_dark | gradient | textured | photo_blurred | abstract_geometric",
+      "description": "string — specific treatment. e.g. 'deep navy to black vertical gradient (#0D1117 to #000000) with subtle noise texture at 3%'",
+      "overlay": "string or null — e.g. 'dark vignette from edges at 40%, keeping center bright'",
+      "accent_elements": ["array of subtle background items. e.g. 'faint concentric circles in accent color at 5% opacity, centered behind headline', 'subtle diagonal line pattern in upper-right at 2% opacity'"]
+    },
+    "accent_elements": {
+      "divider": "string or null — e.g. 'thin 2px horizontal line in accent color, 40% width, between headline and subtitle'",
+      "badge": "string or null — e.g. 'small rounded pill badge reading \"GROWTH PLAY\" in accent color with dark background, positioned top-left with 24px margin'",
+      "icon": "string or null — e.g. 'minimal line-art rocket icon in accent color, 32px, next to badge'",
+      "border": "string or null — e.g. 'subtle 1px border around entire card at 8% white opacity, 16px rounded corners'"
+    },
+    "color_and_style": {
+      "palette": ["5 hex codes: background-primary, background-secondary, text-primary, accent, text-muted"],
+      "contrast": "string — e.g. 'maximum — pure white text on near-black, single accent color pop, nothing else competing'",
+      "overall_style": "string — e.g. 'Poolside FM poster meets Pentagram identity system'"
+    },
+    "output_settings": {
+      "aspect_ratio": "string — 16:9 for OG images, 1:1 for social, 4:5 for Instagram",
+      "resolution": {"width": "int", "height": "int"},
+      "format": "png"
+    },
+    "negative_prompt": [
+      "no warped or distorted letterforms",
+      "no extra decorative elements not specified",
+      "no low contrast text that's hard to read",
+      "no generic stock photo backgrounds",
+      "no clip art or cartoon elements",
+      "no busy patterns that compete with text",
+      "no more than 3 font sizes total"
+    ]
+  },
+  "presets": {
+    "dark_bold": {
+      "description": "Black background, white text, single accent. Maximum impact.",
+      "background": {"type": "solid_dark", "description": "pure black (#000000) with very subtle noise texture at 2%"},
+      "color_and_style": {"palette": ["#000000", "#0A0A0F", "#FFFFFF", "#FF4757", "#666666"], "contrast": "maximum", "overall_style": "Virgil Abloh Off-White typography meets tech startup announcement"},
+      "text": {"headline_font": "extra bold white Helvetica Neue, all caps, -3% letter-spacing, 96pt", "subtitle_font": "light Inter, 40% opacity white, 20pt, sentence case"}
+    },
+    "gradient_purple": {
+      "description": "Dark purple gradient, modern SaaS aesthetic.",
+      "background": {"type": "gradient", "description": "diagonal gradient from deep purple (#1A0A2E) bottom-left to dark navy (#0D1117) top-right, smooth transition"},
+      "color_and_style": {"palette": ["#1A0A2E", "#0D1117", "#FFFFFF", "#6C5CE7", "#8B80C4"], "contrast": "high", "overall_style": "Vercel conference badge meets Linear marketing"},
+      "text": {"headline_font": "bold white Inter Black, -1% letter-spacing, 80pt", "subtitle_font": "regular Inter, 60% opacity white, 18pt"}
+    },
+    "warm_editorial": {
+      "description": "Warm cream/tan background, dark text. Newsletter/editorial feel.",
+      "background": {"type": "textured", "description": "warm cream (#F8EAD8) with subtle paper texture, slight shadow in corners"},
+      "color_and_style": {"palette": ["#F8EAD8", "#F0E6D4", "#1A1A1A", "#C4553A", "#666666"], "contrast": "high — dark text on light background", "overall_style": "Kinfolk magazine cover meets luxury newsletter header"},
+      "text": {"headline_font": "bold dark serif Georgia or Playfair Display, #1A1A1A, -1% letter-spacing, 72pt", "subtitle_font": "light sans-serif Inter, 50% opacity dark, 16pt"}
+    },
+    "neon_accent": {
+      "description": "Near-black with neon accent color. Tech/gaming energy without being tacky.",
+      "background": {"type": "solid_dark", "description": "near-black (#08080C) with subtle radial glow of accent color at center, 5% opacity, 400px radius"},
+      "color_and_style": {"palette": ["#08080C", "#0D0D12", "#FFFFFF", "#00FF88", "#333344"], "contrast": "extreme — neon on black", "overall_style": "Supabase marketing meets terminal aesthetic, but clean not hacky"},
+      "text": {"headline_font": "bold white JetBrains Mono or SF Mono, 72pt, monospace", "subtitle_font": "regular Inter, accent color (#00FF88), 16pt"}
+    }
+  }
+}

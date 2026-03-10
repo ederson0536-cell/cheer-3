@@ -1,0 +1,29 @@
+{
+  "task": {
+    "task_id": "t_001",
+    "parent_task_id": null,
+    "task_type": "coding",
+    "scenario": "modify_existing_file",
+    "complexity_level": "L1",
+    "risk_level": "medium",
+    "file_write_flag": true,
+    "file_scope": ["src/api"],
+    "requires_tools": ["filesystem", "search"],
+    "candidate_subtasks": ["analyze_code", "edit_file", "run_check"],
+    "uncertainty_level": 0.22
+  },
+  "subtasks": [
+    {
+      "subtask_id": "st_001",
+      "parent_task_id": "t_001",
+      "subtask_type": "edit_file",
+      "goal": "modify API handler logic",
+      "local_scenario": "update_existing_module",
+      "required_tools": ["filesystem", "search"],
+      "required_skill": "coding_editor",
+      "constraints": ["no_cross_directory_write"],
+      "file_scope": ["src/api/handler.ts"],
+      "done_criteria": ["build passes", "diff reviewed"]
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "task": {
+    "task_id": "t_golden_003",
+    "parent_task_id": null,
+    "task_type": "research",
+    "scenario": "planning_summary",
+    "complexity_level": "L0",
+    "risk_level": "low",
+    "file_write_flag": false,
+    "requires_tools": ["search"],
+    "candidate_subtasks": ["search_context", "propose_change"],
+    "uncertainty_level": 0.28
+  },
+  "subtasks": [
+    {
+      "subtask_id": "st_g003_01",
+      "parent_task_id": "t_golden_003",
+      "subtask_type": "search_context",
+      "goal": "collect context",
+      "local_scenario": "research_background",
+      "required_tools": ["search"],
+      "constraints": ["read_only"],
+      "done_criteria": ["3 sources collected"]
+    }
+  ]
+}

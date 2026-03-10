@@ -1,0 +1,733 @@
+{
+  "hook": "before_task",
+  "timestamp": "2026-03-08T22:30:01.592554",
+  "task": {
+    "task_id": "t_20260308_782a",
+    "parent_task_id": null,
+    "task_type": "automation",
+    "scenario": "automation_setup",
+    "complexity_level": "L0",
+    "risk_level": "low",
+    "file_write_flag": false,
+    "file_scope": null,
+    "requires_tools": [
+      "conversation"
+    ],
+    "candidate_subtasks": [
+      "design_workflow",
+      "implement_script",
+      "setup_schedule"
+    ],
+    "uncertainty_level": 0.6,
+    "priority": "P2",
+    "tags": [
+      "automation",
+      "scheduled",
+      "automation_setup"
+    ],
+    "created_at": "2026-03-08T22:30:01.587001",
+    "raw_message": "cron-learning-cycle"
+  },
+  "memory_retrieval": {
+    "timestamp": "2026-03-08T22:30:01.592544",
+    "rules_track": {
+      "task_type": "automation",
+      "scenario": "automation_setup",
+      "risk_level": "low",
+      "rules": {
+        "P0_HARD": [
+          {
+            "id": "p0_001",
+            "name": "private_data_stays_private",
+            "description": "Private data must never be exfiltrated",
+            "priority": "P0",
+            "enforced": true
+          },
+          {
+            "id": "p0_002",
+            "name": "no_unauthorized_write",
+            "description": "Cannot write outside allowed file scope",
+            "priority": "P0",
+            "enforced": true
+          },
+          {
+            "id": "p0_003",
+            "name": "ask_before_external_actions",
+            "description": "Must ask before sending emails, tweets, etc",
+            "priority": "P0",
+            "enforced": true
+          },
+          {
+            "id": "p0_004",
+            "name": "high_risk_requires_approval",
+            "description": "High risk tasks require explicit approval",
+            "priority": "P0",
+            "enforced": true
+          }
+        ],
+        "P1_GOVERNANCE": [],
+        "P2_TASK_TYPE": [
+          {
+            "id": "p2_a001",
+            "name": "backup_before",
+            "rule": "Create backup before automation"
+          },
+          {
+            "id": "p2_a002",
+            "name": "log_actions",
+            "rule": "Log all automated actions"
+          },
+          {
+            "id": "p2_a003",
+            "name": "rollback_capability",
+            "rule": "Include rollback capability"
+          }
+        ],
+        "P3_SCENARIO": [],
+        "P4_SUGGESTION": [
+          {
+            "id": "p4_001",
+            "name": "use_cache",
+            "rule": "Consider caching results"
+          },
+          {
+            "id": "p4_002",
+            "name": "log_performance",
+            "rule": "Log performance metrics"
+          }
+        ]
+      },
+      "governance": {
+        "level": "advisory",
+        "auto_approve_categories": [
+          "scenario_discovery",
+          "knowledge"
+        ],
+        "auto_approve_min_confidence": 0.8
+      }
+    },
+    "experience_track": {
+      "episodic": {
+        "similar_tasks": [
+          {
+            "task_id": "t_20260308_4efd",
+            "event": "started",
+            "timestamp": "2026-03-08T20:55:01.185114",
+            "task_type": "automation",
+            "scenario": "automation_setup",
+            "risk_level": "low",
+            "tags": [
+              "automation",
+              "automation_setup",
+              "scheduled"
+            ],
+            "uncertainty": 0.6,
+            "similarity_score": 1.0
+          },
+          {
+            "task_id": "t_20260308_9eb3",
+            "event": "started",
+            "timestamp": "2026-03-08T21:00:01.911489",
+            "task_type": "automation",
+            "scenario": "automation_setup",
+            "risk_level": "low",
+            "tags": [
+              "scheduled",
+              "automation_setup",
+              "automation"
+            ],
+            "uncertainty": 0.6,
+            "similarity_score": 1.0
+          },
+          {
+            "task_id": "t_20260308_8b4f",
+            "event": "started",
+            "timestamp": "2026-03-08T21:05:01.506937",
+            "task_type": "automation",
+            "scenario": "automation_setup",
+            "risk_level": "low",
+            "tags": [
+              "automation",
+              "automation_setup",
+              "scheduled"
+            ],
+            "uncertainty": 0.6,
+            "similarity_score": 1.0
+          },
+          {
+            "task_id": "t_20260308_2953",
+            "event": "started",
+            "timestamp": "2026-03-08T21:10:01.364869",
+            "task_type": "automation",
+            "scenario": "automation_setup",
+            "risk_level": "low",
+            "tags": [
+              "scheduled",
+              "automation",
+              "automation_setup"
+            ],
+            "uncertainty": 0.6,
+            "similarity_score": 1.0
+          },
+          {
+            "task_id": "t_20260308_d5ab",
+            "event": "started",
+            "timestamp": "2026-03-08T21:15:01.506266",
+            "task_type": "automation",
+            "scenario": "automation_setup",
+            "risk_level": "low",
+            "tags": [
+              "automation_setup",
+              "automation",
+              "scheduled"
+            ],
+            "uncertainty": 0.6,
+            "similarity_score": 1.0
+          },
+          {
+            "task_id": "t_20260308_9b62",
+            "event": "started",
+            "timestamp": "2026-03-08T21:20:01.543865",
+            "task_type": "automation",
+            "scenario": "automation_setup",
+            "risk_level": "low",
+            "tags": [
+              "automation_setup",
+              "automation",
+              "scheduled"
+            ],
+            "uncertainty": 0.6,
+            "similarity_score": 1.0
+          },
+          {
+            "task_id": "t_20260308_0a7a",
+            "event": "started",
+            "timestamp": "2026-03-08T21:25:01.847345",
+            "task_type": "automation",
+            "scenario": "automation_setup",
+            "risk_level": "low",
+            "tags": [
+              "automation_setup",
+              "automation",
+              "scheduled"
+            ],
+            "uncertainty": 0.6,
+            "similarity_score": 1.0
+          },
+          {
+            "task_id": "t_20260308_d6ac",
+            "event": "started",
+            "timestamp": "2026-03-08T21:30:01.263702",
+            "task_type": "automation",
+            "scenario": "automation_setup",
+            "risk_level": "low",
+            "tags": [
+              "automation_setup",
+              "automation",
+              "scheduled"
+            ],
+            "uncertainty": 0.6,
+            "similarity_score": 1.0
+          },
+          {
+            "task_id": "t_20260308_9d57",
+            "event": "started",
+            "timestamp": "2026-03-08T21:35:01.457360",
+            "task_type": "automation",
+            "scenario": "automation_setup",
+            "risk_level": "low",
+            "tags": [
+              "scheduled",
+              "automation_setup",
+              "automation"
+            ],
+            "uncertainty": 0.6,
+            "similarity_score": 1.0
+          },
+          {
+            "task_id": "t_20260308_2505",
+            "event": "started",
+            "timestamp": "2026-03-08T21:45:01.728182",
+            "task_type": "automation",
+            "scenario": "automation_setup",
+            "risk_level": "low",
+            "tags": [
+              "scheduled",
+              "automation",
+              "automation_setup"
+            ],
+            "uncertainty": 0.6,
+            "similarity_score": 1.0
+          }
+        ],
+        "success_patterns": [],
+        "failure_patterns": [
+          {
+            "task_id": "t_20260308_4efd",
+            "task_type": "automation",
+            "outcome": null,
+            "timestamp": "2026-03-08T20:55:01.185114",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260308_9eb3",
+            "task_type": "automation",
+            "outcome": null,
+            "timestamp": "2026-03-08T21:00:01.911489",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260308_8b4f",
+            "task_type": "automation",
+            "outcome": null,
+            "timestamp": "2026-03-08T21:05:01.506937",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260308_2953",
+            "task_type": "automation",
+            "outcome": null,
+            "timestamp": "2026-03-08T21:10:01.364869",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260308_d5ab",
+            "task_type": "automation",
+            "outcome": null,
+            "timestamp": "2026-03-08T21:15:01.506266",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260308_9b62",
+            "task_type": "automation",
+            "outcome": null,
+            "timestamp": "2026-03-08T21:20:01.543865",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260308_0a7a",
+            "task_type": "automation",
+            "outcome": null,
+            "timestamp": "2026-03-08T21:25:01.847345",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260308_d6ac",
+            "task_type": "automation",
+            "outcome": null,
+            "timestamp": "2026-03-08T21:30:01.263702",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260308_9d57",
+            "task_type": "automation",
+            "outcome": null,
+            "timestamp": "2026-03-08T21:35:01.457360",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260308_2505",
+            "task_type": "automation",
+            "outcome": null,
+            "timestamp": "2026-03-08T21:45:01.728182",
+            "reasons": [
+              "Unknown"
+            ]
+          }
+        ],
+        "learned_lessons": [
+          "Historical success rate: 0% (0/10)",
+          "Common issues to avoid:",
+          "  • unknown... (10x)"
+        ],
+        "skill_recommendations": [],
+        "confidence": 0.0
+      },
+      "semantic": [],
+      "memories": [],
+      "candidate": [],
+      "graph": []
+    },
+    "context_summary": "📊 经验:\n   • Historical success rate: 0% (0/10)\n   • Common issues to avoid:\n   •   • unknown... (10x)\n\n⚠️ 注意:\n   • 历史有 10 次失败记录",
+    "hits": {
+      "rules": true,
+      "episodic": true,
+      "semantic": false,
+      "memories": false,
+      "candidate": false,
+      "graph": false
+    },
+    "retrieval_stats": {
+      "total_calls": 19,
+      "updated_at": "2026-03-08T22:30:01.592396",
+      "tracks": {
+        "rules": {
+          "hit": 19,
+          "miss": 0
+        },
+        "episodic": {
+          "hit": 18,
+          "miss": 1
+        },
+        "semantic": {
+          "hit": 0,
+          "miss": 19
+        },
+        "memories": {
+          "hit": 0,
+          "miss": 19
+        },
+        "candidate": {
+          "hit": 0,
+          "miss": 19
+        },
+        "graph": {
+          "hit": 0,
+          "miss": 19
+        }
+      }
+    }
+  },
+  "rules": {
+    "P0_HARD": [
+      {
+        "id": "p0_001",
+        "name": "private_data_stays_private",
+        "description": "Private data must never be exfiltrated",
+        "priority": "P0",
+        "enforced": true
+      },
+      {
+        "id": "p0_002",
+        "name": "no_unauthorized_write",
+        "description": "Cannot write outside allowed file scope",
+        "priority": "P0",
+        "enforced": true
+      },
+      {
+        "id": "p0_003",
+        "name": "ask_before_external_actions",
+        "description": "Must ask before sending emails, tweets, etc",
+        "priority": "P0",
+        "enforced": true
+      },
+      {
+        "id": "p0_004",
+        "name": "high_risk_requires_approval",
+        "description": "High risk tasks require explicit approval",
+        "priority": "P0",
+        "enforced": true
+      }
+    ],
+    "P1_GOVERNANCE": [],
+    "P2_TASK_TYPE": [
+      {
+        "id": "p2_a001",
+        "name": "backup_before",
+        "rule": "Create backup before automation"
+      },
+      {
+        "id": "p2_a002",
+        "name": "log_actions",
+        "rule": "Log all automated actions"
+      },
+      {
+        "id": "p2_a003",
+        "name": "rollback_capability",
+        "rule": "Include rollback capability"
+      }
+    ],
+    "P3_SCENARIO": [],
+    "P4_SUGGESTION": [
+      {
+        "id": "p4_001",
+        "name": "use_cache",
+        "rule": "Consider caching results"
+      },
+      {
+        "id": "p4_002",
+        "name": "log_performance",
+        "rule": "Log performance metrics"
+      }
+    ]
+  },
+  "rule_constraints": {
+    "blocking_rules": [],
+    "blocking_count": 0
+  },
+  "rule_description": "P0:4 P1:0 P2:3 P3:0",
+  "experience": {
+    "similar_tasks": [
+      {
+        "task_id": "t_20260308_4efd",
+        "event": "started",
+        "timestamp": "2026-03-08T20:55:01.185114",
+        "task_type": "automation",
+        "scenario": "automation_setup",
+        "risk_level": "low",
+        "tags": [
+          "automation",
+          "automation_setup",
+          "scheduled"
+        ],
+        "uncertainty": 0.6,
+        "similarity_score": 1.0
+      },
+      {
+        "task_id": "t_20260308_9eb3",
+        "event": "started",
+        "timestamp": "2026-03-08T21:00:01.911489",
+        "task_type": "automation",
+        "scenario": "automation_setup",
+        "risk_level": "low",
+        "tags": [
+          "scheduled",
+          "automation_setup",
+          "automation"
+        ],
+        "uncertainty": 0.6,
+        "similarity_score": 1.0
+      },
+      {
+        "task_id": "t_20260308_8b4f",
+        "event": "started",
+        "timestamp": "2026-03-08T21:05:01.506937",
+        "task_type": "automation",
+        "scenario": "automation_setup",
+        "risk_level": "low",
+        "tags": [
+          "automation",
+          "automation_setup",
+          "scheduled"
+        ],
+        "uncertainty": 0.6,
+        "similarity_score": 1.0
+      },
+      {
+        "task_id": "t_20260308_2953",
+        "event": "started",
+        "timestamp": "2026-03-08T21:10:01.364869",
+        "task_type": "automation",
+        "scenario": "automation_setup",
+        "risk_level": "low",
+        "tags": [
+          "scheduled",
+          "automation",
+          "automation_setup"
+        ],
+        "uncertainty": 0.6,
+        "similarity_score": 1.0
+      },
+      {
+        "task_id": "t_20260308_d5ab",
+        "event": "started",
+        "timestamp": "2026-03-08T21:15:01.506266",
+        "task_type": "automation",
+        "scenario": "automation_setup",
+        "risk_level": "low",
+        "tags": [
+          "automation_setup",
+          "automation",
+          "scheduled"
+        ],
+        "uncertainty": 0.6,
+        "similarity_score": 1.0
+      },
+      {
+        "task_id": "t_20260308_9b62",
+        "event": "started",
+        "timestamp": "2026-03-08T21:20:01.543865",
+        "task_type": "automation",
+        "scenario": "automation_setup",
+        "risk_level": "low",
+        "tags": [
+          "automation_setup",
+          "automation",
+          "scheduled"
+        ],
+        "uncertainty": 0.6,
+        "similarity_score": 1.0
+      },
+      {
+        "task_id": "t_20260308_0a7a",
+        "event": "started",
+        "timestamp": "2026-03-08T21:25:01.847345",
+        "task_type": "automation",
+        "scenario": "automation_setup",
+        "risk_level": "low",
+        "tags": [
+          "automation_setup",
+          "automation",
+          "scheduled"
+        ],
+        "uncertainty": 0.6,
+        "similarity_score": 1.0
+      },
+      {
+        "task_id": "t_20260308_d6ac",
+        "event": "started",
+        "timestamp": "2026-03-08T21:30:01.263702",
+        "task_type": "automation",
+        "scenario": "automation_setup",
+        "risk_level": "low",
+        "tags": [
+          "automation_setup",
+          "automation",
+          "scheduled"
+        ],
+        "uncertainty": 0.6,
+        "similarity_score": 1.0
+      },
+      {
+        "task_id": "t_20260308_9d57",
+        "event": "started",
+        "timestamp": "2026-03-08T21:35:01.457360",
+        "task_type": "automation",
+        "scenario": "automation_setup",
+        "risk_level": "low",
+        "tags": [
+          "scheduled",
+          "automation_setup",
+          "automation"
+        ],
+        "uncertainty": 0.6,
+        "similarity_score": 1.0
+      },
+      {
+        "task_id": "t_20260308_2505",
+        "event": "started",
+        "timestamp": "2026-03-08T21:45:01.728182",
+        "task_type": "automation",
+        "scenario": "automation_setup",
+        "risk_level": "low",
+        "tags": [
+          "scheduled",
+          "automation",
+          "automation_setup"
+        ],
+        "uncertainty": 0.6,
+        "similarity_score": 1.0
+      }
+    ],
+    "success_patterns": [],
+    "failure_patterns": [
+      {
+        "task_id": "t_20260308_4efd",
+        "task_type": "automation",
+        "outcome": null,
+        "timestamp": "2026-03-08T20:55:01.185114",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260308_9eb3",
+        "task_type": "automation",
+        "outcome": null,
+        "timestamp": "2026-03-08T21:00:01.911489",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260308_8b4f",
+        "task_type": "automation",
+        "outcome": null,
+        "timestamp": "2026-03-08T21:05:01.506937",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260308_2953",
+        "task_type": "automation",
+        "outcome": null,
+        "timestamp": "2026-03-08T21:10:01.364869",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260308_d5ab",
+        "task_type": "automation",
+        "outcome": null,
+        "timestamp": "2026-03-08T21:15:01.506266",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260308_9b62",
+        "task_type": "automation",
+        "outcome": null,
+        "timestamp": "2026-03-08T21:20:01.543865",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260308_0a7a",
+        "task_type": "automation",
+        "outcome": null,
+        "timestamp": "2026-03-08T21:25:01.847345",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260308_d6ac",
+        "task_type": "automation",
+        "outcome": null,
+        "timestamp": "2026-03-08T21:30:01.263702",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260308_9d57",
+        "task_type": "automation",
+        "outcome": null,
+        "timestamp": "2026-03-08T21:35:01.457360",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260308_2505",
+        "task_type": "automation",
+        "outcome": null,
+        "timestamp": "2026-03-08T21:45:01.728182",
+        "reasons": [
+          "Unknown"
+        ]
+      }
+    ],
+    "learned_lessons": [
+      "Historical success rate: 0% (0/10)",
+      "Common issues to avoid:",
+      "  • unknown... (10x)"
+    ],
+    "skill_recommendations": [],
+    "confidence": 0.0
+  },
+  "context_summary": "📊 经验:\n   • Historical success rate: 0% (0/10)\n   • Common issues to avoid:\n   •   • unknown... (10x)\n\n⚠️ 注意:\n   • 历史有 10 次失败记录",
+  "ready_to_execute": true
+}

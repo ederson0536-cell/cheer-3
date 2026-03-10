@@ -1,0 +1,31 @@
+{
+  "candidate_memory": {
+    "description": "Candidate Knowledge - 待验证的知识",
+    "lifecycle": {
+      "created": "新发现的知识片段",
+      "validating": "正在验证中",
+      "validated": "验证通过，可晋升",
+      "rejected": "验证失败，降权或归档",
+      "promoted": "已晋升到语义记忆"
+    },
+    "validation_criteria": {
+      "min_occurrences": 3,
+      "max_validation_days": 7,
+      "success_threshold": 0.7
+    }
+  },
+  "promotion_rules": {
+    "episodic_to_semantic": [
+      "连续 N>=3 次相似场景验证有效",
+      "未触发高风险冲突(P0/P1)",
+      "未违反硬规则与治理规则",
+      "返工率低于阈值(<15%)",
+      "通过 Governance Gate review"
+    ],
+    "candidate_to_semantic": [
+      "验证通过率 >= 70%",
+      "至少在3个不同任务中验证",
+      "无负面反馈"
+    ]
+  }
+}

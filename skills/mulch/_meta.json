@@ -1,0 +1,36 @@
+{
+  "slug": "mulch",
+  "name": "Mulch Self Improver",
+  "description": "Token-efficient memory system using Code Mode - only 2 tools: search() and execute(). 99.9% token savings. v2.1.0 adds Smart Domain Inference.",
+  "version": "2.1.0",
+  "author": "RuneweaverStudios",
+  "tags": ["memory", "learning", "code-mode", "token-optimization", "smart-inference"],
+  "tools": [
+    {
+      "name": "search",
+      "description": "Filter memories using JavaScript code - only loads relevant learnings, not entire history",
+      "params": {
+        "code": "JS filter code, e.g., 'r => r.type === \"failure\"'"
+      }
+    },
+    {
+      "name": "execute",
+      "description": "Record or query learnings. Smart domain inference automatically detects domain from content if not provided.",
+      "params": {
+        "action": "record|query|promote|notify",
+        "domain": "Domain name (optional - auto-inferred if not provided)",
+        "type": "failure|convention|pattern|decision|guide|reference",
+        "description": "What was learned",
+        "resolution": "How to fix/handle",
+        "content": "Content to infer domain from",
+        "path": "File path for additional context"
+      }
+    }
+  ],
+  "tokenSavings": "99.9% (500 tokens vs 50,000+)",
+  "smartInference": {
+    "domains": ["Skills", "GitHub", "OpenClaw", "Telegram", "Sly", "Social", "Memory", "Config", "Automation", "Browser", "Dependencies", "Vision", "Weather", "Humanizer", "Mulch", "General"],
+    "enabled": true
+  },
+  "publishedAt": 1771777713337
+}

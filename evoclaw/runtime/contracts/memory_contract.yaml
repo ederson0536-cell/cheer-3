@@ -1,0 +1,45 @@
+version: 1
+name: memory_write_read_contract
+
+stores:
+  runtime:
+    path: logs/runtime/
+    write_by: [runtime]
+    object_types: [task_trace, subtask_trace, decision_wal, recovery_note]
+  episodic:
+    path: memory/episodic/
+    write_by: [runtime, processor]
+    object_types: [experience_event, failure_event, routing_outcome]
+  semantic:
+    path: memory/semantic/
+    write_by: [publisher]
+    object_types: [stable_rule, stable_pattern]
+  candidate:
+    path: memory/candidate/
+    write_by: [processor]
+    object_types: [knowledge_candidate, proposal_candidate]
+  rules_active:
+    path: rules/active/
+    write_by: [publisher]
+    object_types: [rule_set]
+  rules_candidate:
+    path: rules/candidate/
+    write_by: [processor]
+    object_types: [rule_candidate]
+
+read_contract:
+  recall_flow:
+    - step: rules_track
+      sources: [rules_active, semantic]
+      constraints: "must check P0/P1 first"
+    - step: experience_track
+      sources: [episodic, runtime]
+      constraints: "match local_scenario + failure_mode"
+    - step: candidate_suggestions
+      sources: [candidate]
+      constraints: "advisory only, cannot override rules"
+
+write_guardrails:
+  - "runtime cannot write semantic/rules_active directly"
+  - "processor cannot publish to active state"
+  - "publisher must reference review_id + canary_report_id"

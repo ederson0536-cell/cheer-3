@@ -1,0 +1,25 @@
+{
+  "name": "novyx-memory",
+  "version": "2.0.0",
+  "description": "Persistent memory with rollback, search, and audit trails for OpenClaw agents.",
+  "main": "index.js",
+  "scripts": {
+    "test": "node verify_install.js"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "dotenv": "^16.3.0"
+  },
+  "keywords": [
+    "openclaw",
+    "memory",
+    "novyx",
+    "persistence",
+    "agent",
+    "rollback",
+    "audit",
+    "semantic-search"
+  ],
+  "author": "Novyx Labs",
+  "license": "MIT"
+}

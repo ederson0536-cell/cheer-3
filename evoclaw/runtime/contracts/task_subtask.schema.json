@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openclaw.local/runtime/contracts/task_subtask.schema.json",
+  "title": "Task and Subtask Contract",
+  "type": "object",
+  "required": ["task", "subtasks"],
+  "properties": {
+    "task": {
+      "$ref": "#/$defs/task"
+    },
+    "subtasks": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/subtask"}
+    }
+  },
+  "$defs": {
+    "task": {
+      "type": "object",
+      "required": [
+        "task_id",
+        "task_type",
+        "scenario",
+        "complexity_level",
+        "risk_level",
+        "file_write_flag",
+        "requires_tools",
+        "candidate_subtasks",
+        "uncertainty_level"
+      ],
+      "properties": {
+        "task_id": {"type": "string", "pattern": "^t_[A-Za-z0-9_-]+$"},
+        "parent_task_id": {"type": ["string", "null"]},
+        "task_type": {"type": "string", "enum": ["coding", "research", "planning", "ops", "qa"]},
+        "scenario": {"type": "string", "minLength": 1},
+        "complexity_level": {"type": "string", "enum": ["L0", "L1", "L2"]},
+        "risk_level": {"type": "string", "enum": ["low", "medium", "high"]},
+        "file_write_flag": {"type": "boolean"},
+        "file_scope": {
+          "type": "array",
+          "items": {"type": "string"},
+          "default": []
+        },
+        "requires_tools": {"type": "array", "items": {"type": "string"}},
+        "candidate_subtasks": {"type": "array", "items": {"type": "string"}},
+        "uncertainty_level": {"type": "number", "minimum": 0, "maximum": 1}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"file_write_flag": {"const": true}}},
+          "then": {"required": ["file_scope"], "properties": {"file_scope": {"minItems": 1}}}
+        }
+      ],
+      "additionalProperties": false
+    },
+    "subtask": {
+      "type": "object",
+      "required": [
+        "subtask_id",
+        "parent_task_id",
+        "subtask_type",
+        "goal",
+        "local_scenario",
+        "required_tools",
+        "constraints",
+        "done_criteria"
+      ],
+      "properties": {
+        "subtask_id": {"type": "string", "pattern": "^st_[A-Za-z0-9_-]+$"},
+        "parent_task_id": {"type": "string", "pattern": "^t_[A-Za-z0-9_-]+$"},
+        "subtask_type": {
+          "type": "string",
+          "enum": ["analyze", "edit_file", "run_validation", "search_context", "propose_change"]
+        },
+        "goal": {"type": "string", "minLength": 1},
+        "local_scenario": {"type": "string", "minLength": 1},
+        "required_tools": {"type": "array", "items": {"type": "string"}},
+        "required_skill": {"type": "string"},
+        "constraints": {"type": "array", "items": {"type": "string"}},
+        "file_scope": {"type": "array", "items": {"type": "string"}},
+        "done_criteria": {"type": "array", "items": {"type": "string"}, "minItems": 1}
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "subtask_type": {"enum": ["edit_file", "run_validation"]}
+            }
+          },
+          "then": {"required": ["file_scope"], "properties": {"file_scope": {"minItems": 1}}}
+        }
+      ],
+      "additionalProperties": false
+    }
+  }
+}

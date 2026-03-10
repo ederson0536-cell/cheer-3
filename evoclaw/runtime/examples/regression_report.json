@@ -1,0 +1,85 @@
+{
+  "meta": {
+    "environment": "staging",
+    "baseline_windows": [
+      "rolling_7d",
+      "rolling_30d"
+    ],
+    "sample_scope": [
+      "golden_runtime_regression",
+      "dirty_input_regression"
+    ]
+  },
+  "results": [
+    {
+      "id": "01_safe_file_write",
+      "suite": "golden",
+      "status": "pass"
+    },
+    {
+      "id": "02_coding_modify",
+      "suite": "golden",
+      "status": "pass"
+    },
+    {
+      "id": "03_research_planning",
+      "suite": "golden",
+      "status": "pass"
+    },
+    {
+      "id": "04_multi_subtask_dependency",
+      "suite": "golden",
+      "status": "pass"
+    },
+    {
+      "id": "05_high_risk_rollback",
+      "suite": "golden",
+      "status": "pass"
+    },
+    {
+      "id": "d01_missing_file_scope",
+      "suite": "dirty",
+      "status": "pass",
+      "expected": "fail"
+    },
+    {
+      "id": "d02_ambiguous_task_type",
+      "suite": "dirty",
+      "status": "pass",
+      "expected": "fail"
+    },
+    {
+      "id": "d03_subtask_overlap",
+      "suite": "dirty",
+      "status": "warning",
+      "expected": "warning"
+    },
+    {
+      "id": "d04_near_threshold_skills",
+      "suite": "dirty",
+      "status": "warning",
+      "expected": "warning"
+    },
+    {
+      "id": "d05_weak_proposal_evidence",
+      "suite": "dirty",
+      "status": "warning",
+      "expected": "warning"
+    }
+  ],
+  "summary": {
+    "pass": 7,
+    "warning": 3,
+    "fail": 0
+  },
+  "baseline_compare": {
+    "rolling_7d": {
+      "task_success_rate": 1.0,
+      "rollback_rate": 0.6
+    },
+    "rolling_30d": {
+      "task_success_rate": 1.0,
+      "rollback_rate": 0.6
+    }
+  }
+}

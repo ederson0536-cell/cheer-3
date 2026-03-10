@@ -1,0 +1,112 @@
+{
+  "style_id": "dark_data",
+  "category": "data_visualization",
+  "verticals": ["SaaS", "marketing", "finance", "newsletter", "analytics"],
+  "description": "Premium dark UI cards with bold stats, clean typography, and subtle depth. Bloomberg Terminal meets Stripe marketing.",
+  "base_prompt": "hyper-realistic 3D render of a floating dark glass dashboard card displaying {content_description}, premium tech aesthetic, {color_mood}",
+  "schema": {
+    "content": {
+      "headline_text": "string — the big number or stat, wrapped in quotes for text rendering. e.g. '\"$200M\"'",
+      "headline_font": "string — specific font, weight, size, color. e.g. 'bold white SF Pro Display, 72pt equivalent'",
+      "subtext": "string — supporting context line. e.g. '\"Annual Revenue · 4-Voice System\"'",
+      "subtext_font": "string — e.g. 'thin Century Gothic, 60% opacity white, 18pt'",
+      "data_elements": ["array of visual data items. e.g. 'small green sparkline chart showing upward trend to the right of the headline', 'two metric pills below reading MRR and YoY Growth in small rounded rectangles'"],
+      "accent_icon": "string or null — optional symbol. e.g. 'small upward arrow icon in accent color next to headline'"
+    },
+    "environment": {
+      "background": "string — e.g. 'deep black (#0A0A0F) with subtle radial gradient to dark navy (#0D1117) at edges'",
+      "depth_elements": ["array. e.g. 'soft frosted glass reflection beneath card at 15% opacity', 'faint dot grid pattern at 3% opacity extending behind card'"],
+      "particles": "string or null — e.g. 'subtle floating bokeh dots in accent color at 8% opacity, scattered in upper portion'"
+    },
+    "card_design": {
+      "material": "string — e.g. 'dark frosted glass with 1px border at 8% white opacity, slight inner blur'",
+      "border_radius": "string — e.g. '24px, smooth corners'",
+      "shadow": "string — e.g. 'deep soft shadow, 40px spread, black at 60% opacity, slight blue tint'",
+      "inner_glow": "string or null — e.g. 'subtle accent color glow along top edge, 2px, 20% opacity'",
+      "padding": "string — e.g. 'generous internal padding, headline is not crammed against edges'"
+    },
+    "color_and_style": {
+      "palette": ["array of 5 hex codes: background, card surface, primary text, accent, secondary accent"],
+      "accent_color": "string — the pop color for highlights, sparklines, and active states",
+      "grade": "string — e.g. 'high contrast, deep true blacks, selective accent saturation, all other colors desaturated'",
+      "overall_style": "string — e.g. 'Linear.app marketing page meets Vercel dashboard aesthetic'"
+    },
+    "camera": {
+      "perspective": "string — e.g. 'slight isometric tilt, 12 degrees from flat, looking slightly down at card surface'",
+      "depth_of_field": "string — e.g. 'moderate, card surface tack-sharp, background particles and reflections softly blurred'"
+    },
+    "output_settings": {
+      "aspect_ratio": "16:9 or 1:1",
+      "resolution": {"width": 1920, "height": 1080},
+      "format": "png"
+    },
+    "negative_prompt": [
+      "no bright white backgrounds",
+      "no cartoon or flat illustration style",
+      "no cluttered UI with too many elements",
+      "no warped or illegible text",
+      "no stock photo watermarks",
+      "no gradients that look like PowerPoint defaults",
+      "no neon glow that looks like gaming aesthetic",
+      "no visible window chrome or browser UI"
+    ]
+  },
+  "presets": {
+    "revenue_card": {
+      "description": "Big revenue number with green sparkline. Growth energy.",
+      "content": {
+        "headline_font": "bold white Inter Black, 72pt equivalent, tight letter-spacing",
+        "subtext_font": "thin SF Pro Display, 40% opacity white, 16pt, generous letter-spacing",
+        "data_elements": ["small bright green sparkline chart trending upward, positioned right of headline", "two rounded metric pills below: one reading 'MRR' in muted text, one reading 'YoY Growth' with small green up-arrow"],
+        "accent_icon": "small green circle with white checkmark, top-right of card"
+      },
+      "color_and_style": {
+        "palette": ["#0A0A0F", "#12121A", "#FFFFFF", "#00D68F", "#1A1A25"],
+        "accent_color": "#00D68F",
+        "overall_style": "Stripe Atlas dashboard meets Bloomberg terminal"
+      }
+    },
+    "performance_card": {
+      "description": "Performance metrics with purple accent. Authority.",
+      "content": {
+        "headline_font": "heavy Impact, white, 80pt, all-caps",
+        "subtext_font": "light Inter, 50% opacity white, 14pt",
+        "data_elements": ["three horizontal bar chart segments in different lengths, purple gradient fill", "small percentage badges at end of each bar"],
+        "accent_icon": "abstract chart icon in accent color, top-left"
+      },
+      "color_and_style": {
+        "palette": ["#0A0A0F", "#12121A", "#FFFFFF", "#6C5CE7", "#FF4757"],
+        "accent_color": "#6C5CE7",
+        "overall_style": "Datadog monitoring dashboard meets Framer marketing site"
+      }
+    },
+    "savings_card": {
+      "description": "Money saved / waste prevented. Red accent for urgency.",
+      "content": {
+        "headline_font": "bold white Helvetica Neue, 80pt, tight tracking",
+        "subtext_font": "regular Inter, 45% opacity white, 15pt",
+        "data_elements": ["downward-trending red line chart showing cost decrease", "single pill badge reading 'Monthly' in muted container"],
+        "accent_icon": "small shield or stop-hand icon in red accent"
+      },
+      "color_and_style": {
+        "palette": ["#0A0A0F", "#12121A", "#FFFFFF", "#FF4757", "#1A1A25"],
+        "accent_color": "#FF4757",
+        "overall_style": "Notion analytics panel meets Arc browser new tab"
+      }
+    },
+    "time_saved_card": {
+      "description": "Time efficiency metric. Blue/cyan accent. Clean.",
+      "content": {
+        "headline_font": "bold white SF Mono, 72pt, monospace feel",
+        "subtext_font": "light Inter, 40% opacity white, 14pt",
+        "data_elements": ["before/after comparison: two numbers side by side with arrow between them", "small clock icon in accent color"],
+        "accent_icon": "minimal clock or timer icon"
+      },
+      "color_and_style": {
+        "palette": ["#0A0A0F", "#12121A", "#FFFFFF", "#4FACFE", "#1A1A25"],
+        "accent_color": "#4FACFE",
+        "overall_style": "Linear changelog card meets Raycast marketing"
+      }
+    }
+  }
+}

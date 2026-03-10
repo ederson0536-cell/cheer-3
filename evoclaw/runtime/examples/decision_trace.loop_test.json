@@ -1,0 +1,367 @@
+{
+  "single_task_loop": {
+    "task_id": "t_001",
+    "before_task": {
+      "task_guardrail_bundle": [
+        "must_follow_P0_P1",
+        "respect_file_scope"
+      ],
+      "task_level_recall_packet": {
+        "rules": [
+          "rule_safe_edit"
+        ],
+        "experience": [
+          "similar_fix_001"
+        ]
+      }
+    },
+    "episodic_write": {
+      "object_type": "routing_outcome",
+      "task_id": "t_001",
+      "selected_skill": "coding_editor_v1",
+      "status": "success"
+    },
+    "proposal": {
+      "proposal_id": "pp_single_001",
+      "source": "after_task",
+      "candidate_type": "routing_weight_update_candidate",
+      "payload": {
+        "target": "coding_editor_v1",
+        "delta": {
+          "w2": 0.01
+        }
+      },
+      "status": "candidate"
+    }
+  },
+  "subtask_loop": {
+    "subtask_count": 3,
+    "decision_traces": [
+      {
+        "trace_version": "1.0.0",
+        "schema_version": "decision-trace@1",
+        "router_version": "router@0.2.0",
+        "policy_version": "policy@2026-03-06",
+        "object_id": "st_001",
+        "decision_type": "subtask_routing",
+        "selected": "generic_helper_v1",
+        "candidates": [
+          "coding_editor_v1",
+          "generic_helper_v1"
+        ],
+        "score_breakdown": {
+          "scenario_match": 0.66
+        },
+        "final_score": 0.66,
+        "decision": "cautious_review_or_canary"
+      },
+      {
+        "trace_version": "1.0.0",
+        "schema_version": "decision-trace@1",
+        "router_version": "router@0.2.0",
+        "policy_version": "policy@2026-03-06",
+        "object_id": "st_002",
+        "decision_type": "subtask_routing",
+        "selected": "coding_editor_v1",
+        "candidates": [
+          "coding_editor_v1",
+          "generic_helper_v1"
+        ],
+        "score_breakdown": {
+          "scenario_match": 0.82
+        },
+        "final_score": 0.82,
+        "decision": "auto_execute"
+      },
+      {
+        "trace_version": "1.0.0",
+        "schema_version": "decision-trace@1",
+        "router_version": "router@0.2.0",
+        "policy_version": "policy@2026-03-06",
+        "object_id": "st_003",
+        "decision_type": "subtask_routing",
+        "selected": "generic_helper_v1",
+        "candidates": [
+          "coding_editor_v1",
+          "generic_helper_v1"
+        ],
+        "score_breakdown": {
+          "scenario_match": 0.66
+        },
+        "final_score": 0.66,
+        "decision": "cautious_review_or_canary"
+      }
+    ],
+    "near_threshold_cases": [
+      "st_001",
+      "st_003"
+    ]
+  },
+  "proposal_publish_loop": {
+    "status_flow": [
+      "draft",
+      "candidate",
+      "review_pending",
+      "canary",
+      "active",
+      "rolled_back"
+    ],
+    "final_action": "rollback",
+    "rollback_reason": "canary_fail_rate_increase"
+  },
+  "failure_injection_loop": {
+    "failure_cases": [
+      {
+        "failure_id": "fail_001",
+        "failure_mode": "memory_miss",
+        "taxonomy_written": true,
+        "proposal": {
+          "proposal_id": "pp_fail_001",
+          "candidate_type": "memory_policy_update_candidate",
+          "status": "candidate"
+        },
+        "publish_decision": "canary",
+        "decision_trace": {
+          "trace_version": "1.0.0",
+          "schema_version": "decision-trace@1",
+          "router_version": "router@0.2.0",
+          "policy_version": "policy@2026-03-06",
+          "object_id": "st_fail_001",
+          "decision_type": "subtask_routing",
+          "selected": "generic_helper_v1",
+          "candidates": [
+            "coding_editor_v1",
+            "generic_helper_v1"
+          ],
+          "score_breakdown": {
+            "failure_penalty": 1.0
+          },
+          "final_score": 0.2,
+          "decision": "cautious_review_or_canary",
+          "metadata": {
+            "injected_failure": "memory_miss"
+          }
+        }
+      },
+      {
+        "failure_id": "fail_002",
+        "failure_mode": "routing_error",
+        "taxonomy_written": true,
+        "proposal": {
+          "proposal_id": "pp_fail_002",
+          "candidate_type": "routing_weight_update_candidate",
+          "status": "candidate"
+        },
+        "publish_decision": "canary",
+        "decision_trace": {
+          "trace_version": "1.0.0",
+          "schema_version": "decision-trace@1",
+          "router_version": "router@0.2.0",
+          "policy_version": "policy@2026-03-06",
+          "object_id": "st_fail_002",
+          "decision_type": "subtask_routing",
+          "selected": "generic_helper_v1",
+          "candidates": [
+            "coding_editor_v1",
+            "generic_helper_v1"
+          ],
+          "score_breakdown": {
+            "failure_penalty": 1.0
+          },
+          "final_score": 0.2,
+          "decision": "cautious_review_or_canary",
+          "metadata": {
+            "injected_failure": "routing_error"
+          }
+        }
+      },
+      {
+        "failure_id": "fail_003",
+        "failure_mode": "tool_error",
+        "taxonomy_written": true,
+        "proposal": {
+          "proposal_id": "pp_fail_003",
+          "candidate_type": "routing_weight_update_candidate",
+          "status": "candidate"
+        },
+        "publish_decision": "rollback",
+        "decision_trace": {
+          "trace_version": "1.0.0",
+          "schema_version": "decision-trace@1",
+          "router_version": "router@0.2.0",
+          "policy_version": "policy@2026-03-06",
+          "object_id": "st_fail_003",
+          "decision_type": "subtask_routing",
+          "selected": "generic_helper_v1",
+          "candidates": [
+            "coding_editor_v1",
+            "generic_helper_v1"
+          ],
+          "score_breakdown": {
+            "failure_penalty": 1.0
+          },
+          "final_score": 0.2,
+          "decision": "reject_auto",
+          "metadata": {
+            "injected_failure": "tool_error"
+          }
+        }
+      },
+      {
+        "failure_id": "fail_004",
+        "failure_mode": "rule_conflict",
+        "taxonomy_written": true,
+        "proposal": {
+          "proposal_id": "pp_fail_004",
+          "candidate_type": "routing_weight_update_candidate",
+          "status": "candidate"
+        },
+        "publish_decision": "rollback",
+        "decision_trace": {
+          "trace_version": "1.0.0",
+          "schema_version": "decision-trace@1",
+          "router_version": "router@0.2.0",
+          "policy_version": "policy@2026-03-06",
+          "object_id": "st_fail_004",
+          "decision_type": "subtask_routing",
+          "selected": "generic_helper_v1",
+          "candidates": [
+            "coding_editor_v1",
+            "generic_helper_v1"
+          ],
+          "score_breakdown": {
+            "failure_penalty": 1.0
+          },
+          "final_score": 0.2,
+          "decision": "reject_auto",
+          "metadata": {
+            "injected_failure": "rule_conflict"
+          }
+        }
+      },
+      {
+        "failure_id": "fail_005",
+        "failure_mode": "file_scope_error",
+        "taxonomy_written": true,
+        "proposal": {
+          "proposal_id": "pp_fail_005",
+          "candidate_type": "routing_weight_update_candidate",
+          "status": "candidate"
+        },
+        "publish_decision": "rollback",
+        "decision_trace": {
+          "trace_version": "1.0.0",
+          "schema_version": "decision-trace@1",
+          "router_version": "router@0.2.0",
+          "policy_version": "policy@2026-03-06",
+          "object_id": "st_fail_005",
+          "decision_type": "subtask_routing",
+          "selected": "generic_helper_v1",
+          "candidates": [
+            "coding_editor_v1",
+            "generic_helper_v1"
+          ],
+          "score_breakdown": {
+            "failure_penalty": 1.0
+          },
+          "final_score": 0.2,
+          "decision": "reject_auto",
+          "metadata": {
+            "injected_failure": "file_scope_error"
+          }
+        }
+      }
+    ],
+    "expectation_source": "/home/bro/.openclaw/workspace-cheer/evoclaw/runtime/contracts/expectations/failure_injection_expectations.json"
+  },
+  "golden_regression": {
+    "suite_name": "golden_runtime_regression",
+    "window": "rolling_30d",
+    "environment": "staging",
+    "total": 5,
+    "passed": 5,
+    "results": [
+      {
+        "id": "01_safe_file_write",
+        "category": "safe_write",
+        "status": "passed"
+      },
+      {
+        "id": "02_coding_modify",
+        "category": "coding_modify",
+        "status": "passed"
+      },
+      {
+        "id": "03_research_planning",
+        "category": "research_planning",
+        "status": "passed"
+      },
+      {
+        "id": "04_multi_subtask_dependency",
+        "category": "multi_subtask_dependency",
+        "status": "passed"
+      },
+      {
+        "id": "05_high_risk_rollback",
+        "category": "high_risk_rollback",
+        "status": "passed"
+      }
+    ]
+  },
+  "baseline_layered_dashboard": {
+    "meta": {
+      "environment": "staging",
+      "baseline_window": "rolling_30d",
+      "sample_scope": "golden_runtime_regression"
+    },
+    "execution_layer": {
+      "task_success_rate": 1.0,
+      "subtask_success_rate": 1.0,
+      "rework_rate": 0.333
+    },
+    "routing_layer": {
+      "auto_execute_ratio": 0.333,
+      "score_distribution": {
+        "auto_execute": 1,
+        "near_threshold": 2,
+        "reject_auto": 0
+      },
+      "near_threshold_cases": [
+        "st_001",
+        "st_003"
+      ]
+    },
+    "evolution_layer": {
+      "proposal_generation_rate": 1.0,
+      "canary_pass_rate": 0.4,
+      "rollback_rate": 0.6
+    },
+    "memory_layer": {
+      "recall_hit_rate": 1.0,
+      "memory_miss_ratio": 0.2,
+      "candidate_promote_rate": 0.0
+    },
+    "top_failure_modes": [
+      [
+        "memory_miss",
+        1
+      ],
+      [
+        "routing_error",
+        1
+      ],
+      [
+        "tool_error",
+        1
+      ],
+      [
+        "rule_conflict",
+        1
+      ],
+      [
+        "file_scope_error",
+        1
+      ]
+    ]
+  }
+}

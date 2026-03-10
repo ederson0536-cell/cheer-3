@@ -1,0 +1,8 @@
+.git
+.learnings
+.mulch
+*.md
+!SKILL.md
+references
+assets
+_meta.json

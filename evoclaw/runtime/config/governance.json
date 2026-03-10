@@ -1,0 +1,13 @@
+{
+  "governance_level": "advisory",
+  "auto_approve_categories": [
+    "scenario_discovery",
+    "knowledge"
+  ],
+  "auto_approve_min_confidence": 0.8,
+  "canary_required_for": [
+    "rule_change",
+    "skill_change"
+  ],
+  "rollback_on_fail": true
+}

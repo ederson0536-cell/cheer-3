@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Task Understanding Schema",
+  "type": "object",
+  "required": ["task_id", "task_type", "scenario", "complexity_level", "risk_level", "file_write_flag", "requires_tools", "candidate_subtasks", "uncertainty_level"],
+  "properties": {
+    "task_id": {"type": "string"},
+    "parent_task_id": {"type": ["string", "null"]},
+    "task_type": {"type": "string", "enum": ["coding", "research", "planning", "writing", "analysis", "automation", "information", "conversation"]},
+    "scenario": {"type": "string"},
+    "complexity_level": {"type": "string", "enum": ["L0", "L1", "L2"]},
+    "risk_level": {"type": "string", "enum": ["low", "medium", "high", "critical"]},
+    "file_write_flag": {"type": "boolean"},
+    "file_scope": {"type": ["array", "null"], "items": {"type": "string"}},
+    "requires_tools": {"type": "array", "items": {"type": "string"}},
+    "candidate_subtasks": {"type": "array", "items": {"type": "string"}},
+    "uncertainty_level": {"type": "number", "minimum": 0, "maximum": 1}
+  }
+}

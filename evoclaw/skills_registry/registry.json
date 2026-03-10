@@ -1,0 +1,335 @@
+{
+  "web_fetch_skill": {
+    "skill_id": "web_fetch_skill",
+    "skill_name": "Web Fetch",
+    "domain": "research",
+    "supported_task_types": [
+      "research",
+      "information"
+    ],
+    "supported_subtask_types": [
+      "fetch"
+    ],
+    "supported_scenarios": [
+      "news_summary",
+      "information_retrieval"
+    ],
+    "required_tools": [
+      "web_fetch"
+    ],
+    "writable_scope": null,
+    "risk_profile": "low",
+    "compatible_rules": [],
+    "incompatible_rules": [],
+    "trust_level": "high",
+    "avg_success_rate": 0.97740563708152,
+    "avg_latency_ms": 847.3456023741222,
+    "avg_rework_rate": 0.014121476824050006,
+    "preferred_scenarios": [
+      "news",
+      "info",
+      "fetch"
+    ],
+    "common_failure_modes": [
+      "network_timeout",
+      "page_not_found"
+    ]
+  },
+  "browser_skill": {
+    "skill_id": "browser_skill",
+    "skill_name": "Browser Automation",
+    "domain": "research",
+    "supported_task_types": [
+      "research",
+      "automation"
+    ],
+    "supported_subtask_types": [
+      "fetch",
+      "analyze"
+    ],
+    "supported_scenarios": [
+      "web_automation",
+      "form_fill"
+    ],
+    "required_tools": [
+      "browser"
+    ],
+    "writable_scope": null,
+    "risk_profile": "medium",
+    "compatible_rules": [],
+    "incompatible_rules": [],
+    "trust_level": "medium",
+    "avg_success_rate": 0.8785,
+    "avg_latency_ms": 6480.25605,
+    "avg_rework_rate": 0.12150000000000001,
+    "preferred_scenarios": [
+      "browser",
+      "automation",
+      "click"
+    ],
+    "common_failure_modes": [
+      "element_not_found",
+      "timeout"
+    ]
+  },
+  "coding_editor": {
+    "skill_id": "coding_editor",
+    "skill_name": "Code Editor",
+    "domain": "engineering",
+    "supported_task_types": [
+      "coding"
+    ],
+    "supported_subtask_types": [
+      "edit_file",
+      "write_output"
+    ],
+    "supported_scenarios": [
+      "code_development",
+      "fix_bug"
+    ],
+    "required_tools": [
+      "filesystem",
+      "exec"
+    ],
+    "writable_scope": [
+      "src/**",
+      "scripts/**",
+      "evoclaw/**"
+    ],
+    "risk_profile": "medium",
+    "compatible_rules": [
+      "preserve_working_code"
+    ],
+    "incompatible_rules": [],
+    "trust_level": "medium",
+    "avg_success_rate": 0.8380000000000001,
+    "avg_latency_ms": 4050.0136500000003,
+    "avg_rework_rate": 0.16200000000000003,
+    "preferred_scenarios": [
+      "code",
+      "script",
+      "fix"
+    ],
+    "common_failure_modes": [
+      "syntax_error",
+      "missing_dependency"
+    ]
+  },
+  "notion_api": {
+    "skill_id": "notion_api",
+    "skill_name": "Notion API",
+    "domain": "automation",
+    "supported_task_types": [
+      "automation",
+      "writing"
+    ],
+    "supported_subtask_types": [
+      "write_output"
+    ],
+    "supported_scenarios": [
+      "notion_update"
+    ],
+    "required_tools": [
+      "exec",
+      "api"
+    ],
+    "writable_scope": null,
+    "risk_profile": "medium",
+    "compatible_rules": [],
+    "incompatible_rules": [],
+    "trust_level": "medium",
+    "avg_success_rate": 0.892,
+    "avg_latency_ms": 3600.0094,
+    "avg_rework_rate": 0.09000000000000001,
+    "preferred_scenarios": [
+      "notion",
+      "upload"
+    ],
+    "common_failure_modes": [
+      "auth_error",
+      "rate_limit"
+    ]
+  },
+  "task_analysis": {
+    "skill_id": "task_analysis",
+    "skill_name": "Task Analysis",
+    "domain": "planning",
+    "supported_task_types": [
+      "planning",
+      "analysis"
+    ],
+    "supported_subtask_types": [
+      "analyze"
+    ],
+    "supported_scenarios": [
+      "task_breakdown",
+      "analysis"
+    ],
+    "required_tools": [
+      "memory"
+    ],
+    "writable_scope": null,
+    "risk_profile": "low",
+    "compatible_rules": [],
+    "incompatible_rules": [],
+    "trust_level": "high",
+    "avg_success_rate": 0.95,
+    "avg_latency_ms": 1000,
+    "avg_rework_rate": 0.03,
+    "preferred_scenarios": [
+      "analyze",
+      "plan"
+    ],
+    "common_failure_modes": []
+  },
+  "weather_skill": {
+    "skill_id": "weather_skill",
+    "skill_name": "Weather Query",
+    "domain": "research",
+    "supported_task_types": [
+      "information"
+    ],
+    "supported_subtask_types": [
+      "fetch"
+    ],
+    "supported_scenarios": [
+      "weather_query"
+    ],
+    "required_tools": [
+      "web_fetch"
+    ],
+    "writable_scope": null,
+    "risk_profile": "low",
+    "compatible_rules": [],
+    "incompatible_rules": [],
+    "trust_level": "high",
+    "avg_success_rate": 0.98,
+    "avg_latency_ms": 2000,
+    "avg_rework_rate": 0.02,
+    "preferred_scenarios": [
+      "weather"
+    ],
+    "common_failure_modes": [
+      "api_error"
+    ]
+  },
+  "cron_scheduler": {
+    "skill_id": "cron_scheduler",
+    "skill_name": "Cron Scheduler",
+    "domain": "automation",
+    "supported_task_types": [
+      "automation"
+    ],
+    "supported_subtask_types": [
+      "coordinate"
+    ],
+    "supported_scenarios": [
+      "automation_setup",
+      "scheduled_task",
+      "cron_job"
+    ],
+    "required_tools": [
+      "exec",
+      "filesystem"
+    ],
+    "writable_scope": [
+      "scripts/**",
+      "cron.d/**"
+    ],
+    "risk_profile": "medium",
+    "compatible_rules": [
+      "log_automation"
+    ],
+    "incompatible_rules": [],
+    "trust_level": "medium",
+    "avg_success_rate": 0.82,
+    "avg_latency_ms": 3000,
+    "avg_rework_rate": 0.15,
+    "preferred_scenarios": [
+      "schedule",
+      "cron",
+      "定时",
+      "提醒",
+      "自动",
+      "scheduled"
+    ],
+    "common_failure_modes": [
+      "cron_syntax_error",
+      "permission_denied"
+    ]
+  },
+  "email_skill": {
+    "skill_id": "email_skill",
+    "skill_name": "Email Handler",
+    "domain": "communication",
+    "supported_task_types": [
+      "automation",
+      "writing"
+    ],
+    "supported_subtasks": [
+      "write_output"
+    ],
+    "supported_scenarios": [
+      "send_email"
+    ],
+    "required_tools": [
+      "message"
+    ],
+    "risk_profile": "medium",
+    "trust_level": "medium",
+    "avg_success_rate": 0.85
+  },
+  "calendar_skill": {
+    "skill_id": "calendar_skill",
+    "skill_name": "Calendar Manager",
+    "domain": "automation",
+    "supported_task_types": [
+      "planning",
+      "automation"
+    ],
+    "supported_subtasks": [
+      "coordinate"
+    ],
+    "required_tools": [
+      "nodes"
+    ],
+    "risk_profile": "medium",
+    "trust_level": "medium",
+    "avg_success_rate": 0.8
+  },
+  "memory_skill": {
+    "skill_id": "memory_skill",
+    "skill_name": "Memory Manager",
+    "domain": "planning",
+    "supported_task_types": [
+      "planning"
+    ],
+    "supported_subtasks": [
+      "analyze"
+    ],
+    "required_tools": [
+      "memory_search"
+    ],
+    "risk_profile": "low",
+    "trust_level": "high",
+    "avg_success_rate": 0.9
+  },
+  "tts_skill": {
+    "skill_id": "tts_skill",
+    "skill_name": "Text to Speech",
+    "domain": "communication",
+    "supported_task_types": [
+      "writing",
+      "information"
+    ],
+    "supported_subtasks": [
+      "write_output"
+    ],
+    "required_tools": [
+      "tts"
+    ],
+    "risk_profile": "low",
+    "trust_level": "high",
+    "avg_success_rate": 0.95
+  }
+}

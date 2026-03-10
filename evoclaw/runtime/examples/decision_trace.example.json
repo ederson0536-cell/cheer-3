@@ -1,0 +1,23 @@
+{
+  "trace_version": "1.0.0",
+  "schema_version": "decision-trace@1",
+  "router_version": "router@0.1.0",
+  "policy_version": "policy@2026-03-06",
+  "object_id": "st_001",
+  "decision_type": "subtask_routing",
+  "selected": "coding_editor_v1",
+  "candidates": ["coding_editor_v1", "generic_helper_v1"],
+  "score_breakdown": {
+    "rule_alignment": 0.9,
+    "success_rate": 0.86,
+    "rework_rate": 0.12,
+    "latency_penalty": 0.2,
+    "trust_level": 0.7,
+    "scenario_match": 0.88
+  },
+  "final_score": 0.594,
+  "decision": "reject_auto",
+  "metadata": {
+    "trace_source": "routing_score.py"
+  }
+}

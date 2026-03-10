@@ -1,0 +1,49 @@
+{
+  "failure_modes": {
+    "understanding_error": {
+      "description": "Task understanding failed - unclear intent or missing context",
+      "indicators": ["high_uncertainty", "ambiguous_message", "missing_context"],
+      "resolution": "Clarify with user or use memory recall"
+    },
+    "routing_error": {
+      "description": "Skill routing selected wrong skill or no skill available",
+      "indicators": ["low_routing_score", "skill_not_found", "wrong_skill_selected"],
+      "resolution": "Update skill registry or routing weights"
+    },
+    "tool_error": {
+      "description": "Tool execution failed - network, permission, or execution error",
+      "indicators": ["timeout", "permission_denied", "network_error", "tool_crash"],
+      "resolution": "Retry with different approach or report tool issue"
+    },
+    "memory_miss": {
+      "description": "Relevant memory not found or retrieval failed",
+      "indicators": ["empty_recall", "wrong_recall", "memory_not_found"],
+      "resolution": "Improve memory indexing or manually add experience"
+    },
+    "rule_conflict": {
+      "description": "Task conflicts with existing rules",
+      "indicators": ["rule_rejected", "permission_denied", "governance_block"],
+      "resolution": "Review rules or escalate to governance"
+    },
+    "execution_timeout": {
+      "description": "Task or subtask exceeded time limit",
+      "indicators": ["timeout", "slow_execution", "stuck"],
+      "resolution": "Break into smaller subtasks or optimize"
+    },
+    "file_scope_error": {
+      "description": "File operation outside allowed scope",
+      "indicators": ["path_rejected", "scope_violation", "permission_error"],
+      "resolution": "Verify file paths or request scope expansion"
+    },
+    "hallucinated_assumption": {
+      "description": "Made incorrect assumptions without verification",
+      "indicators": ["wrong_fact", "unverified_claim", "assumption_failed"],
+      "resolution": "Add verification step to checklist"
+    },
+    "incomplete_validation": {
+      "description": "Output validation failed or incomplete",
+      "indicators": ["validation_failed", "missing_fields", "wrong_format"],
+      "resolution": "Add validation checks or improve output format"
+    }
+  }
+}

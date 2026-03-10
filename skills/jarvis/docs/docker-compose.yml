@@ -1,0 +1,48 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# Jarvis AI Desktop Agent – Docker Compose
+# Startet Jarvis Web-UI + VNC-Desktop + WhatsApp-Bridge (alles in einem Container)
+#
+# Schnellstart:
+#   docker compose up -d
+#   Browser: https://localhost:8000  (SSL-Warnung bestätigen)
+#   Login:   jarvis / jarvis
+# ──────────────────────────────────────────────────────────────────────────────
+
+services:
+
+  # ── Jarvis Haupt-Container (inkl. WhatsApp-Bridge) ────────────────────────
+  jarvis:
+    image: ghcr.io/dev-core-busy/jarvis:latest
+    container_name: jarvis
+    restart: unless-stopped
+    ports:
+      - "8000:8000"   # Web-UI (HTTPS)
+      - "6080:6080"   # noVNC Desktop-Streaming
+    environment:
+      # Docker-Modus aktivieren (deaktiviert PAM-Authentifizierung)
+      JARVIS_DOCKER: "1"
+      # Web-Login Passwort (Benutzername ist immer "jarvis")
+      JARVIS_PASSWORD: "${JARVIS_PASSWORD:-jarvis}"
+      # Server-IP für SSL-Zertifikat (WICHTIG: Auf eigene IP anpassen!)
+      SERVER_IP: "${SERVER_IP:-127.0.0.1}"
+      # LLM API-Keys (alternativ im Web-UI unter Einstellungen eintragen)
+      # GEMINI_API_KEY: "..."
+      # ANTHROPIC_API_KEY: "..."
+      # OPENROUTER_API_KEY: "..."
+    volumes:
+      # Persistente Daten (Memory, Wissensdatenbank, Logs, WhatsApp-Session)
+      - jarvis-data:/app/data
+      # SSL-Zertifikate (werden beim ersten Start automatisch erstellt)
+      - jarvis-certs:/app/certs
+      # WhatsApp-Session (Baileys Auth-Daten persistent)
+      - wa-session:/app/services/whatsapp-bridge/auth
+    shm_size: "256mb"   # Für Browser-Automation empfohlen
+
+# ── Volumes ────────────────────────────────────────────────────────────────────
+volumes:
+  jarvis-data:
+    driver: local
+  jarvis-certs:
+    driver: local
+  wa-session:
+    driver: local

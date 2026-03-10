@@ -1,0 +1,84 @@
+{
+  "style_id": "cinematic_scene",
+  "category": "narrative",
+  "verticals": ["newsletter", "SaaS", "finance", "editorial", "longform", "case_study"],
+  "description": "Movie-still quality scenes with dramatic lighting and deliberate composition. Named director references for specific visual languages. For content that needs to feel important.",
+  "base_prompt": "cinematic film still, {scene_description}, {lighting_description}, directed by {director_reference}, shot on {camera}",
+  "schema": {
+    "scene": {
+      "description": "string — the moment being captured. e.g. 'a man alone in a glass-walled office at night, city lights behind him, staring at multiple monitors showing data dashboards'",
+      "subjects": ["array of people/objects with specific positions. e.g. 'man in dark fitted sweater, seated at desk, body facing monitors, head turned 30 degrees toward camera, face half-lit by screen glow'"],
+      "action": "string — what's happening in this frozen moment. e.g. 'the exact moment of recognizing a pattern in the data — slight forward lean, hand paused over keyboard'",
+      "narrative_tension": "string — what story does this frame imply. e.g. 'the weight of a decision that will affect the company, isolation of leadership, late-night clarity'"
+    },
+    "environment": {
+      "location": "string — specific place. e.g. 'corner office on 30th floor, floor-to-ceiling glass on two walls'",
+      "time": "string — exact time and weather. e.g. '11:47pm, clear night, city lights visible for miles'",
+      "production_design": "string — e.g. 'minimalist modern with cold materials — glass, steel, concrete. Single warm element: amber whiskey in crystal glass on desk'",
+      "practical_lights": ["array of in-scene light sources. e.g. 'three monitors casting blue-white glow on face and desk', 'single desk lamp with warm Edison bulb behind monitors', 'city lights creating bokeh through rain-spotted windows'"]
+    },
+    "camera": {
+      "camera_model": "string — e.g. 'ARRI Alexa Mini LF' for digital cinema, 'Panavision Millennium DXL2' for classic Hollywood",
+      "lens": "string — specific cinema lens. e.g. 'Cooke S7/i 40mm T2.0 anamorphic' or 'Zeiss Master Prime 50mm T1.3'",
+      "aperture": "string — e.g. 'T2.0, wide open for selective focus'",
+      "shot_type": "string — e.g. 'medium shot, subject positioned at left third of frame, negative space on right showing city through glass'",
+      "movement": "string — e.g. 'static, locked off on tripod, deliberate composed framing — this is a moment, not an action'",
+      "aspect_ratio_native": "string — e.g. '2.39:1 anamorphic widescreen' or '1.85:1 flat widescreen'"
+    },
+    "lighting": {
+      "key_light": "string — motivated, directional. e.g. 'monitor glow as key light, cool blue-white, illuminating left side of face with sharp falloff'",
+      "fill_light": "string — e.g. 'city ambient through windows, very dim, just enough to separate subject from pure black'",
+      "practicals": "string — e.g. 'desk lamp creates warm pool of light on papers and whiskey glass, contrasting with cool monitor light'",
+      "color_temperature": "string — e.g. 'mixed: cool 6500K from screens, warm 2700K from desk lamp, creating deliberate color contrast on face'",
+      "contrast_ratio": "string — e.g. '6:1 on face — dramatic but readable, shadow side has detail not pure black'"
+    },
+    "color_and_style": {
+      "palette": ["5 hex codes. e.g. '#0D1117', '#1E3A5F', '#F5E6D3', '#4FACFE', '#FF8C42'"],
+      "grade": "string — specific DI reference. e.g. 'teal shadows with warm skin tones preserved, crushed blacks with slight blue shift, highlights roll off naturally — Deakins-style precision'",
+      "film_response": "string or null — e.g. 'emulate ARRI LogC to Rec.709 with custom LUT, natural skin rolloff'",
+      "overall_style": "string — e.g. 'The Social Network boardroom scene meets Sicario border crossing — cold precision with human warmth underneath'",
+      "director_reference": "string — e.g. 'David Fincher' or 'Denis Villeneuve' or 'Sofia Coppola' or 'Christopher Nolan'"
+    },
+    "output_settings": {
+      "aspect_ratio": "string — 2.39:1, 16:9, or 21:9 for cinematic",
+      "resolution": {"width": 2048, "height": 858},
+      "format": "png"
+    },
+    "negative_prompt": [
+      "no over-lit flat lighting — this is cinema not corporate video",
+      "no Dutch angles unless explicitly specified",
+      "no visible crew, equipment, or C-stands",
+      "no cheesy lens flares or anamorphic streak abuse",
+      "no HDR tonemapping look",
+      "no color banding in dark gradients",
+      "no uncanny valley faces — if people are present they look real",
+      "no generic office stock photo staging"
+    ]
+  },
+  "presets": {
+    "late_night_office": {
+      "description": "Solo founder working late. Isolation, focus, weight of decisions. Fincher energy.",
+      "scene": {"narrative_tension": "the isolation of building something alone at night when the world is asleep"},
+      "environment": {"time": "11:47pm, clear night", "production_design": "minimal, cold materials, single warm accent"},
+      "camera": {"camera_model": "ARRI Alexa Mini LF", "lens": "Cooke S7/i 40mm T2.0", "shot_type": "medium, subject at left third", "aspect_ratio_native": "2.39:1"},
+      "lighting": {"key_light": "monitor glow, cool blue-white", "color_temperature": "mixed cool/warm", "contrast_ratio": "6:1"},
+      "color_and_style": {"grade": "teal shadows, warm skin, crushed blacks", "director_reference": "David Fincher", "overall_style": "The Social Network meets Zodiac — obsessive late-night energy"}
+    },
+    "morning_strategy": {
+      "description": "Early morning boardroom or kitchen table. The calm before execution. Villeneuve stillness.",
+      "scene": {"narrative_tension": "the quiet moment of clarity before a big move — coffee, notes, the plan coming together"},
+      "environment": {"time": "6:15am, dawn light just starting, pre-sunrise blue hour", "production_design": "clean surfaces, morning ritual objects — coffee, notebook, phone face-down"},
+      "camera": {"camera_model": "RED V-Raptor", "lens": "Zeiss Master Prime 50mm T1.3", "shot_type": "wide establishing then medium close-up", "aspect_ratio_native": "2.39:1"},
+      "lighting": {"key_light": "pre-dawn blue light through windows, cool and ethereal", "practicals": "single warm kitchen light or candle", "color_temperature": "cool dominant with warm accent", "contrast_ratio": "3:1, softer than night scenes"},
+      "color_and_style": {"grade": "blue hour desaturation, skin warmth preserved, lifted shadows", "director_reference": "Denis Villeneuve", "overall_style": "Arrival morning scenes meets Blade Runner 2049 interiors — vast quiet spaces"}
+    },
+    "deal_room": {
+      "description": "The moment a deal closes or a pitch lands. Controlled tension. Sorkin energy.",
+      "scene": {"narrative_tension": "the held breath between the ask and the answer — professional stakes, human emotion"},
+      "environment": {"time": "2:30pm, afternoon sun filtering through half-closed blinds", "production_design": "upscale conference room, dark wood table, water glasses, documents, clean and powerful"},
+      "camera": {"camera_model": "Panavision Millennium DXL2", "lens": "Panavision Primo 75mm T1.9", "shot_type": "tight medium shot across table, shallow focus on speaker, listener soft in foreground", "aspect_ratio_native": "1.85:1"},
+      "lighting": {"key_light": "afternoon sun through venetian blinds creating horizontal stripe shadows across room", "fill_light": "bounce from white ceiling, subtle", "contrast_ratio": "4:1"},
+      "color_and_style": {"grade": "warm amber from sun, cool shadows in unlit areas, rich wood tones", "director_reference": "Aaron Sorkin / cinematographer Thomas Newman", "overall_style": "Steve Jobs conference room meets Moneyball negotiation — intellect meets stakes"}
+    }
+  }
+}

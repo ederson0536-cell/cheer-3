@@ -1,0 +1,89 @@
+{
+  "package": "real_sample.config_update",
+  "subtask_count": 3,
+  "decision_traces": [
+    {
+      "trace_version": "1.0.0",
+      "schema_version": "decision-trace@1",
+      "router_version": "router@0.2.0",
+      "policy_version": "policy@2026-03-06",
+      "object_id": "st_real_001",
+      "decision_type": "subtask_routing",
+      "selected": "generic_helper_v1",
+      "candidates": [
+        "coding_editor_v1",
+        "generic_helper_v1"
+      ],
+      "score_breakdown": {
+        "scenario_match": 0.67
+      },
+      "final_score": 0.67,
+      "decision": "cautious_review_or_canary"
+    },
+    {
+      "trace_version": "1.0.0",
+      "schema_version": "decision-trace@1",
+      "router_version": "router@0.2.0",
+      "policy_version": "policy@2026-03-06",
+      "object_id": "st_real_002",
+      "decision_type": "subtask_routing",
+      "selected": "coding_editor_v1",
+      "candidates": [
+        "coding_editor_v1",
+        "generic_helper_v1"
+      ],
+      "score_breakdown": {
+        "scenario_match": 0.81
+      },
+      "final_score": 0.81,
+      "decision": "auto_execute"
+    },
+    {
+      "trace_version": "1.0.0",
+      "schema_version": "decision-trace@1",
+      "router_version": "router@0.2.0",
+      "policy_version": "policy@2026-03-06",
+      "object_id": "st_real_003",
+      "decision_type": "subtask_routing",
+      "selected": "generic_helper_v1",
+      "candidates": [
+        "coding_editor_v1",
+        "generic_helper_v1"
+      ],
+      "score_breakdown": {
+        "scenario_match": 0.67
+      },
+      "final_score": 0.67,
+      "decision": "cautious_review_or_canary"
+    }
+  ],
+  "proposal_flow": {
+    "proposal": {
+      "proposal_id": "pp_real_001",
+      "source": "after_task",
+      "candidate_type": "routing_weight_update_candidate",
+      "payload": {
+        "target": "coding_editor_v1",
+        "delta": {
+          "w2": 0.01
+        }
+      },
+      "status": "review_pending"
+    },
+    "review": {
+      "review_id": "rv_real_001",
+      "proposal_id": "pp_real_001",
+      "decision": "canary_only",
+      "reviewer": "governance_gate",
+      "notes": "real sample canary"
+    },
+    "publish": {
+      "publish_id": "pb_real_001",
+      "proposal_id": "pp_real_001",
+      "action": "canary",
+      "status": "queued",
+      "canary_report_id": null,
+      "rollback_reason": null
+    }
+  }
+}

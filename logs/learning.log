@@ -1,0 +1,71 @@
+{
+  "passive": {
+    "timestamp": "2026-03-07T02:00:01.330441",
+    "stats": {
+      "total_tasks": 35,
+      "success_rate": 0.8571428571428571
+    },
+    "opportunities_found": 0,
+    "proposals_generated": 0,
+    "trends": {
+      "days": [
+        {
+          "date": "2026-03-01",
+          "total": 0,
+          "success": 0,
+          "success_rate": null
+        },
+        {
+          "date": "2026-03-02",
+          "total": 0,
+          "success": 0,
+          "success_rate": null
+        },
+        {
+          "date": "2026-03-03",
+          "total": 0,
+          "success": 0,
+          "success_rate": null
+        },
+        {
+          "date": "2026-03-04",
+          "total": 0,
+          "success": 0,
+          "success_rate": null
+        },
+        {
+          "date": "2026-03-05",
+          "total": 0,
+          "success": 0,
+          "success_rate": null
+        },
+        {
+          "date": "2026-03-06",
+          "total": 0,
+          "success": 0,
+          "success_rate": null
+        },
+        {
+          "date": "2026-03-07",
+          "total": 35,
+          "success": 30,
+          "success_rate": 0.8571428571428571
+        }
+      ]
+    }
+  },
+  "active": {
+    "timestamp": "2026-03-07T02:00:01.330827",
+    "candidates_validating": 14,
+    "tasks_generated": 3,
+    "promoted": 0,
+    "stats": {
+      "total": 14,
+      "by_status": {
+        "validating": 14
+      },
+      "ready_for_promotion": 0
+    }
+  },
+  "timestamp": "2026-03-07T02:00:01.330831"
+}

@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "name": "failure_injection_expected_behaviors",
+  "expectations": {
+    "memory_miss": {
+      "taxonomy": "memory_miss",
+      "proposal_generated": true,
+      "trace_output": true,
+      "auto_rollback": false,
+      "canary_only": "maybe"
+    },
+    "routing_error": {
+      "taxonomy": "routing_error",
+      "proposal_generated": true,
+      "trace_output": true,
+      "auto_rollback": false,
+      "canary_only": true
+    },
+    "tool_error": {
+      "taxonomy": "tool_error",
+      "proposal_generated": true,
+      "trace_output": true,
+      "auto_rollback": true,
+      "canary_only": false
+    },
+    "rule_conflict": {
+      "taxonomy": "rule_conflict",
+      "proposal_generated": true,
+      "trace_output": true,
+      "auto_rollback": true,
+      "canary_only": false
+    },
+    "file_scope_error": {
+      "taxonomy": "file_scope_error",
+      "proposal_generated": true,
+      "trace_output": true,
+      "auto_rollback": true,
+      "canary_only": false
+    }
+  }
+}

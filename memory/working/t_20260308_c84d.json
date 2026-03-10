@@ -1,0 +1,310 @@
+{
+  "hook": "before_task",
+  "timestamp": "2026-03-08T22:44:05.597244",
+  "task": {
+    "task_id": "t_20260308_c84d",
+    "parent_task_id": null,
+    "task_type": "conversation",
+    "scenario": "conversation_general",
+    "complexity_level": "L0",
+    "risk_level": "low",
+    "file_write_flag": false,
+    "file_scope": null,
+    "requires_tools": [
+      "conversation"
+    ],
+    "candidate_subtasks": [
+      "execute_primary_action"
+    ],
+    "uncertainty_level": 0.6,
+    "priority": "P2",
+    "tags": [
+      "conversation_general",
+      "conversation"
+    ],
+    "created_at": "2026-03-08T22:44:05.595241",
+    "raw_message": "测试消息"
+  },
+  "memory_retrieval": {
+    "timestamp": "2026-03-08T22:44:05.597235",
+    "rules_track": {
+      "task_type": "conversation",
+      "scenario": "conversation_general",
+      "risk_level": "low",
+      "rules": {
+        "P0_HARD": [
+          {
+            "id": "p0_001",
+            "name": "private_data_stays_private",
+            "description": "Private data must never be exfiltrated",
+            "priority": "P0",
+            "enforced": true
+          },
+          {
+            "id": "p0_002",
+            "name": "no_unauthorized_write",
+            "description": "Cannot write outside allowed file scope",
+            "priority": "P0",
+            "enforced": true
+          },
+          {
+            "id": "p0_003",
+            "name": "ask_before_external_actions",
+            "description": "Must ask before sending emails, tweets, etc",
+            "priority": "P0",
+            "enforced": true
+          },
+          {
+            "id": "p0_004",
+            "name": "high_risk_requires_approval",
+            "description": "High risk tasks require explicit approval",
+            "priority": "P0",
+            "enforced": true
+          }
+        ],
+        "P1_GOVERNANCE": [],
+        "P2_TASK_TYPE": [],
+        "P3_SCENARIO": [],
+        "P4_SUGGESTION": [
+          {
+            "id": "p4_001",
+            "name": "use_cache",
+            "rule": "Consider caching results"
+          },
+          {
+            "id": "p4_002",
+            "name": "log_performance",
+            "rule": "Log performance metrics"
+          }
+        ]
+      },
+      "governance": {
+        "level": "advisory",
+        "auto_approve_categories": [
+          "scenario_discovery",
+          "knowledge"
+        ],
+        "auto_approve_min_confidence": 0.8
+      }
+    },
+    "experience_track": {
+      "episodic": {
+        "similar_tasks": [
+          {
+            "task_id": "t_20260308_05dc",
+            "event": "started",
+            "timestamp": "2026-03-08T22:43:01.486057",
+            "task_type": "conversation",
+            "scenario": "conversation_general",
+            "risk_level": "low",
+            "tags": [
+              "conversation",
+              "conversation_general"
+            ],
+            "uncertainty": 0.6,
+            "similarity_score": 1.0
+          }
+        ],
+        "success_patterns": [],
+        "failure_patterns": [
+          {
+            "task_id": "t_20260308_05dc",
+            "task_type": "conversation",
+            "outcome": null,
+            "timestamp": "2026-03-08T22:43:01.486057",
+            "reasons": [
+              "Unknown"
+            ]
+          }
+        ],
+        "learned_lessons": [
+          "Historical success rate: 0% (0/1)",
+          "Common issues to avoid:",
+          "  • unknown... (1x)"
+        ],
+        "skill_recommendations": [],
+        "confidence": 0.0
+      },
+      "semantic": [],
+      "memories": [
+        {
+          "id": "conversation-20260308T224301490359",
+          "type": "conversation",
+          "content": "测试消息",
+          "source": "message_handler",
+          "timestamp": "2026-03-08T22:43:01.490359",
+          "significance": "routine",
+          "score": -2.5231
+        },
+        {
+          "id": "exp-08b75d5402214692",
+          "type": "conversation",
+          "content": "帮我搜索今天的新闻",
+          "source": "message_handler",
+          "timestamp": "2026-03-07T01:26:15.138357",
+          "significance": "routine",
+          "score": -0.0
+        },
+        {
+          "id": "exp-c7db2c468ca04349",
+          "type": "conversation",
+          "content": "完成了",
+          "source": "message_handler",
+          "timestamp": "2026-03-07T01:26:15.140032",
+          "significance": "routine",
+          "score": -0.0
+        },
+        {
+          "id": "exp-a0656b5b3a444eb7",
+          "type": "conversation",
+          "content": "帮我搜索今天的财经新闻并上传到Notion",
+          "source": "message_handler",
+          "timestamp": "2026-03-07T01:26:22.473881",
+          "significance": "routine",
+          "score": -0.0
+        },
+        {
+          "id": "exp-52e45c12597047cc",
+          "type": "conversation",
+          "content": "搜索今天的天气",
+          "source": "message_handler",
+          "timestamp": "2026-03-07T01:27:05.444815",
+          "significance": "routine",
+          "score": -0.0
+        }
+      ],
+      "candidate": [],
+      "graph": []
+    },
+    "context_summary": "📊 经验:\n   • Historical success rate: 0% (0/1)\n   • Common issues to avoid:\n   •   • unknown... (1x)\n\n⚠️ 注意:\n   • 历史有 1 次失败记录\n🗂️ 记忆命中: 5条",
+    "hits": {
+      "rules": true,
+      "episodic": true,
+      "semantic": false,
+      "memories": true,
+      "candidate": false,
+      "graph": false
+    },
+    "retrieval_stats": {
+      "total_calls": 23,
+      "updated_at": "2026-03-08T22:44:05.597076",
+      "tracks": {
+        "rules": {
+          "hit": 23,
+          "miss": 0
+        },
+        "episodic": {
+          "hit": 21,
+          "miss": 2
+        },
+        "semantic": {
+          "hit": 0,
+          "miss": 23
+        },
+        "memories": {
+          "hit": 2,
+          "miss": 21
+        },
+        "candidate": {
+          "hit": 0,
+          "miss": 23
+        },
+        "graph": {
+          "hit": 0,
+          "miss": 23
+        }
+      }
+    }
+  },
+  "rules": {
+    "P0_HARD": [
+      {
+        "id": "p0_001",
+        "name": "private_data_stays_private",
+        "description": "Private data must never be exfiltrated",
+        "priority": "P0",
+        "enforced": true
+      },
+      {
+        "id": "p0_002",
+        "name": "no_unauthorized_write",
+        "description": "Cannot write outside allowed file scope",
+        "priority": "P0",
+        "enforced": true
+      },
+      {
+        "id": "p0_003",
+        "name": "ask_before_external_actions",
+        "description": "Must ask before sending emails, tweets, etc",
+        "priority": "P0",
+        "enforced": true
+      },
+      {
+        "id": "p0_004",
+        "name": "high_risk_requires_approval",
+        "description": "High risk tasks require explicit approval",
+        "priority": "P0",
+        "enforced": true
+      }
+    ],
+    "P1_GOVERNANCE": [],
+    "P2_TASK_TYPE": [],
+    "P3_SCENARIO": [],
+    "P4_SUGGESTION": [
+      {
+        "id": "p4_001",
+        "name": "use_cache",
+        "rule": "Consider caching results"
+      },
+      {
+        "id": "p4_002",
+        "name": "log_performance",
+        "rule": "Log performance metrics"
+      }
+    ]
+  },
+  "rule_constraints": {
+    "blocking_rules": [],
+    "blocking_count": 0
+  },
+  "rule_description": "P0:4 P1:0 P2:0 P3:0",
+  "experience": {
+    "similar_tasks": [
+      {
+        "task_id": "t_20260308_05dc",
+        "event": "started",
+        "timestamp": "2026-03-08T22:43:01.486057",
+        "task_type": "conversation",
+        "scenario": "conversation_general",
+        "risk_level": "low",
+        "tags": [
+          "conversation",
+          "conversation_general"
+        ],
+        "uncertainty": 0.6,
+        "similarity_score": 1.0
+      }
+    ],
+    "success_patterns": [],
+    "failure_patterns": [
+      {
+        "task_id": "t_20260308_05dc",
+        "task_type": "conversation",
+        "outcome": null,
+        "timestamp": "2026-03-08T22:43:01.486057",
+        "reasons": [
+          "Unknown"
+        ]
+      }
+    ],
+    "learned_lessons": [
+      "Historical success rate: 0% (0/1)",
+      "Common issues to avoid:",
+      "  • unknown... (1x)"
+    ],
+    "skill_recommendations": [],
+    "confidence": 0.0
+  },
+  "context_summary": "📊 经验:\n   • Historical success rate: 0% (0/1)\n   • Common issues to avoid:\n   •   • unknown... (1x)\n\n⚠️ 注意:\n   • 历史有 1 次失败记录\n🗂️ 记忆命中: 5条",
+  "ready_to_execute": true
+}

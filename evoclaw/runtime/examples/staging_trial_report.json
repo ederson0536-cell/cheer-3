@@ -1,0 +1,24 @@
+{
+  "environment": "staging",
+  "selected_categories": 3,
+  "results": [
+    {
+      "sample": "01_safe_file_write.json",
+      "task_id": "t_golden_001",
+      "risk_level": "medium",
+      "status": "staging_pass"
+    },
+    {
+      "sample": "02_coding_modify.json",
+      "task_id": "t_golden_002",
+      "risk_level": "medium",
+      "status": "staging_pass"
+    },
+    {
+      "sample": "03_research_planning.json",
+      "task_id": "t_golden_003",
+      "risk_level": "low",
+      "status": "staging_pass"
+    }
+  ]
+}

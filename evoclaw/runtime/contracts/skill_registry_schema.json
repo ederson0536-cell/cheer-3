@@ -1,0 +1,80 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Skill Registry Schema",
+  "type": "object",
+  "required": ["skill_id", "skill_name", "domain", "supported_task_types", "supported_subtask_types", "required_tools", "risk_profile", "trust_level"],
+  "properties": {
+    "skill_id": {
+      "type": "string",
+      "description": "Unique skill identifier"
+    },
+    "skill_name": {
+      "type": "string"
+    },
+    "domain": {
+      "type": "string",
+      "enum": ["engineering", "research", "writing", "planning", "automation", "communication"]
+    },
+    "supported_task_types": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "supported_subtask_types": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "supported_scenarios": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "required_tools": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "writable_scope": {
+      "type": ["array", "null"],
+      "items": {"type": "string"}
+    },
+    "risk_profile": {
+      "type": "string",
+      "enum": ["low", "medium", "high", "critical"]
+    },
+    "compatible_rules": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "incompatible_rules": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "trust_level": {
+      "type": "string",
+      "enum": ["unverified", "low", "medium", "high"],
+      "default": "unverified"
+    },
+    "avg_success_rate": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "default": 0.5
+    },
+    "avg_latency_ms": {
+      "type": "number",
+      "default": 5000
+    },
+    "avg_rework_rate": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "default": 0.2
+    },
+    "preferred_scenarios": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "common_failure_modes": {
+      "type": "array",
+      "items": {"type": "string"}
+    }
+  }
+}

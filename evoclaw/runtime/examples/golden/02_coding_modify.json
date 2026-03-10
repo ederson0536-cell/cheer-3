@@ -1,0 +1,39 @@
+{
+  "task": {
+    "task_id": "t_golden_002",
+    "parent_task_id": null,
+    "task_type": "coding",
+    "scenario": "modify_existing_function",
+    "complexity_level": "L1",
+    "risk_level": "medium",
+    "file_write_flag": true,
+    "file_scope": ["src/"],
+    "requires_tools": ["filesystem", "search"],
+    "candidate_subtasks": ["analyze", "edit_file", "run_validation"],
+    "uncertainty_level": 0.25
+  },
+  "subtasks": [
+    {
+      "subtask_id": "st_g002_01",
+      "parent_task_id": "t_golden_002",
+      "subtask_type": "analyze",
+      "goal": "find function entry",
+      "local_scenario": "locate_target_function",
+      "required_tools": ["search"],
+      "constraints": ["read_only"],
+      "done_criteria": ["target found"]
+    },
+    {
+      "subtask_id": "st_g002_02",
+      "parent_task_id": "t_golden_002",
+      "subtask_type": "edit_file",
+      "goal": "apply function patch",
+      "local_scenario": "update_existing_module",
+      "required_tools": ["filesystem"],
+      "required_skill": "coding_editor_v1",
+      "constraints": ["no_cross_directory_write"],
+      "file_scope": ["src/service.py"],
+      "done_criteria": ["patch applied", "build passes"]
+    }
+  ]
+}

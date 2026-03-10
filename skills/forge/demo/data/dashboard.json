@@ -1,0 +1,333 @@
+{
+  "timestamp": 1770925910668,
+  "summary": {
+    "skillsTracked": 20,
+    "totalRuns": 160,
+    "avgTokenSavings": 34,
+    "avgRuntime": 578.4375
+  },
+  "skills": [
+    {
+      "skillId": "agent-coalition",
+      "avgExecutionMs": 655.375,
+      "avgTokensIn": 554,
+      "avgTokensOut": 240.125,
+      "totalRuns": 8,
+      "failureRate": 0.125,
+      "p95ExecutionMs": 975
+    },
+    {
+      "skillId": "ai-proposal-generator",
+      "avgExecutionMs": 712.5,
+      "avgTokensIn": 1901,
+      "avgTokensOut": 959.375,
+      "totalRuns": 8,
+      "failureRate": 0,
+      "p95ExecutionMs": 1000
+    },
+    {
+      "skillId": "automation-workflows",
+      "avgExecutionMs": 518.25,
+      "avgTokensIn": 2578,
+      "avgTokensOut": 1340.75,
+      "totalRuns": 8,
+      "failureRate": 0,
+      "p95ExecutionMs": 730
+    },
+    {
+      "skillId": "business-development",
+      "avgExecutionMs": 526.875,
+      "avgTokensIn": 4031,
+      "avgTokensOut": 1893.5,
+      "totalRuns": 8,
+      "failureRate": 0,
+      "p95ExecutionMs": 646
+    },
+    {
+      "skillId": "butler",
+      "avgExecutionMs": 587.25,
+      "avgTokensIn": 833,
+      "avgTokensOut": 436.25,
+      "totalRuns": 8,
+      "failureRate": 0.125,
+      "p95ExecutionMs": 848
+    },
+    {
+      "skillId": "competitive-intelligence-market-research",
+      "avgExecutionMs": 696,
+      "avgTokensIn": 22020,
+      "avgTokensOut": 11695.625,
+      "totalRuns": 8,
+      "failureRate": 0,
+      "p95ExecutionMs": 981
+    },
+    {
+      "skillId": "content-remix-studio",
+      "avgExecutionMs": 615.25,
+      "avgTokensIn": 4488,
+      "avgTokensOut": 2166.75,
+      "totalRuns": 8,
+      "failureRate": 0,
+      "p95ExecutionMs": 918
+    },
+    {
+      "skillId": "deep-research-pro",
+      "avgExecutionMs": 482.25,
+      "avgTokensIn": 1101,
+      "avgTokensOut": 626,
+      "totalRuns": 8,
+      "failureRate": 0,
+      "p95ExecutionMs": 937
+    },
+    {
+      "skillId": "firecrawl-search",
+      "avgExecutionMs": 461.25,
+      "avgTokensIn": 249,
+      "avgTokensOut": 140.25,
+      "totalRuns": 8,
+      "failureRate": 0,
+      "p95ExecutionMs": 788
+    },
+    {
+      "skillId": "knowledge-graph",
+      "avgExecutionMs": 543.75,
+      "avgTokensIn": 373,
+      "avgTokensOut": 157.375,
+      "totalRuns": 8,
+      "failureRate": 0,
+      "p95ExecutionMs": 875
+    },
+    {
+      "skillId": "lead-hunter",
+      "avgExecutionMs": 648.5,
+      "avgTokensIn": 1232,
+      "avgTokensOut": 602.875,
+      "totalRuns": 8,
+      "failureRate": 0,
+      "p95ExecutionMs": 970
+    },
+    {
+      "skillId": "linkedin-api",
+      "avgExecutionMs": 621.75,
+      "avgTokensIn": 5896,
+      "avgTokensOut": 3030.25,
+      "totalRuns": 8,
+      "failureRate": 0,
+      "p95ExecutionMs": 875
+    },
+    {
+      "skillId": "linkedin-lead-gen",
+      "avgExecutionMs": 630.5,
+      "avgTokensIn": 613,
+      "avgTokensOut": 302.375,
+      "totalRuns": 8,
+      "failureRate": 0.125,
+      "p95ExecutionMs": 952
+    },
+    {
+      "skillId": "social-lead-gen",
+      "avgExecutionMs": 511.125,
+      "avgTokensIn": 2995,
+      "avgTokensOut": 1621.625,
+      "totalRuns": 8,
+      "failureRate": 0,
+      "p95ExecutionMs": 745
+    },
+    {
+      "skillId": "super-websearch-realtime",
+      "avgExecutionMs": 535.125,
+      "avgTokensIn": 219,
+      "avgTokensOut": 110.875,
+      "totalRuns": 8,
+      "failureRate": 0.125,
+      "p95ExecutionMs": 849
+    },
+    {
+      "skillId": "task-monitor",
+      "avgExecutionMs": 683.25,
+      "avgTokensIn": 593,
+      "avgTokensOut": 304.625,
+      "totalRuns": 8,
+      "failureRate": 0,
+      "p95ExecutionMs": 806
+    },
+    {
+      "skillId": "topic-monitor",
+      "avgExecutionMs": 586.75,
+      "avgTokensIn": 4362,
+      "avgTokensOut": 1993.375,
+      "totalRuns": 8,
+      "failureRate": 0,
+      "p95ExecutionMs": 1003
+    },
+    {
+      "skillId": "workflow-engine",
+      "avgExecutionMs": 568,
+      "avgTokensIn": 500,
+      "avgTokensOut": 243.625,
+      "totalRuns": 8,
+      "failureRate": 0.125,
+      "p95ExecutionMs": 983
+    },
+    {
+      "skillId": "yc-cold-outreach",
+      "avgExecutionMs": 466,
+      "avgTokensIn": 451,
+      "avgTokensOut": 240.875,
+      "totalRuns": 8,
+      "failureRate": 0,
+      "p95ExecutionMs": 878
+    },
+    {
+      "skillId": "youtube-factory",
+      "avgExecutionMs": 519,
+      "avgTokensIn": 1064,
+      "avgTokensOut": 526.375,
+      "totalRuns": 8,
+      "failureRate": 0,
+      "p95ExecutionMs": 938
+    }
+  ],
+  "events": [
+    {
+      "timestamp": 1770925910637,
+      "module": "profiler",
+      "action": "batch-complete",
+      "skillId": "youtube-factory",
+      "details": "Profiled 8 iterations"
+    },
+    {
+      "timestamp": 1770925906480,
+      "module": "profiler",
+      "action": "batch-complete",
+      "skillId": "yc-cold-outreach",
+      "details": "Profiled 8 iterations"
+    },
+    {
+      "timestamp": 1770925902748,
+      "module": "profiler",
+      "action": "batch-complete",
+      "skillId": "workflow-engine",
+      "details": "Profiled 8 iterations"
+    },
+    {
+      "timestamp": 1770925898200,
+      "module": "profiler",
+      "action": "batch-complete",
+      "skillId": "topic-monitor",
+      "details": "Profiled 8 iterations"
+    },
+    {
+      "timestamp": 1770925893500,
+      "module": "profiler",
+      "action": "batch-complete",
+      "skillId": "task-monitor",
+      "details": "Profiled 8 iterations"
+    },
+    {
+      "timestamp": 1770925888027,
+      "module": "profiler",
+      "action": "batch-complete",
+      "skillId": "super-websearch-realtime",
+      "details": "Profiled 8 iterations"
+    },
+    {
+      "timestamp": 1770925883741,
+      "module": "profiler",
+      "action": "batch-complete",
+      "skillId": "social-lead-gen",
+      "details": "Profiled 8 iterations"
+    },
+    {
+      "timestamp": 1770925879646,
+      "module": "profiler",
+      "action": "batch-complete",
+      "skillId": "linkedin-lead-gen",
+      "details": "Profiled 8 iterations"
+    },
+    {
+      "timestamp": 1770925874596,
+      "module": "profiler",
+      "action": "batch-complete",
+      "skillId": "linkedin-api",
+      "details": "Profiled 8 iterations"
+    },
+    {
+      "timestamp": 1770925869611,
+      "module": "profiler",
+      "action": "batch-complete",
+      "skillId": "lead-hunter",
+      "details": "Profiled 8 iterations"
+    },
+    {
+      "timestamp": 1770925864410,
+      "module": "profiler",
+      "action": "batch-complete",
+      "skillId": "knowledge-graph",
+      "details": "Profiled 8 iterations"
+    },
+    {
+      "timestamp": 1770925860058,
+      "module": "profiler",
+      "action": "batch-complete",
+      "skillId": "firecrawl-search",
+      "details": "Profiled 8 iterations"
+    },
+    {
+      "timestamp": 1770925856362,
+      "module": "profiler",
+      "action": "batch-complete",
+      "skillId": "deep-research-pro",
+      "details": "Profiled 8 iterations"
+    },
+    {
+      "timestamp": 1770925852499,
+      "module": "profiler",
+      "action": "batch-complete",
+      "skillId": "content-remix-studio",
+      "details": "Profiled 8 iterations"
+    },
+    {
+      "timestamp": 1770925847572,
+      "module": "profiler",
+      "action": "batch-complete",
+      "skillId": "competitive-intelligence-market-research",
+      "details": "Profiled 8 iterations"
+    },
+    {
+      "timestamp": 1770925841994,
+      "module": "profiler",
+      "action": "batch-complete",
+      "skillId": "butler",
+      "details": "Profiled 8 iterations"
+    },
+    {
+      "timestamp": 1770925837285,
+      "module": "profiler",
+      "action": "batch-complete",
+      "skillId": "business-development",
+      "details": "Profiled 8 iterations"
+    },
+    {
+      "timestamp": 1770925833067,
+      "module": "profiler",
+      "action": "batch-complete",
+      "skillId": "automation-workflows",
+      "details": "Profiled 8 iterations"
+    },
+    {
+      "timestamp": 1770925828915,
+      "module": "profiler",
+      "action": "batch-complete",
+      "skillId": "ai-proposal-generator",
+      "details": "Profiled 8 iterations"
+    },
+    {
+      "timestamp": 1770925823207,
+      "module": "profiler",
+      "action": "batch-complete",
+      "skillId": "agent-coalition",
+      "details": "Profiled 8 iterations"
+    }
+  ]
+}
