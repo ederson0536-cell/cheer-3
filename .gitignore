@@ -10,11 +10,6 @@ __pycache__/
 dist/
 build/
 
-# 数据库
-*.db
-*.db-shm
-*.db-wal
-
 # 临时文件
 *.log
 *.tmp
