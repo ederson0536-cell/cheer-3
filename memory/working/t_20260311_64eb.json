@@ -1,0 +1,803 @@
+{
+  "hook": "before_task",
+  "timestamp": "2026-03-11T15:19:08.973034",
+  "task": {
+    "task_id": "t_20260311_64eb",
+    "parent_task_id": null,
+    "task_type": "writing",
+    "scenario": "news_summary",
+    "complexity_level": "L0",
+    "risk_level": "low",
+    "file_write_flag": false,
+    "file_scope": null,
+    "requires_tools": [
+      "conversation"
+    ],
+    "candidate_subtasks": [
+      "gather_information",
+      "organize_content",
+      "write_output"
+    ],
+    "uncertainty_level": 0.6,
+    "priority": "P2",
+    "tags": [
+      "writing",
+      "news_summary"
+    ],
+    "created_at": "2026-03-11T15:19:08.969125",
+    "raw_message": "那任务的反馈总结呢"
+  },
+  "memory_retrieval": {
+    "timestamp": "2026-03-11T15:19:08.973017",
+    "rules_track": {
+      "task_type": "writing",
+      "scenario": "news_summary",
+      "risk_level": "low",
+      "rules": {
+        "P0_HARD": [
+          {
+            "id": "p0_001",
+            "name": "private_data_stays_private",
+            "description": "隐私数据必须保密，永不外泄",
+            "rule": "禁止将任何私人数据发送到系统外部",
+            "priority": "P0_HARD",
+            "category": "",
+            "action": "block"
+          },
+          {
+            "id": "p0_003",
+            "name": "ask_before_external_actions",
+            "description": "外部操作必须先询问人类",
+            "rule": "发送邮件、推文等操作前必须先获得批准",
+            "priority": "P0_HARD",
+            "category": "",
+            "action": "block"
+          },
+          {
+            "id": "p0_004",
+            "name": "high_risk_requires_approval",
+            "description": "高风险任务需要明确审批",
+            "rule": "涉及删除、部署等高风险操作需要确认",
+            "priority": "P0_HARD",
+            "category": "",
+            "action": "block"
+          },
+          {
+            "id": "p0_005",
+            "name": "sync_mechanism_and_code",
+            "description": "修改系统机制文件时，必须同步更新相关代码",
+            "rule": "当修改配置文件、数据库schema、规则等机制文件时，必须同步修改相关代码，确保行为一致",
+            "priority": "P0_HARD",
+            "category": "system",
+            "action": "suggest"
+          },
+          {
+            "id": "p0_006",
+            "name": "enforce_new_mechanisms",
+            "description": "新文件/新机制必须落实执行",
+            "rule": "创建新配置文件、技能、机制后，必须确保其被实际使用/执行，不能只是创建了事",
+            "priority": "P0_HARD",
+            "category": "system",
+            "action": "block"
+          }
+        ],
+        "P1_GOVERNANCE": [],
+        "P2_TASK_TYPE": [],
+        "P3_SCENARIO": [],
+        "P4_SUGGESTION": [
+          {
+            "id": "p4_001",
+            "name": "use_cache",
+            "description": "考虑使用缓存",
+            "rule": "重复请求可使用缓存",
+            "priority": "P4_SUGGESTION",
+            "category": "",
+            "action": "suggest"
+          },
+          {
+            "id": "p4_002",
+            "name": "log_performance",
+            "description": "记录性能指标",
+            "rule": "记录响应时间和资源使用",
+            "priority": "P4_SUGGESTION",
+            "category": "",
+            "action": "suggest"
+          }
+        ]
+      },
+      "governance": {
+        "level": "advisory",
+        "auto_approve_categories": [
+          "scenario_discovery",
+          "knowledge"
+        ],
+        "auto_approve_min_confidence": 0.8
+      }
+    },
+    "experience_track": {
+      "episodic": {
+        "similar_tasks": [
+          {
+            "task_id": "t_20260311_4cfb",
+            "event": "started",
+            "timestamp": "2026-03-11T12:38:46.687456",
+            "task_type": "writing",
+            "scenario": "news_summary",
+            "risk_level": "low",
+            "tags": [
+              "writing",
+              "news_summary"
+            ],
+            "uncertainty": 0.3,
+            "similarity_score": 1.0
+          },
+          {
+            "task_id": "t_20260311_9895",
+            "event": "started",
+            "timestamp": "2026-03-11T12:38:46.694207",
+            "task_type": "writing",
+            "scenario": "news_summary",
+            "risk_level": "low",
+            "tags": [
+              "writing",
+              "news_summary"
+            ],
+            "uncertainty": 0.3,
+            "similarity_score": 1.0
+          },
+          {
+            "task_id": "t_20260311_f854",
+            "event": "started",
+            "timestamp": "2026-03-11T15:19:08.966410",
+            "task_type": "writing",
+            "scenario": "news_summary",
+            "risk_level": "low",
+            "tags": [
+              "writing",
+              "news_summary"
+            ],
+            "uncertainty": 0.6,
+            "similarity_score": 1.0
+          },
+          {
+            "task_id": "t_20260311_735c",
+            "event": "started",
+            "timestamp": "2026-03-11T13:09:26.671252",
+            "task_type": "writing",
+            "scenario": "writing_general",
+            "risk_level": "low",
+            "tags": [
+              "writing_general",
+              "writing"
+            ],
+            "uncertainty": 0.5,
+            "similarity_score": 0.55
+          },
+          {
+            "task_id": "t_20260311_e31d",
+            "event": "started",
+            "timestamp": "2026-03-11T13:09:26.679634",
+            "task_type": "writing",
+            "scenario": "writing_general",
+            "risk_level": "low",
+            "tags": [
+              "writing_general",
+              "writing"
+            ],
+            "uncertainty": 0.5,
+            "similarity_score": 0.55
+          },
+          {
+            "task_id": "t_20260311_dc04",
+            "event": "started",
+            "timestamp": "2026-03-11T13:12:53.467627",
+            "task_type": "writing",
+            "scenario": "writing_general",
+            "risk_level": "low",
+            "tags": [
+              "writing_general",
+              "writing"
+            ],
+            "uncertainty": 0.6,
+            "similarity_score": 0.55
+          },
+          {
+            "task_id": "t_20260311_25d9",
+            "event": "started",
+            "timestamp": "2026-03-11T13:12:53.477200",
+            "task_type": "writing",
+            "scenario": "writing_general",
+            "risk_level": "low",
+            "tags": [
+              "writing_general",
+              "writing"
+            ],
+            "uncertainty": 0.6,
+            "similarity_score": 0.55
+          },
+          {
+            "task_id": "t_20260311_3dff",
+            "event": "started",
+            "timestamp": "2026-03-11T13:49:49.174058",
+            "task_type": "writing",
+            "scenario": "writing_general",
+            "risk_level": "low",
+            "tags": [
+              "writing_general",
+              "writing"
+            ],
+            "uncertainty": 0.5,
+            "similarity_score": 0.55
+          },
+          {
+            "task_id": "t_20260311_b571",
+            "event": "started",
+            "timestamp": "2026-03-11T13:49:49.181259",
+            "task_type": "writing",
+            "scenario": "writing_general",
+            "risk_level": "low",
+            "tags": [
+              "writing_general",
+              "writing"
+            ],
+            "uncertainty": 0.5,
+            "similarity_score": 0.55
+          },
+          {
+            "task_id": "t_20260311_fad4",
+            "event": "started",
+            "timestamp": "2026-03-11T14:18:37.634081",
+            "task_type": "writing",
+            "scenario": "writing_general",
+            "risk_level": "low",
+            "tags": [
+              "writing_general",
+              "writing"
+            ],
+            "uncertainty": 0.19999999999999998,
+            "similarity_score": 0.55
+          }
+        ],
+        "success_patterns": [],
+        "failure_patterns": [
+          {
+            "task_id": "t_20260311_4cfb",
+            "task_type": "writing",
+            "outcome": null,
+            "timestamp": "2026-03-11T12:38:46.687456",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260311_9895",
+            "task_type": "writing",
+            "outcome": null,
+            "timestamp": "2026-03-11T12:38:46.694207",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260311_f854",
+            "task_type": "writing",
+            "outcome": null,
+            "timestamp": "2026-03-11T15:19:08.966410",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260311_735c",
+            "task_type": "writing",
+            "outcome": null,
+            "timestamp": "2026-03-11T13:09:26.671252",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260311_e31d",
+            "task_type": "writing",
+            "outcome": null,
+            "timestamp": "2026-03-11T13:09:26.679634",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260311_dc04",
+            "task_type": "writing",
+            "outcome": null,
+            "timestamp": "2026-03-11T13:12:53.467627",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260311_25d9",
+            "task_type": "writing",
+            "outcome": null,
+            "timestamp": "2026-03-11T13:12:53.477200",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260311_3dff",
+            "task_type": "writing",
+            "outcome": null,
+            "timestamp": "2026-03-11T13:49:49.174058",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260311_b571",
+            "task_type": "writing",
+            "outcome": null,
+            "timestamp": "2026-03-11T13:49:49.181259",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260311_fad4",
+            "task_type": "writing",
+            "outcome": null,
+            "timestamp": "2026-03-11T14:18:37.634081",
+            "reasons": [
+              "Unknown"
+            ]
+          }
+        ],
+        "learned_lessons": [
+          "Historical success rate: 0% (0/10)",
+          "Common issues to avoid:",
+          "  • unknown... (10x)"
+        ],
+        "skill_recommendations": [],
+        "confidence": 0.0
+      },
+      "semantic": [
+        {
+          "score": 0.1517,
+          "type": "conversation",
+          "timestamp": "2026-03-11T14:10:00Z",
+          "content": "用户严厉批评Notion新闻任务输出：你自己看看自己做的啥 狗屎？要求是每日新闻而非周报",
+          "source": "telegram"
+        },
+        {
+          "score": 0.075,
+          "type": "notable",
+          "timestamp": null,
+          "content": "新增docs/system-user-manual-2026-03-10.md，整理入口、记忆库、反馈接口、文件治理与排障的详细使用手册。",
+          "source": null
+        },
+        {
+          "score": 0.0697,
+          "type": "notable",
+          "timestamp": null,
+          "content": "根据新反馈将可读清单落为独立数据库表system_readable_checklist，并补充memory/README、AGENTS/TOOLS职责说明。",
+          "source": null
+        },
+        {
+          "score": 0.0691,
+          "type": "notable",
+          "timestamp": null,
+          "content": "新增系统协调性校验器，检查catalog与readable checklist写库、after_task反馈入库结构、入口到记忆链路一致性。",
+          "source": null
+        },
+        {
+          "score": 0.0655,
+          "type": "conversation",
+          "timestamp": "2026-03-11T13:45:00Z",
+          "content": "用户反馈：新闻要深度分析解读，不是单纯的罗列全球和中国的经济、政治、科技、机制链条",
+          "source": "telegram"
+        }
+      ],
+      "memories": [],
+      "candidate": [],
+      "graph": []
+    },
+    "context_summary": "📊 经验:\n   • Historical success rate: 0% (0/10)\n   • Common issues to avoid:\n   •   • unknown... (10x)\n\n⚠️ 注意:\n   • 历史有 10 次失败记录\n\n🧠 语义命中: 5条",
+    "hits": {
+      "rules": true,
+      "episodic": true,
+      "semantic": true,
+      "memories": false,
+      "candidate": false,
+      "graph": false
+    },
+    "retrieval_stats": {
+      "total_calls": 423,
+      "updated_at": "2026-03-11T15:19:08.972367",
+      "tracks": {
+        "rules": {
+          "hit": 423,
+          "miss": 0
+        },
+        "episodic": {
+          "hit": 413,
+          "miss": 10
+        },
+        "semantic": {
+          "hit": 221,
+          "miss": 202
+        },
+        "memories": {
+          "hit": 298,
+          "miss": 125
+        },
+        "candidate": {
+          "hit": 14,
+          "miss": 409
+        },
+        "graph": {
+          "hit": 0,
+          "miss": 423
+        }
+      }
+    }
+  },
+  "rules": {
+    "P0_HARD": [
+      {
+        "id": "p0_001",
+        "name": "private_data_stays_private",
+        "description": "隐私数据必须保密，永不外泄",
+        "rule": "禁止将任何私人数据发送到系统外部",
+        "priority": "P0_HARD",
+        "category": "",
+        "action": "block"
+      },
+      {
+        "id": "p0_003",
+        "name": "ask_before_external_actions",
+        "description": "外部操作必须先询问人类",
+        "rule": "发送邮件、推文等操作前必须先获得批准",
+        "priority": "P0_HARD",
+        "category": "",
+        "action": "block"
+      },
+      {
+        "id": "p0_004",
+        "name": "high_risk_requires_approval",
+        "description": "高风险任务需要明确审批",
+        "rule": "涉及删除、部署等高风险操作需要确认",
+        "priority": "P0_HARD",
+        "category": "",
+        "action": "block"
+      },
+      {
+        "id": "p0_005",
+        "name": "sync_mechanism_and_code",
+        "description": "修改系统机制文件时，必须同步更新相关代码",
+        "rule": "当修改配置文件、数据库schema、规则等机制文件时，必须同步修改相关代码，确保行为一致",
+        "priority": "P0_HARD",
+        "category": "system",
+        "action": "suggest"
+      },
+      {
+        "id": "p0_006",
+        "name": "enforce_new_mechanisms",
+        "description": "新文件/新机制必须落实执行",
+        "rule": "创建新配置文件、技能、机制后，必须确保其被实际使用/执行，不能只是创建了事",
+        "priority": "P0_HARD",
+        "category": "system",
+        "action": "block"
+      }
+    ],
+    "P1_GOVERNANCE": [],
+    "P2_TASK_TYPE": [],
+    "P3_SCENARIO": [],
+    "P4_SUGGESTION": [
+      {
+        "id": "p4_001",
+        "name": "use_cache",
+        "description": "考虑使用缓存",
+        "rule": "重复请求可使用缓存",
+        "priority": "P4_SUGGESTION",
+        "category": "",
+        "action": "suggest"
+      },
+      {
+        "id": "p4_002",
+        "name": "log_performance",
+        "description": "记录性能指标",
+        "rule": "记录响应时间和资源使用",
+        "priority": "P4_SUGGESTION",
+        "category": "",
+        "action": "suggest"
+      }
+    ]
+  },
+  "rule_constraints": {
+    "blocking_rules": [
+      {
+        "id": "p0_001",
+        "name": "private_data_stays_private",
+        "description": "隐私数据必须保密，永不外泄",
+        "rule": "禁止将任何私人数据发送到系统外部",
+        "priority": "P0_HARD",
+        "category": "",
+        "action": "block"
+      },
+      {
+        "id": "p0_003",
+        "name": "ask_before_external_actions",
+        "description": "外部操作必须先询问人类",
+        "rule": "发送邮件、推文等操作前必须先获得批准",
+        "priority": "P0_HARD",
+        "category": "",
+        "action": "block"
+      },
+      {
+        "id": "p0_004",
+        "name": "high_risk_requires_approval",
+        "description": "高风险任务需要明确审批",
+        "rule": "涉及删除、部署等高风险操作需要确认",
+        "priority": "P0_HARD",
+        "category": "",
+        "action": "block"
+      },
+      {
+        "id": "p0_006",
+        "name": "enforce_new_mechanisms",
+        "description": "新文件/新机制必须落实执行",
+        "rule": "创建新配置文件、技能、机制后，必须确保其被实际使用/执行，不能只是创建了事",
+        "priority": "P0_HARD",
+        "category": "system",
+        "action": "block"
+      }
+    ],
+    "blocking_count": 4
+  },
+  "rule_description": "P0:5 P1:0 P2:0 P3:0",
+  "experience": {
+    "similar_tasks": [
+      {
+        "task_id": "t_20260311_4cfb",
+        "event": "started",
+        "timestamp": "2026-03-11T12:38:46.687456",
+        "task_type": "writing",
+        "scenario": "news_summary",
+        "risk_level": "low",
+        "tags": [
+          "writing",
+          "news_summary"
+        ],
+        "uncertainty": 0.3,
+        "similarity_score": 1.0
+      },
+      {
+        "task_id": "t_20260311_9895",
+        "event": "started",
+        "timestamp": "2026-03-11T12:38:46.694207",
+        "task_type": "writing",
+        "scenario": "news_summary",
+        "risk_level": "low",
+        "tags": [
+          "writing",
+          "news_summary"
+        ],
+        "uncertainty": 0.3,
+        "similarity_score": 1.0
+      },
+      {
+        "task_id": "t_20260311_f854",
+        "event": "started",
+        "timestamp": "2026-03-11T15:19:08.966410",
+        "task_type": "writing",
+        "scenario": "news_summary",
+        "risk_level": "low",
+        "tags": [
+          "writing",
+          "news_summary"
+        ],
+        "uncertainty": 0.6,
+        "similarity_score": 1.0
+      },
+      {
+        "task_id": "t_20260311_735c",
+        "event": "started",
+        "timestamp": "2026-03-11T13:09:26.671252",
+        "task_type": "writing",
+        "scenario": "writing_general",
+        "risk_level": "low",
+        "tags": [
+          "writing_general",
+          "writing"
+        ],
+        "uncertainty": 0.5,
+        "similarity_score": 0.55
+      },
+      {
+        "task_id": "t_20260311_e31d",
+        "event": "started",
+        "timestamp": "2026-03-11T13:09:26.679634",
+        "task_type": "writing",
+        "scenario": "writing_general",
+        "risk_level": "low",
+        "tags": [
+          "writing_general",
+          "writing"
+        ],
+        "uncertainty": 0.5,
+        "similarity_score": 0.55
+      },
+      {
+        "task_id": "t_20260311_dc04",
+        "event": "started",
+        "timestamp": "2026-03-11T13:12:53.467627",
+        "task_type": "writing",
+        "scenario": "writing_general",
+        "risk_level": "low",
+        "tags": [
+          "writing_general",
+          "writing"
+        ],
+        "uncertainty": 0.6,
+        "similarity_score": 0.55
+      },
+      {
+        "task_id": "t_20260311_25d9",
+        "event": "started",
+        "timestamp": "2026-03-11T13:12:53.477200",
+        "task_type": "writing",
+        "scenario": "writing_general",
+        "risk_level": "low",
+        "tags": [
+          "writing_general",
+          "writing"
+        ],
+        "uncertainty": 0.6,
+        "similarity_score": 0.55
+      },
+      {
+        "task_id": "t_20260311_3dff",
+        "event": "started",
+        "timestamp": "2026-03-11T13:49:49.174058",
+        "task_type": "writing",
+        "scenario": "writing_general",
+        "risk_level": "low",
+        "tags": [
+          "writing_general",
+          "writing"
+        ],
+        "uncertainty": 0.5,
+        "similarity_score": 0.55
+      },
+      {
+        "task_id": "t_20260311_b571",
+        "event": "started",
+        "timestamp": "2026-03-11T13:49:49.181259",
+        "task_type": "writing",
+        "scenario": "writing_general",
+        "risk_level": "low",
+        "tags": [
+          "writing_general",
+          "writing"
+        ],
+        "uncertainty": 0.5,
+        "similarity_score": 0.55
+      },
+      {
+        "task_id": "t_20260311_fad4",
+        "event": "started",
+        "timestamp": "2026-03-11T14:18:37.634081",
+        "task_type": "writing",
+        "scenario": "writing_general",
+        "risk_level": "low",
+        "tags": [
+          "writing_general",
+          "writing"
+        ],
+        "uncertainty": 0.19999999999999998,
+        "similarity_score": 0.55
+      }
+    ],
+    "success_patterns": [],
+    "failure_patterns": [
+      {
+        "task_id": "t_20260311_4cfb",
+        "task_type": "writing",
+        "outcome": null,
+        "timestamp": "2026-03-11T12:38:46.687456",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260311_9895",
+        "task_type": "writing",
+        "outcome": null,
+        "timestamp": "2026-03-11T12:38:46.694207",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260311_f854",
+        "task_type": "writing",
+        "outcome": null,
+        "timestamp": "2026-03-11T15:19:08.966410",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260311_735c",
+        "task_type": "writing",
+        "outcome": null,
+        "timestamp": "2026-03-11T13:09:26.671252",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260311_e31d",
+        "task_type": "writing",
+        "outcome": null,
+        "timestamp": "2026-03-11T13:09:26.679634",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260311_dc04",
+        "task_type": "writing",
+        "outcome": null,
+        "timestamp": "2026-03-11T13:12:53.467627",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260311_25d9",
+        "task_type": "writing",
+        "outcome": null,
+        "timestamp": "2026-03-11T13:12:53.477200",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260311_3dff",
+        "task_type": "writing",
+        "outcome": null,
+        "timestamp": "2026-03-11T13:49:49.174058",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260311_b571",
+        "task_type": "writing",
+        "outcome": null,
+        "timestamp": "2026-03-11T13:49:49.181259",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260311_fad4",
+        "task_type": "writing",
+        "outcome": null,
+        "timestamp": "2026-03-11T14:18:37.634081",
+        "reasons": [
+          "Unknown"
+        ]
+      }
+    ],
+    "learned_lessons": [
+      "Historical success rate: 0% (0/10)",
+      "Common issues to avoid:",
+      "  • unknown... (10x)"
+    ],
+    "skill_recommendations": [],
+    "confidence": 0.0
+  },
+  "context_summary": "📊 经验:\n   • Historical success rate: 0% (0/10)\n   • Common issues to avoid:\n   •   • unknown... (10x)\n\n⚠️ 注意:\n   • 历史有 10 次失败记录\n\n🧠 语义命中: 5条",
+  "ready_to_execute": false
+}

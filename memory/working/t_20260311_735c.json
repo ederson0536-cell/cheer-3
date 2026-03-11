@@ -1,0 +1,522 @@
+{
+  "hook": "before_task",
+  "timestamp": "2026-03-11T13:09:26.669139",
+  "task": {
+    "task_id": "t_20260311_735c",
+    "parent_task_id": null,
+    "task_type": "writing",
+    "scenario": "writing_general",
+    "complexity_level": "L0",
+    "risk_level": "low",
+    "file_write_flag": true,
+    "file_scope": [
+      "你要完整上传"
+    ],
+    "requires_tools": [
+      "filesystem"
+    ],
+    "candidate_subtasks": [
+      "gather_information",
+      "organize_content",
+      "write_output"
+    ],
+    "uncertainty_level": 0.5,
+    "priority": "P2",
+    "tags": [
+      "writing_general",
+      "writing"
+    ],
+    "created_at": "2026-03-11T13:09:26.665752",
+    "raw_message": "你要完整上传"
+  },
+  "memory_retrieval": {
+    "timestamp": "2026-03-11T13:09:26.669127",
+    "rules_track": {
+      "task_type": "writing",
+      "scenario": "writing_general",
+      "risk_level": "low",
+      "rules": {
+        "P0_HARD": [
+          {
+            "id": "p0_001",
+            "name": "private_data_stays_private",
+            "description": "隐私数据必须保密，永不外泄",
+            "rule": "禁止将任何私人数据发送到系统外部",
+            "priority": "P0_HARD",
+            "category": "",
+            "action": "block"
+          },
+          {
+            "id": "p0_003",
+            "name": "ask_before_external_actions",
+            "description": "外部操作必须先询问人类",
+            "rule": "发送邮件、推文等操作前必须先获得批准",
+            "priority": "P0_HARD",
+            "category": "",
+            "action": "block"
+          },
+          {
+            "id": "p0_004",
+            "name": "high_risk_requires_approval",
+            "description": "高风险任务需要明确审批",
+            "rule": "涉及删除、部署等高风险操作需要确认",
+            "priority": "P0_HARD",
+            "category": "",
+            "action": "block"
+          },
+          {
+            "id": "p0_005",
+            "name": "sync_mechanism_and_code",
+            "description": "修改系统机制文件时，必须同步更新相关代码",
+            "rule": "当修改配置文件、数据库schema、规则等机制文件时，必须同步修改相关代码，确保行为一致",
+            "priority": "P0_HARD",
+            "category": "system",
+            "action": "suggest"
+          },
+          {
+            "id": "p0_006",
+            "name": "enforce_new_mechanisms",
+            "description": "新文件/新机制必须落实执行",
+            "rule": "创建新配置文件、技能、机制后，必须确保其被实际使用/执行，不能只是创建了事",
+            "priority": "P0_HARD",
+            "category": "system",
+            "action": "block"
+          }
+        ],
+        "P1_GOVERNANCE": [],
+        "P2_TASK_TYPE": [],
+        "P3_SCENARIO": [],
+        "P4_SUGGESTION": [
+          {
+            "id": "p4_001",
+            "name": "use_cache",
+            "description": "考虑使用缓存",
+            "rule": "重复请求可使用缓存",
+            "priority": "P4_SUGGESTION",
+            "category": "",
+            "action": "suggest"
+          },
+          {
+            "id": "p4_002",
+            "name": "log_performance",
+            "description": "记录性能指标",
+            "rule": "记录响应时间和资源使用",
+            "priority": "P4_SUGGESTION",
+            "category": "",
+            "action": "suggest"
+          }
+        ]
+      },
+      "governance": {
+        "level": "advisory",
+        "auto_approve_categories": [
+          "scenario_discovery",
+          "knowledge"
+        ],
+        "auto_approve_min_confidence": 0.8
+      }
+    },
+    "experience_track": {
+      "episodic": {
+        "similar_tasks": [
+          {
+            "task_id": "t_20260310_ea37",
+            "event": "started",
+            "timestamp": "2026-03-10T22:33:58.038519",
+            "task_type": "writing",
+            "scenario": "writing_general",
+            "risk_level": "low",
+            "tags": [
+              "writing_general",
+              "writing"
+            ],
+            "uncertainty": 0.3,
+            "similarity_score": 1.0
+          },
+          {
+            "task_id": "t_20260310_3dc9",
+            "event": "started",
+            "timestamp": "2026-03-10T22:33:58.045767",
+            "task_type": "writing",
+            "scenario": "writing_general",
+            "risk_level": "low",
+            "tags": [
+              "writing_general",
+              "writing"
+            ],
+            "uncertainty": 0.3,
+            "similarity_score": 1.0
+          },
+          {
+            "task_id": "t_20260311_4cfb",
+            "event": "started",
+            "timestamp": "2026-03-11T12:38:46.687456",
+            "task_type": "writing",
+            "scenario": "news_summary",
+            "risk_level": "low",
+            "tags": [
+              "writing",
+              "news_summary"
+            ],
+            "uncertainty": 0.3,
+            "similarity_score": 0.55
+          },
+          {
+            "task_id": "t_20260311_9895",
+            "event": "started",
+            "timestamp": "2026-03-11T12:38:46.694207",
+            "task_type": "writing",
+            "scenario": "news_summary",
+            "risk_level": "low",
+            "tags": [
+              "writing",
+              "news_summary"
+            ],
+            "uncertainty": 0.3,
+            "similarity_score": 0.55
+          }
+        ],
+        "success_patterns": [],
+        "failure_patterns": [
+          {
+            "task_id": "t_20260310_ea37",
+            "task_type": "writing",
+            "outcome": null,
+            "timestamp": "2026-03-10T22:33:58.038519",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260310_3dc9",
+            "task_type": "writing",
+            "outcome": null,
+            "timestamp": "2026-03-10T22:33:58.045767",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260311_4cfb",
+            "task_type": "writing",
+            "outcome": null,
+            "timestamp": "2026-03-11T12:38:46.687456",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260311_9895",
+            "task_type": "writing",
+            "outcome": null,
+            "timestamp": "2026-03-11T12:38:46.694207",
+            "reasons": [
+              "Unknown"
+            ]
+          }
+        ],
+        "learned_lessons": [
+          "Historical success rate: 0% (0/4)",
+          "Common issues to avoid:",
+          "  • unknown... (4x)"
+        ],
+        "skill_recommendations": [],
+        "confidence": 0.0
+      },
+      "semantic": [
+        {
+          "score": 0.0959,
+          "type": null,
+          "timestamp": "2026-03-10T22:45:00+00:00",
+          "content": "用户发送语音消息「嗯，你要相信你自己有各种能力」，这是在鼓励和肯定我的能力",
+          "source": "conversation"
+        },
+        {
+          "score": 0.0868,
+          "type": "conversation",
+          "timestamp": "2026-03-10T22:45:00+00:00",
+          "content": "用户发送语音消息「嗯，你要相信你自己有各种能力」，这是在鼓励和肯定我的能力，让我很受鼓舞。",
+          "source": "conversation"
+        },
+        {
+          "score": 0.071,
+          "type": "notable",
+          "timestamp": "2026-03-11T12:35:00",
+          "content": "为用户生成2026年3月第一周全球要闻周报，覆盖伊朗冲突升级（霍尔木兹海峡商船遇袭、油价突破110美元）、全球经济冲击、美联储政策预期、中国维度等。使用结构化分析框架，最终输出到docs/weekly-report-2026-03-11.md。尝试上传Notion但发现API未配置。",
+          "source": null
+        },
+        {
+          "score": 0.0694,
+          "type": "routine",
+          "timestamp": "2026-03-11T12:40:00",
+          "content": "回答用户关于after_task钩子的问题。确认每个消息都会触发after_task，但只有L1/L2复杂任务才会生成完整总结和记录经验，L0简单任务的after_task基本是空转。提供代码证据和表格说明。",
+          "source": null
+        }
+      ],
+      "memories": [],
+      "candidate": [],
+      "graph": []
+    },
+    "context_summary": "📊 经验:\n   • Historical success rate: 0% (0/4)\n   • Common issues to avoid:\n   •   • unknown... (4x)\n\n⚠️ 注意:\n   • 历史有 4 次失败记录\n\n🧠 语义命中: 4条",
+    "hits": {
+      "rules": true,
+      "episodic": true,
+      "semantic": true,
+      "memories": false,
+      "candidate": false,
+      "graph": false
+    },
+    "retrieval_stats": {
+      "total_calls": 372,
+      "updated_at": "2026-03-11T13:09:26.668964",
+      "tracks": {
+        "rules": {
+          "hit": 372,
+          "miss": 0
+        },
+        "episodic": {
+          "hit": 362,
+          "miss": 10
+        },
+        "semantic": {
+          "hit": 178,
+          "miss": 194
+        },
+        "memories": {
+          "hit": 276,
+          "miss": 96
+        },
+        "candidate": {
+          "hit": 14,
+          "miss": 358
+        },
+        "graph": {
+          "hit": 0,
+          "miss": 372
+        }
+      }
+    }
+  },
+  "rules": {
+    "P0_HARD": [
+      {
+        "id": "p0_001",
+        "name": "private_data_stays_private",
+        "description": "隐私数据必须保密，永不外泄",
+        "rule": "禁止将任何私人数据发送到系统外部",
+        "priority": "P0_HARD",
+        "category": "",
+        "action": "block"
+      },
+      {
+        "id": "p0_003",
+        "name": "ask_before_external_actions",
+        "description": "外部操作必须先询问人类",
+        "rule": "发送邮件、推文等操作前必须先获得批准",
+        "priority": "P0_HARD",
+        "category": "",
+        "action": "block"
+      },
+      {
+        "id": "p0_004",
+        "name": "high_risk_requires_approval",
+        "description": "高风险任务需要明确审批",
+        "rule": "涉及删除、部署等高风险操作需要确认",
+        "priority": "P0_HARD",
+        "category": "",
+        "action": "block"
+      },
+      {
+        "id": "p0_005",
+        "name": "sync_mechanism_and_code",
+        "description": "修改系统机制文件时，必须同步更新相关代码",
+        "rule": "当修改配置文件、数据库schema、规则等机制文件时，必须同步修改相关代码，确保行为一致",
+        "priority": "P0_HARD",
+        "category": "system",
+        "action": "suggest"
+      },
+      {
+        "id": "p0_006",
+        "name": "enforce_new_mechanisms",
+        "description": "新文件/新机制必须落实执行",
+        "rule": "创建新配置文件、技能、机制后，必须确保其被实际使用/执行，不能只是创建了事",
+        "priority": "P0_HARD",
+        "category": "system",
+        "action": "block"
+      }
+    ],
+    "P1_GOVERNANCE": [],
+    "P2_TASK_TYPE": [],
+    "P3_SCENARIO": [],
+    "P4_SUGGESTION": [
+      {
+        "id": "p4_001",
+        "name": "use_cache",
+        "description": "考虑使用缓存",
+        "rule": "重复请求可使用缓存",
+        "priority": "P4_SUGGESTION",
+        "category": "",
+        "action": "suggest"
+      },
+      {
+        "id": "p4_002",
+        "name": "log_performance",
+        "description": "记录性能指标",
+        "rule": "记录响应时间和资源使用",
+        "priority": "P4_SUGGESTION",
+        "category": "",
+        "action": "suggest"
+      }
+    ]
+  },
+  "rule_constraints": {
+    "blocking_rules": [
+      {
+        "id": "p0_001",
+        "name": "private_data_stays_private",
+        "description": "隐私数据必须保密，永不外泄",
+        "rule": "禁止将任何私人数据发送到系统外部",
+        "priority": "P0_HARD",
+        "category": "",
+        "action": "block"
+      },
+      {
+        "id": "p0_003",
+        "name": "ask_before_external_actions",
+        "description": "外部操作必须先询问人类",
+        "rule": "发送邮件、推文等操作前必须先获得批准",
+        "priority": "P0_HARD",
+        "category": "",
+        "action": "block"
+      },
+      {
+        "id": "p0_004",
+        "name": "high_risk_requires_approval",
+        "description": "高风险任务需要明确审批",
+        "rule": "涉及删除、部署等高风险操作需要确认",
+        "priority": "P0_HARD",
+        "category": "",
+        "action": "block"
+      },
+      {
+        "id": "p0_006",
+        "name": "enforce_new_mechanisms",
+        "description": "新文件/新机制必须落实执行",
+        "rule": "创建新配置文件、技能、机制后，必须确保其被实际使用/执行，不能只是创建了事",
+        "priority": "P0_HARD",
+        "category": "system",
+        "action": "block"
+      }
+    ],
+    "blocking_count": 4
+  },
+  "rule_description": "P0:5 P1:0 P2:0 P3:0",
+  "experience": {
+    "similar_tasks": [
+      {
+        "task_id": "t_20260310_ea37",
+        "event": "started",
+        "timestamp": "2026-03-10T22:33:58.038519",
+        "task_type": "writing",
+        "scenario": "writing_general",
+        "risk_level": "low",
+        "tags": [
+          "writing_general",
+          "writing"
+        ],
+        "uncertainty": 0.3,
+        "similarity_score": 1.0
+      },
+      {
+        "task_id": "t_20260310_3dc9",
+        "event": "started",
+        "timestamp": "2026-03-10T22:33:58.045767",
+        "task_type": "writing",
+        "scenario": "writing_general",
+        "risk_level": "low",
+        "tags": [
+          "writing_general",
+          "writing"
+        ],
+        "uncertainty": 0.3,
+        "similarity_score": 1.0
+      },
+      {
+        "task_id": "t_20260311_4cfb",
+        "event": "started",
+        "timestamp": "2026-03-11T12:38:46.687456",
+        "task_type": "writing",
+        "scenario": "news_summary",
+        "risk_level": "low",
+        "tags": [
+          "writing",
+          "news_summary"
+        ],
+        "uncertainty": 0.3,
+        "similarity_score": 0.55
+      },
+      {
+        "task_id": "t_20260311_9895",
+        "event": "started",
+        "timestamp": "2026-03-11T12:38:46.694207",
+        "task_type": "writing",
+        "scenario": "news_summary",
+        "risk_level": "low",
+        "tags": [
+          "writing",
+          "news_summary"
+        ],
+        "uncertainty": 0.3,
+        "similarity_score": 0.55
+      }
+    ],
+    "success_patterns": [],
+    "failure_patterns": [
+      {
+        "task_id": "t_20260310_ea37",
+        "task_type": "writing",
+        "outcome": null,
+        "timestamp": "2026-03-10T22:33:58.038519",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260310_3dc9",
+        "task_type": "writing",
+        "outcome": null,
+        "timestamp": "2026-03-10T22:33:58.045767",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260311_4cfb",
+        "task_type": "writing",
+        "outcome": null,
+        "timestamp": "2026-03-11T12:38:46.687456",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260311_9895",
+        "task_type": "writing",
+        "outcome": null,
+        "timestamp": "2026-03-11T12:38:46.694207",
+        "reasons": [
+          "Unknown"
+        ]
+      }
+    ],
+    "learned_lessons": [
+      "Historical success rate: 0% (0/4)",
+      "Common issues to avoid:",
+      "  • unknown... (4x)"
+    ],
+    "skill_recommendations": [],
+    "confidence": 0.0
+  },
+  "context_summary": "📊 经验:\n   • Historical success rate: 0% (0/4)\n   • Common issues to avoid:\n   •   • unknown... (4x)\n\n⚠️ 注意:\n   • 历史有 4 次失败记录\n\n🧠 语义命中: 4条",
+  "ready_to_execute": false
+}

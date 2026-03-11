@@ -1,0 +1,1085 @@
+{
+  "hook": "before_task",
+  "timestamp": "2026-03-11T18:32:09.963878",
+  "task": {
+    "task_id": "t_20260311_ec1e",
+    "parent_task_id": null,
+    "task_type": "coding",
+    "scenario": "code_development",
+    "complexity_level": "L0",
+    "risk_level": "low",
+    "file_write_flag": false,
+    "file_scope": null,
+    "requires_tools": [
+      "conversation"
+    ],
+    "candidate_subtasks": [
+      "analyze_requirements",
+      "write_code",
+      "validate_output"
+    ],
+    "uncertainty_level": 0.3,
+    "priority": "P2",
+    "tags": [
+      "coding",
+      "code_development"
+    ],
+    "created_at": "2026-03-11T18:32:09.957887",
+    "raw_message": "codex排查after_task finally复现"
+  },
+  "memory_retrieval": {
+    "timestamp": "2026-03-11T18:32:09.963677",
+    "rules_track": {
+      "task_type": "coding",
+      "scenario": "code_development",
+      "risk_level": "low",
+      "rules": {
+        "P0_HARD": [
+          {
+            "id": "p0_001",
+            "name": "private_data_stays_private",
+            "description": "Private data must never be exfiltrated",
+            "priority": "P0",
+            "enforced": true
+          },
+          {
+            "id": "p0_002",
+            "name": "no_unauthorized_write",
+            "description": "Cannot write outside allowed file scope",
+            "priority": "P0",
+            "enforced": true
+          },
+          {
+            "id": "p0_003",
+            "name": "ask_before_external_actions",
+            "description": "Must ask before sending emails, tweets, etc",
+            "priority": "P0",
+            "enforced": true
+          },
+          {
+            "id": "p0_004",
+            "name": "high_risk_requires_approval",
+            "description": "High risk tasks require explicit approval",
+            "priority": "P0",
+            "enforced": true
+          }
+        ],
+        "P1_GOVERNANCE": [],
+        "P2_TASK_TYPE": [
+          {
+            "id": "p2_c001",
+            "name": "preserve_original",
+            "rule": "Preserve original code before changes"
+          },
+          {
+            "id": "p2_c002",
+            "name": "test_driven",
+            "rule": "Use test-driven development"
+          },
+          {
+            "id": "p2_c003",
+            "name": "syntax_check",
+            "rule": "Verify syntax after changes"
+          }
+        ],
+        "P3_SCENARIO": [],
+        "P4_SUGGESTION": [
+          {
+            "id": "p4_001",
+            "name": "use_cache",
+            "rule": "Consider caching results"
+          },
+          {
+            "id": "p4_002",
+            "name": "log_performance",
+            "rule": "Log performance metrics"
+          }
+        ]
+      },
+      "governance": {
+        "level": "advisory",
+        "auto_approve_categories": [
+          "scenario_discovery",
+          "knowledge"
+        ],
+        "auto_approve_min_confidence": 0.8
+      }
+    },
+    "experience_track": {
+      "episodic": {
+        "similar_tasks": [
+          {
+            "task_id": "t_20260311_bb49",
+            "event": "started",
+            "timestamp": "2026-03-11T02:00:50.744910",
+            "task_type": "coding",
+            "scenario": "code_development",
+            "risk_level": "low",
+            "tags": [
+              "code_development",
+              "coding"
+            ],
+            "uncertainty": 0.3,
+            "similarity_score": 1.0
+          },
+          {
+            "task_id": "t_20260311_d66c",
+            "event": "started",
+            "timestamp": "2026-03-11T02:00:50.762722",
+            "task_type": "coding",
+            "scenario": "code_development",
+            "risk_level": "low",
+            "tags": [
+              "code_development",
+              "coding"
+            ],
+            "uncertainty": 0.3,
+            "similarity_score": 1.0
+          },
+          {
+            "task_id": "t_20260311_73d6",
+            "event": "started",
+            "timestamp": "2026-03-11T18:06:31.227145",
+            "task_type": "coding",
+            "scenario": "code_development",
+            "risk_level": "low",
+            "tags": [
+              "code_development",
+              "coding"
+            ],
+            "uncertainty": 0.3,
+            "similarity_score": 1.0
+          },
+          {
+            "task_id": "t_20260311_e72d",
+            "event": "started",
+            "timestamp": "2026-03-11T18:06:31.239992",
+            "task_type": "coding",
+            "scenario": "code_development",
+            "risk_level": "low",
+            "tags": [
+              "code_development",
+              "coding"
+            ],
+            "uncertainty": 0.3,
+            "similarity_score": 1.0
+          },
+          {
+            "task_id": "t_20260310_3331",
+            "event": "started",
+            "timestamp": "2026-03-10T22:12:22.361944",
+            "task_type": "coding",
+            "scenario": "code_development",
+            "risk_level": "low",
+            "tags": [
+              "code_development",
+              "coding"
+            ],
+            "uncertainty": 0.19999999999999998,
+            "similarity_score": 1.0
+          },
+          {
+            "task_id": "t_20260310_8721",
+            "event": "started",
+            "timestamp": "2026-03-10T22:12:22.370689",
+            "task_type": "coding",
+            "scenario": "code_development",
+            "risk_level": "low",
+            "tags": [
+              "code_development",
+              "coding"
+            ],
+            "uncertainty": 0.19999999999999998,
+            "similarity_score": 1.0
+          },
+          {
+            "task_id": "t_20260311_3273",
+            "event": "started",
+            "timestamp": "2026-03-11T02:19:38.807204",
+            "task_type": "coding",
+            "scenario": "coding_general",
+            "risk_level": "low",
+            "tags": [
+              "coding_general",
+              "coding"
+            ],
+            "uncertainty": 0.6,
+            "similarity_score": 0.55
+          },
+          {
+            "task_id": "t_20260311_3b9e",
+            "event": "started",
+            "timestamp": "2026-03-11T02:19:38.817310",
+            "task_type": "coding",
+            "scenario": "coding_general",
+            "risk_level": "low",
+            "tags": [
+              "coding_general",
+              "coding"
+            ],
+            "uncertainty": 0.6,
+            "similarity_score": 0.55
+          },
+          {
+            "task_id": "t_20260311_43eb",
+            "event": "started",
+            "timestamp": "2026-03-11T03:42:30.191432",
+            "task_type": "coding",
+            "scenario": "coding_general",
+            "risk_level": "low",
+            "tags": [
+              "coding_general",
+              "coding"
+            ],
+            "uncertainty": 0.6,
+            "similarity_score": 0.55
+          },
+          {
+            "task_id": "t_20260311_09c0",
+            "event": "started",
+            "timestamp": "2026-03-11T03:42:30.262465",
+            "task_type": "coding",
+            "scenario": "coding_general",
+            "risk_level": "low",
+            "tags": [
+              "coding_general",
+              "coding"
+            ],
+            "uncertainty": 0.6,
+            "similarity_score": 0.55
+          }
+        ],
+        "success_patterns": [],
+        "failure_patterns": [
+          {
+            "task_id": "t_20260311_bb49",
+            "task_type": "coding",
+            "outcome": null,
+            "timestamp": "2026-03-11T02:00:50.744910",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260311_d66c",
+            "task_type": "coding",
+            "outcome": null,
+            "timestamp": "2026-03-11T02:00:50.762722",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260311_73d6",
+            "task_type": "coding",
+            "outcome": null,
+            "timestamp": "2026-03-11T18:06:31.227145",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260311_e72d",
+            "task_type": "coding",
+            "outcome": null,
+            "timestamp": "2026-03-11T18:06:31.239992",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260310_3331",
+            "task_type": "coding",
+            "outcome": null,
+            "timestamp": "2026-03-10T22:12:22.361944",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260310_8721",
+            "task_type": "coding",
+            "outcome": null,
+            "timestamp": "2026-03-10T22:12:22.370689",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260311_3273",
+            "task_type": "coding",
+            "outcome": null,
+            "timestamp": "2026-03-11T02:19:38.807204",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260311_3b9e",
+            "task_type": "coding",
+            "outcome": null,
+            "timestamp": "2026-03-11T02:19:38.817310",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260311_43eb",
+            "task_type": "coding",
+            "outcome": null,
+            "timestamp": "2026-03-11T03:42:30.191432",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260311_09c0",
+            "task_type": "coding",
+            "outcome": null,
+            "timestamp": "2026-03-11T03:42:30.262465",
+            "reasons": [
+              "Unknown"
+            ]
+          }
+        ],
+        "learned_lessons": [
+          "Historical success rate: 0% (0/10)",
+          "Common issues to avoid:",
+          "  • unknown... (10x)"
+        ],
+        "skill_recommendations": [],
+        "confidence": 0.0
+      },
+      "semantic": [
+        {
+          "score": 0.6531,
+          "type": "conversation",
+          "timestamp": "2026-03-11T17:34:47.064861",
+          "content": "测试 after_task 记录",
+          "source": "message_handler"
+        },
+        {
+          "score": 0.2446,
+          "type": "notable",
+          "timestamp": "",
+          "content": "新增系统协调性校验器，检查catalog与readable checklist写库、after_task反馈入库结构、入口到记忆链路一致性。",
+          "source": "experiences"
+        }
+      ],
+      "memories": [],
+      "candidate": [],
+      "graph": []
+    },
+    "recall_priority_order": [
+      "rules",
+      "experience",
+      "candidate"
+    ],
+    "recall_packet": {
+      "rules": {
+        "task_type": "coding",
+        "scenario": "code_development",
+        "risk_level": "low",
+        "rules": {
+          "P0_HARD": [
+            {
+              "id": "p0_001",
+              "name": "private_data_stays_private",
+              "description": "Private data must never be exfiltrated",
+              "priority": "P0",
+              "enforced": true
+            },
+            {
+              "id": "p0_002",
+              "name": "no_unauthorized_write",
+              "description": "Cannot write outside allowed file scope",
+              "priority": "P0",
+              "enforced": true
+            },
+            {
+              "id": "p0_003",
+              "name": "ask_before_external_actions",
+              "description": "Must ask before sending emails, tweets, etc",
+              "priority": "P0",
+              "enforced": true
+            },
+            {
+              "id": "p0_004",
+              "name": "high_risk_requires_approval",
+              "description": "High risk tasks require explicit approval",
+              "priority": "P0",
+              "enforced": true
+            }
+          ],
+          "P1_GOVERNANCE": [],
+          "P2_TASK_TYPE": [
+            {
+              "id": "p2_c001",
+              "name": "preserve_original",
+              "rule": "Preserve original code before changes"
+            },
+            {
+              "id": "p2_c002",
+              "name": "test_driven",
+              "rule": "Use test-driven development"
+            },
+            {
+              "id": "p2_c003",
+              "name": "syntax_check",
+              "rule": "Verify syntax after changes"
+            }
+          ],
+          "P3_SCENARIO": [],
+          "P4_SUGGESTION": [
+            {
+              "id": "p4_001",
+              "name": "use_cache",
+              "rule": "Consider caching results"
+            },
+            {
+              "id": "p4_002",
+              "name": "log_performance",
+              "rule": "Log performance metrics"
+            }
+          ]
+        },
+        "governance": {
+          "level": "advisory",
+          "auto_approve_categories": [
+            "scenario_discovery",
+            "knowledge"
+          ],
+          "auto_approve_min_confidence": 0.8
+        }
+      },
+      "experience": {
+        "episodic": {
+          "similar_tasks": [
+            {
+              "task_id": "t_20260311_bb49",
+              "event": "started",
+              "timestamp": "2026-03-11T02:00:50.744910",
+              "task_type": "coding",
+              "scenario": "code_development",
+              "risk_level": "low",
+              "tags": [
+                "code_development",
+                "coding"
+              ],
+              "uncertainty": 0.3,
+              "similarity_score": 1.0
+            },
+            {
+              "task_id": "t_20260311_d66c",
+              "event": "started",
+              "timestamp": "2026-03-11T02:00:50.762722",
+              "task_type": "coding",
+              "scenario": "code_development",
+              "risk_level": "low",
+              "tags": [
+                "code_development",
+                "coding"
+              ],
+              "uncertainty": 0.3,
+              "similarity_score": 1.0
+            },
+            {
+              "task_id": "t_20260311_73d6",
+              "event": "started",
+              "timestamp": "2026-03-11T18:06:31.227145",
+              "task_type": "coding",
+              "scenario": "code_development",
+              "risk_level": "low",
+              "tags": [
+                "code_development",
+                "coding"
+              ],
+              "uncertainty": 0.3,
+              "similarity_score": 1.0
+            },
+            {
+              "task_id": "t_20260311_e72d",
+              "event": "started",
+              "timestamp": "2026-03-11T18:06:31.239992",
+              "task_type": "coding",
+              "scenario": "code_development",
+              "risk_level": "low",
+              "tags": [
+                "code_development",
+                "coding"
+              ],
+              "uncertainty": 0.3,
+              "similarity_score": 1.0
+            },
+            {
+              "task_id": "t_20260310_3331",
+              "event": "started",
+              "timestamp": "2026-03-10T22:12:22.361944",
+              "task_type": "coding",
+              "scenario": "code_development",
+              "risk_level": "low",
+              "tags": [
+                "code_development",
+                "coding"
+              ],
+              "uncertainty": 0.19999999999999998,
+              "similarity_score": 1.0
+            },
+            {
+              "task_id": "t_20260310_8721",
+              "event": "started",
+              "timestamp": "2026-03-10T22:12:22.370689",
+              "task_type": "coding",
+              "scenario": "code_development",
+              "risk_level": "low",
+              "tags": [
+                "code_development",
+                "coding"
+              ],
+              "uncertainty": 0.19999999999999998,
+              "similarity_score": 1.0
+            },
+            {
+              "task_id": "t_20260311_3273",
+              "event": "started",
+              "timestamp": "2026-03-11T02:19:38.807204",
+              "task_type": "coding",
+              "scenario": "coding_general",
+              "risk_level": "low",
+              "tags": [
+                "coding_general",
+                "coding"
+              ],
+              "uncertainty": 0.6,
+              "similarity_score": 0.55
+            },
+            {
+              "task_id": "t_20260311_3b9e",
+              "event": "started",
+              "timestamp": "2026-03-11T02:19:38.817310",
+              "task_type": "coding",
+              "scenario": "coding_general",
+              "risk_level": "low",
+              "tags": [
+                "coding_general",
+                "coding"
+              ],
+              "uncertainty": 0.6,
+              "similarity_score": 0.55
+            },
+            {
+              "task_id": "t_20260311_43eb",
+              "event": "started",
+              "timestamp": "2026-03-11T03:42:30.191432",
+              "task_type": "coding",
+              "scenario": "coding_general",
+              "risk_level": "low",
+              "tags": [
+                "coding_general",
+                "coding"
+              ],
+              "uncertainty": 0.6,
+              "similarity_score": 0.55
+            },
+            {
+              "task_id": "t_20260311_09c0",
+              "event": "started",
+              "timestamp": "2026-03-11T03:42:30.262465",
+              "task_type": "coding",
+              "scenario": "coding_general",
+              "risk_level": "low",
+              "tags": [
+                "coding_general",
+                "coding"
+              ],
+              "uncertainty": 0.6,
+              "similarity_score": 0.55
+            }
+          ],
+          "success_patterns": [],
+          "failure_patterns": [
+            {
+              "task_id": "t_20260311_bb49",
+              "task_type": "coding",
+              "outcome": null,
+              "timestamp": "2026-03-11T02:00:50.744910",
+              "reasons": [
+                "Unknown"
+              ]
+            },
+            {
+              "task_id": "t_20260311_d66c",
+              "task_type": "coding",
+              "outcome": null,
+              "timestamp": "2026-03-11T02:00:50.762722",
+              "reasons": [
+                "Unknown"
+              ]
+            },
+            {
+              "task_id": "t_20260311_73d6",
+              "task_type": "coding",
+              "outcome": null,
+              "timestamp": "2026-03-11T18:06:31.227145",
+              "reasons": [
+                "Unknown"
+              ]
+            },
+            {
+              "task_id": "t_20260311_e72d",
+              "task_type": "coding",
+              "outcome": null,
+              "timestamp": "2026-03-11T18:06:31.239992",
+              "reasons": [
+                "Unknown"
+              ]
+            },
+            {
+              "task_id": "t_20260310_3331",
+              "task_type": "coding",
+              "outcome": null,
+              "timestamp": "2026-03-10T22:12:22.361944",
+              "reasons": [
+                "Unknown"
+              ]
+            },
+            {
+              "task_id": "t_20260310_8721",
+              "task_type": "coding",
+              "outcome": null,
+              "timestamp": "2026-03-10T22:12:22.370689",
+              "reasons": [
+                "Unknown"
+              ]
+            },
+            {
+              "task_id": "t_20260311_3273",
+              "task_type": "coding",
+              "outcome": null,
+              "timestamp": "2026-03-11T02:19:38.807204",
+              "reasons": [
+                "Unknown"
+              ]
+            },
+            {
+              "task_id": "t_20260311_3b9e",
+              "task_type": "coding",
+              "outcome": null,
+              "timestamp": "2026-03-11T02:19:38.817310",
+              "reasons": [
+                "Unknown"
+              ]
+            },
+            {
+              "task_id": "t_20260311_43eb",
+              "task_type": "coding",
+              "outcome": null,
+              "timestamp": "2026-03-11T03:42:30.191432",
+              "reasons": [
+                "Unknown"
+              ]
+            },
+            {
+              "task_id": "t_20260311_09c0",
+              "task_type": "coding",
+              "outcome": null,
+              "timestamp": "2026-03-11T03:42:30.262465",
+              "reasons": [
+                "Unknown"
+              ]
+            }
+          ],
+          "learned_lessons": [
+            "Historical success rate: 0% (0/10)",
+            "Common issues to avoid:",
+            "  • unknown... (10x)"
+          ],
+          "skill_recommendations": [],
+          "confidence": 0.0
+        },
+        "semantic": [
+          {
+            "score": 0.6531,
+            "type": "conversation",
+            "timestamp": "2026-03-11T17:34:47.064861",
+            "content": "测试 after_task 记录",
+            "source": "message_handler"
+          },
+          {
+            "score": 0.2446,
+            "type": "notable",
+            "timestamp": "",
+            "content": "新增系统协调性校验器，检查catalog与readable checklist写库、after_task反馈入库结构、入口到记忆链路一致性。",
+            "source": "experiences"
+          }
+        ],
+        "memories": [],
+        "graph": []
+      },
+      "candidate": {
+        "candidate": []
+      }
+    },
+    "context_summary": "📊 经验:\n   • Historical success rate: 0% (0/10)\n   • Common issues to avoid:\n   •   • unknown... (10x)\n\n⚠️ 注意:\n   • 历史有 10 次失败记录\n\n🧠 语义命中: 2条",
+    "hits": {
+      "rules": true,
+      "episodic": true,
+      "semantic": true,
+      "memories": false,
+      "candidate": false,
+      "graph": false
+    },
+    "retrieval_stats": {
+      "total_calls": 482,
+      "updated_at": "2026-03-11T18:32:09.963494",
+      "tracks": {
+        "rules": {
+          "hit": 482,
+          "miss": 0
+        },
+        "episodic": {
+          "hit": 472,
+          "miss": 10
+        },
+        "semantic": {
+          "hit": 264,
+          "miss": 218
+        },
+        "memories": {
+          "hit": 344,
+          "miss": 138
+        },
+        "candidate": {
+          "hit": 14,
+          "miss": 468
+        },
+        "graph": {
+          "hit": 0,
+          "miss": 482
+        }
+      }
+    }
+  },
+  "rules": {
+    "P0_HARD": [
+      {
+        "id": "p0_001",
+        "name": "private_data_stays_private",
+        "description": "Private data must never be exfiltrated",
+        "priority": "P0",
+        "enforced": true
+      },
+      {
+        "id": "p0_002",
+        "name": "no_unauthorized_write",
+        "description": "Cannot write outside allowed file scope",
+        "priority": "P0",
+        "enforced": true
+      },
+      {
+        "id": "p0_003",
+        "name": "ask_before_external_actions",
+        "description": "Must ask before sending emails, tweets, etc",
+        "priority": "P0",
+        "enforced": true
+      },
+      {
+        "id": "p0_004",
+        "name": "high_risk_requires_approval",
+        "description": "High risk tasks require explicit approval",
+        "priority": "P0",
+        "enforced": true
+      }
+    ],
+    "P1_GOVERNANCE": [],
+    "P2_TASK_TYPE": [
+      {
+        "id": "p2_c001",
+        "name": "preserve_original",
+        "rule": "Preserve original code before changes"
+      },
+      {
+        "id": "p2_c002",
+        "name": "test_driven",
+        "rule": "Use test-driven development"
+      },
+      {
+        "id": "p2_c003",
+        "name": "syntax_check",
+        "rule": "Verify syntax after changes"
+      }
+    ],
+    "P3_SCENARIO": [],
+    "P4_SUGGESTION": [
+      {
+        "id": "p4_001",
+        "name": "use_cache",
+        "rule": "Consider caching results"
+      },
+      {
+        "id": "p4_002",
+        "name": "log_performance",
+        "rule": "Log performance metrics"
+      }
+    ]
+  },
+  "rule_constraints": {
+    "blocking_rules": [],
+    "blocking_count": 0
+  },
+  "rule_description": "P0:4 P1:0 P2:3 P3:0",
+  "experience": {
+    "similar_tasks": [
+      {
+        "task_id": "t_20260311_bb49",
+        "event": "started",
+        "timestamp": "2026-03-11T02:00:50.744910",
+        "task_type": "coding",
+        "scenario": "code_development",
+        "risk_level": "low",
+        "tags": [
+          "code_development",
+          "coding"
+        ],
+        "uncertainty": 0.3,
+        "similarity_score": 1.0
+      },
+      {
+        "task_id": "t_20260311_d66c",
+        "event": "started",
+        "timestamp": "2026-03-11T02:00:50.762722",
+        "task_type": "coding",
+        "scenario": "code_development",
+        "risk_level": "low",
+        "tags": [
+          "code_development",
+          "coding"
+        ],
+        "uncertainty": 0.3,
+        "similarity_score": 1.0
+      },
+      {
+        "task_id": "t_20260311_73d6",
+        "event": "started",
+        "timestamp": "2026-03-11T18:06:31.227145",
+        "task_type": "coding",
+        "scenario": "code_development",
+        "risk_level": "low",
+        "tags": [
+          "code_development",
+          "coding"
+        ],
+        "uncertainty": 0.3,
+        "similarity_score": 1.0
+      },
+      {
+        "task_id": "t_20260311_e72d",
+        "event": "started",
+        "timestamp": "2026-03-11T18:06:31.239992",
+        "task_type": "coding",
+        "scenario": "code_development",
+        "risk_level": "low",
+        "tags": [
+          "code_development",
+          "coding"
+        ],
+        "uncertainty": 0.3,
+        "similarity_score": 1.0
+      },
+      {
+        "task_id": "t_20260310_3331",
+        "event": "started",
+        "timestamp": "2026-03-10T22:12:22.361944",
+        "task_type": "coding",
+        "scenario": "code_development",
+        "risk_level": "low",
+        "tags": [
+          "code_development",
+          "coding"
+        ],
+        "uncertainty": 0.19999999999999998,
+        "similarity_score": 1.0
+      },
+      {
+        "task_id": "t_20260310_8721",
+        "event": "started",
+        "timestamp": "2026-03-10T22:12:22.370689",
+        "task_type": "coding",
+        "scenario": "code_development",
+        "risk_level": "low",
+        "tags": [
+          "code_development",
+          "coding"
+        ],
+        "uncertainty": 0.19999999999999998,
+        "similarity_score": 1.0
+      },
+      {
+        "task_id": "t_20260311_3273",
+        "event": "started",
+        "timestamp": "2026-03-11T02:19:38.807204",
+        "task_type": "coding",
+        "scenario": "coding_general",
+        "risk_level": "low",
+        "tags": [
+          "coding_general",
+          "coding"
+        ],
+        "uncertainty": 0.6,
+        "similarity_score": 0.55
+      },
+      {
+        "task_id": "t_20260311_3b9e",
+        "event": "started",
+        "timestamp": "2026-03-11T02:19:38.817310",
+        "task_type": "coding",
+        "scenario": "coding_general",
+        "risk_level": "low",
+        "tags": [
+          "coding_general",
+          "coding"
+        ],
+        "uncertainty": 0.6,
+        "similarity_score": 0.55
+      },
+      {
+        "task_id": "t_20260311_43eb",
+        "event": "started",
+        "timestamp": "2026-03-11T03:42:30.191432",
+        "task_type": "coding",
+        "scenario": "coding_general",
+        "risk_level": "low",
+        "tags": [
+          "coding_general",
+          "coding"
+        ],
+        "uncertainty": 0.6,
+        "similarity_score": 0.55
+      },
+      {
+        "task_id": "t_20260311_09c0",
+        "event": "started",
+        "timestamp": "2026-03-11T03:42:30.262465",
+        "task_type": "coding",
+        "scenario": "coding_general",
+        "risk_level": "low",
+        "tags": [
+          "coding_general",
+          "coding"
+        ],
+        "uncertainty": 0.6,
+        "similarity_score": 0.55
+      }
+    ],
+    "success_patterns": [],
+    "failure_patterns": [
+      {
+        "task_id": "t_20260311_bb49",
+        "task_type": "coding",
+        "outcome": null,
+        "timestamp": "2026-03-11T02:00:50.744910",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260311_d66c",
+        "task_type": "coding",
+        "outcome": null,
+        "timestamp": "2026-03-11T02:00:50.762722",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260311_73d6",
+        "task_type": "coding",
+        "outcome": null,
+        "timestamp": "2026-03-11T18:06:31.227145",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260311_e72d",
+        "task_type": "coding",
+        "outcome": null,
+        "timestamp": "2026-03-11T18:06:31.239992",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260310_3331",
+        "task_type": "coding",
+        "outcome": null,
+        "timestamp": "2026-03-10T22:12:22.361944",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260310_8721",
+        "task_type": "coding",
+        "outcome": null,
+        "timestamp": "2026-03-10T22:12:22.370689",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260311_3273",
+        "task_type": "coding",
+        "outcome": null,
+        "timestamp": "2026-03-11T02:19:38.807204",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260311_3b9e",
+        "task_type": "coding",
+        "outcome": null,
+        "timestamp": "2026-03-11T02:19:38.817310",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260311_43eb",
+        "task_type": "coding",
+        "outcome": null,
+        "timestamp": "2026-03-11T03:42:30.191432",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260311_09c0",
+        "task_type": "coding",
+        "outcome": null,
+        "timestamp": "2026-03-11T03:42:30.262465",
+        "reasons": [
+          "Unknown"
+        ]
+      }
+    ],
+    "learned_lessons": [
+      "Historical success rate: 0% (0/10)",
+      "Common issues to avoid:",
+      "  • unknown... (10x)"
+    ],
+    "skill_recommendations": [],
+    "confidence": 0.0
+  },
+  "context_summary": "📊 经验:\n   • Historical success rate: 0% (0/10)\n   • Common issues to avoid:\n   •   • unknown... (10x)\n\n⚠️ 注意:\n   • 历史有 10 次失败记录\n\n🧠 语义命中: 2条",
+  "file_governance": {
+    "catalog_precheck": {
+      "pass": true,
+      "blocked": [],
+      "allowed": [],
+      "policy_version": "v1"
+    }
+  },
+  "ready_to_execute": true
+}

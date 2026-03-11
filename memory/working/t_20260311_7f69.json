@@ -1,0 +1,443 @@
+{
+  "hook": "before_task",
+  "timestamp": "2026-03-11T18:22:39.360193",
+  "task": {
+    "task_id": "t_20260311_7f69",
+    "parent_task_id": null,
+    "task_type": "information",
+    "scenario": "information_general",
+    "complexity_level": "L0",
+    "risk_level": "low",
+    "file_write_flag": false,
+    "file_scope": null,
+    "requires_tools": [
+      "conversation"
+    ],
+    "candidate_subtasks": [
+      "execute_primary_action"
+    ],
+    "uncertainty_level": 0.6,
+    "priority": "P2",
+    "tags": [
+      "information_general",
+      "information"
+    ],
+    "created_at": "2026-03-11T18:22:39.357191",
+    "raw_message": "天气？"
+  },
+  "memory_retrieval": {
+    "timestamp": "2026-03-11T18:22:39.360184",
+    "rules_track": {
+      "task_type": "information",
+      "scenario": "information_general",
+      "risk_level": "low",
+      "rules": {
+        "P0_HARD": [
+          {
+            "id": "p0_001",
+            "name": "private_data_stays_private",
+            "description": "隐私数据必须保密，永不外泄",
+            "rule": "禁止将任何私人数据发送到系统外部",
+            "priority": "P0_HARD",
+            "category": "",
+            "action": "block"
+          },
+          {
+            "id": "p0_003",
+            "name": "ask_before_external_actions",
+            "description": "外部操作必须先询问人类",
+            "rule": "发送邮件、推文等操作前必须先获得批准",
+            "priority": "P0_HARD",
+            "category": "",
+            "action": "block"
+          },
+          {
+            "id": "p0_004",
+            "name": "high_risk_requires_approval",
+            "description": "高风险任务需要明确审批",
+            "rule": "涉及删除、部署等高风险操作需要确认",
+            "priority": "P0_HARD",
+            "category": "",
+            "action": "block"
+          },
+          {
+            "id": "p0_005",
+            "name": "sync_mechanism_and_code",
+            "description": "修改系统机制文件时，必须同步更新相关代码",
+            "rule": "当修改配置文件、数据库schema、规则等机制文件时，必须同步修改相关代码，确保行为一致",
+            "priority": "P0_HARD",
+            "category": "system",
+            "action": "suggest"
+          },
+          {
+            "id": "p0_006",
+            "name": "enforce_new_mechanisms",
+            "description": "新文件/新机制必须落实执行",
+            "rule": "创建新配置文件、技能、机制后，必须确保其被实际使用/执行，不能只是创建了事",
+            "priority": "P0_HARD",
+            "category": "system",
+            "action": "block"
+          }
+        ],
+        "P1_GOVERNANCE": [],
+        "P2_TASK_TYPE": [],
+        "P3_SCENARIO": [],
+        "P4_SUGGESTION": [
+          {
+            "id": "p4_001",
+            "name": "use_cache",
+            "description": "考虑使用缓存",
+            "rule": "重复请求可使用缓存",
+            "priority": "P4_SUGGESTION",
+            "category": "",
+            "action": "suggest"
+          },
+          {
+            "id": "p4_002",
+            "name": "log_performance",
+            "description": "记录性能指标",
+            "rule": "记录响应时间和资源使用",
+            "priority": "P4_SUGGESTION",
+            "category": "",
+            "action": "suggest"
+          }
+        ]
+      },
+      "governance": {
+        "level": "advisory",
+        "auto_approve_categories": [
+          "scenario_discovery",
+          "knowledge"
+        ],
+        "auto_approve_min_confidence": 0.8
+      }
+    },
+    "experience_track": {
+      "episodic": {
+        "similar_tasks": [
+          {
+            "task_id": "t_20260311_f836",
+            "event": "started",
+            "timestamp": "2026-03-11T18:22:39.355126",
+            "task_type": "information",
+            "scenario": "information_general",
+            "risk_level": "low",
+            "tags": [
+              "information_general",
+              "information"
+            ],
+            "uncertainty": 0.6,
+            "similarity_score": 1.0
+          },
+          {
+            "task_id": "t_20260310_6331",
+            "event": "started",
+            "timestamp": "2026-03-10T22:54:06.338105",
+            "task_type": "information",
+            "scenario": "information_general",
+            "risk_level": "low",
+            "tags": [
+              "information_general",
+              "information"
+            ],
+            "uncertainty": 0.19999999999999998,
+            "similarity_score": 1.0
+          },
+          {
+            "task_id": "t_20260310_c701",
+            "event": "started",
+            "timestamp": "2026-03-10T22:54:06.348906",
+            "task_type": "information",
+            "scenario": "information_general",
+            "risk_level": "low",
+            "tags": [
+              "information_general",
+              "information"
+            ],
+            "uncertainty": 0.19999999999999998,
+            "similarity_score": 1.0
+          }
+        ],
+        "success_patterns": [],
+        "failure_patterns": [
+          {
+            "task_id": "t_20260311_f836",
+            "task_type": "information",
+            "outcome": null,
+            "timestamp": "2026-03-11T18:22:39.355126",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260310_6331",
+            "task_type": "information",
+            "outcome": null,
+            "timestamp": "2026-03-10T22:54:06.338105",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260310_c701",
+            "task_type": "information",
+            "outcome": null,
+            "timestamp": "2026-03-10T22:54:06.348906",
+            "reasons": [
+              "Unknown"
+            ]
+          }
+        ],
+        "learned_lessons": [
+          "Historical success rate: 0% (0/3)",
+          "Common issues to avoid:",
+          "  • unknown... (3x)"
+        ],
+        "skill_recommendations": [],
+        "confidence": 0.0
+      },
+      "semantic": [],
+      "memories": [],
+      "candidate": [],
+      "graph": []
+    },
+    "context_summary": "📊 经验:\n   • Historical success rate: 0% (0/3)\n   • Common issues to avoid:\n   •   • unknown... (3x)\n\n⚠️ 注意:\n   • 历史有 3 次失败记录",
+    "hits": {
+      "rules": true,
+      "episodic": true,
+      "semantic": false,
+      "memories": false,
+      "candidate": false,
+      "graph": false
+    },
+    "retrieval_stats": {
+      "total_calls": 479,
+      "updated_at": "2026-03-11T18:22:39.359996",
+      "tracks": {
+        "rules": {
+          "hit": 479,
+          "miss": 0
+        },
+        "episodic": {
+          "hit": 469,
+          "miss": 10
+        },
+        "semantic": {
+          "hit": 263,
+          "miss": 216
+        },
+        "memories": {
+          "hit": 342,
+          "miss": 137
+        },
+        "candidate": {
+          "hit": 14,
+          "miss": 465
+        },
+        "graph": {
+          "hit": 0,
+          "miss": 479
+        }
+      }
+    }
+  },
+  "rules": {
+    "P0_HARD": [
+      {
+        "id": "p0_001",
+        "name": "private_data_stays_private",
+        "description": "隐私数据必须保密，永不外泄",
+        "rule": "禁止将任何私人数据发送到系统外部",
+        "priority": "P0_HARD",
+        "category": "",
+        "action": "block"
+      },
+      {
+        "id": "p0_003",
+        "name": "ask_before_external_actions",
+        "description": "外部操作必须先询问人类",
+        "rule": "发送邮件、推文等操作前必须先获得批准",
+        "priority": "P0_HARD",
+        "category": "",
+        "action": "block"
+      },
+      {
+        "id": "p0_004",
+        "name": "high_risk_requires_approval",
+        "description": "高风险任务需要明确审批",
+        "rule": "涉及删除、部署等高风险操作需要确认",
+        "priority": "P0_HARD",
+        "category": "",
+        "action": "block"
+      },
+      {
+        "id": "p0_005",
+        "name": "sync_mechanism_and_code",
+        "description": "修改系统机制文件时，必须同步更新相关代码",
+        "rule": "当修改配置文件、数据库schema、规则等机制文件时，必须同步修改相关代码，确保行为一致",
+        "priority": "P0_HARD",
+        "category": "system",
+        "action": "suggest"
+      },
+      {
+        "id": "p0_006",
+        "name": "enforce_new_mechanisms",
+        "description": "新文件/新机制必须落实执行",
+        "rule": "创建新配置文件、技能、机制后，必须确保其被实际使用/执行，不能只是创建了事",
+        "priority": "P0_HARD",
+        "category": "system",
+        "action": "block"
+      }
+    ],
+    "P1_GOVERNANCE": [],
+    "P2_TASK_TYPE": [],
+    "P3_SCENARIO": [],
+    "P4_SUGGESTION": [
+      {
+        "id": "p4_001",
+        "name": "use_cache",
+        "description": "考虑使用缓存",
+        "rule": "重复请求可使用缓存",
+        "priority": "P4_SUGGESTION",
+        "category": "",
+        "action": "suggest"
+      },
+      {
+        "id": "p4_002",
+        "name": "log_performance",
+        "description": "记录性能指标",
+        "rule": "记录响应时间和资源使用",
+        "priority": "P4_SUGGESTION",
+        "category": "",
+        "action": "suggest"
+      }
+    ]
+  },
+  "rule_constraints": {
+    "blocking_rules": [
+      {
+        "id": "p0_001",
+        "name": "private_data_stays_private",
+        "description": "隐私数据必须保密，永不外泄",
+        "rule": "禁止将任何私人数据发送到系统外部",
+        "priority": "P0_HARD",
+        "category": "",
+        "action": "block"
+      },
+      {
+        "id": "p0_003",
+        "name": "ask_before_external_actions",
+        "description": "外部操作必须先询问人类",
+        "rule": "发送邮件、推文等操作前必须先获得批准",
+        "priority": "P0_HARD",
+        "category": "",
+        "action": "block"
+      },
+      {
+        "id": "p0_004",
+        "name": "high_risk_requires_approval",
+        "description": "高风险任务需要明确审批",
+        "rule": "涉及删除、部署等高风险操作需要确认",
+        "priority": "P0_HARD",
+        "category": "",
+        "action": "block"
+      },
+      {
+        "id": "p0_006",
+        "name": "enforce_new_mechanisms",
+        "description": "新文件/新机制必须落实执行",
+        "rule": "创建新配置文件、技能、机制后，必须确保其被实际使用/执行，不能只是创建了事",
+        "priority": "P0_HARD",
+        "category": "system",
+        "action": "block"
+      }
+    ],
+    "blocking_count": 4
+  },
+  "rule_description": "P0:5 P1:0 P2:0 P3:0",
+  "experience": {
+    "similar_tasks": [
+      {
+        "task_id": "t_20260311_f836",
+        "event": "started",
+        "timestamp": "2026-03-11T18:22:39.355126",
+        "task_type": "information",
+        "scenario": "information_general",
+        "risk_level": "low",
+        "tags": [
+          "information_general",
+          "information"
+        ],
+        "uncertainty": 0.6,
+        "similarity_score": 1.0
+      },
+      {
+        "task_id": "t_20260310_6331",
+        "event": "started",
+        "timestamp": "2026-03-10T22:54:06.338105",
+        "task_type": "information",
+        "scenario": "information_general",
+        "risk_level": "low",
+        "tags": [
+          "information_general",
+          "information"
+        ],
+        "uncertainty": 0.19999999999999998,
+        "similarity_score": 1.0
+      },
+      {
+        "task_id": "t_20260310_c701",
+        "event": "started",
+        "timestamp": "2026-03-10T22:54:06.348906",
+        "task_type": "information",
+        "scenario": "information_general",
+        "risk_level": "low",
+        "tags": [
+          "information_general",
+          "information"
+        ],
+        "uncertainty": 0.19999999999999998,
+        "similarity_score": 1.0
+      }
+    ],
+    "success_patterns": [],
+    "failure_patterns": [
+      {
+        "task_id": "t_20260311_f836",
+        "task_type": "information",
+        "outcome": null,
+        "timestamp": "2026-03-11T18:22:39.355126",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260310_6331",
+        "task_type": "information",
+        "outcome": null,
+        "timestamp": "2026-03-10T22:54:06.338105",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260310_c701",
+        "task_type": "information",
+        "outcome": null,
+        "timestamp": "2026-03-10T22:54:06.348906",
+        "reasons": [
+          "Unknown"
+        ]
+      }
+    ],
+    "learned_lessons": [
+      "Historical success rate: 0% (0/3)",
+      "Common issues to avoid:",
+      "  • unknown... (3x)"
+    ],
+    "skill_recommendations": [],
+    "confidence": 0.0
+  },
+  "context_summary": "📊 经验:\n   • Historical success rate: 0% (0/3)\n   • Common issues to avoid:\n   •   • unknown... (3x)\n\n⚠️ 注意:\n   • 历史有 3 次失败记录",
+  "ready_to_execute": false
+}

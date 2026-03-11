@@ -1,0 +1,19 @@
+{
+  "id": "REF-20260311-003",
+  "timestamp": "2026-03-11T03:16:00",
+  "type": "notable",
+  "source_experiences": ["EXP-20260311-0005"],
+  "summary": "用户要求安装 PinchTab 浏览器自动化工具，丰富了工具生态",
+  "key_insights": [
+    "用户主动探索更高效的浏览器自动化方案，说明对现有工具的局限性有感知",
+    "PinchTab 的 token 效率优势与 SOUL.md 中'不产生半生不熟内容'的原则一致",
+    "更新 TOOLS.md 是维护工作区知识库的正确行为"
+  ],
+  "growth_signals": [
+    "工具认知扩展 - 了解了轻量级浏览器自动化方案",
+    "工作区知识管理能力提升 - 正确维护了 TOOLS.md",
+    "对浏览器自动化工具的判断力增强"
+  ],
+  "proposal_candidates": [],
+  "proposal_rationale": "这是工具层面的学习，不需要修改 SOUL。用户需求清晰，执行正确，无需身份层面变更。"
+}

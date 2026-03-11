@@ -1,0 +1,70 @@
+{
+  "hook": "before_subtask",
+  "timestamp": "2026-03-11T18:38:02.229606",
+  "parent_task_id": "t_20260311_a9fa",
+  "subtask": {
+    "subtask_id": "st_001",
+    "parent_task_id": "t_20260311_a9fa",
+    "subtask_type": "fetch",
+    "goal": "执行: B方案有啥风险"
+  },
+  "routing": {
+    "skill_id": null,
+    "skill_name": "default_fallback",
+    "routing_score": 0.0,
+    "hard_constraints_pass": true,
+    "constraints_violated": [],
+    "reason": "No specific skill found, using fallback",
+    "alternatives": [],
+    "ready_to_execute": true
+  },
+  "rules": {
+    "hard_rules": [
+      "verify_path_before_write",
+      "backup_before_modify"
+    ],
+    "local_rules": [
+      "verify_source_reliability",
+      "cache_results"
+    ],
+    "guidelines": []
+  },
+  "local_experience": {
+    "similar_subtasks": [
+      {
+        "subtask_id": "st_001",
+        "outcome": null,
+        "error": null
+      },
+      {
+        "subtask_id": "st_001",
+        "outcome": null,
+        "error": null
+      },
+      {
+        "subtask_id": "st_001",
+        "outcome": null,
+        "error": null
+      }
+    ],
+    "total_found": 178
+  },
+  "checklist": [
+    {
+      "item": "Execute subtask: fetch",
+      "done": false,
+      "required": true
+    },
+    {
+      "item": "Verify data source",
+      "done": false,
+      "required": true
+    },
+    {
+      "item": "Verify done_criteria met",
+      "done": false,
+      "required": true
+    }
+  ],
+  "ready_to_execute": true
+}

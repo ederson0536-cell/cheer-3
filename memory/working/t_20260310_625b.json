@@ -1,0 +1,837 @@
+{
+  "hook": "before_task",
+  "timestamp": "2026-03-10T22:30:20.900625",
+  "task": {
+    "task_id": "t_20260310_625b",
+    "parent_task_id": null,
+    "task_type": "coding",
+    "scenario": "automation_setup",
+    "complexity_level": "L0",
+    "risk_level": "low",
+    "file_write_flag": false,
+    "file_scope": null,
+    "requires_tools": [
+      "conversation"
+    ],
+    "candidate_subtasks": [
+      "analyze_requirements",
+      "write_code",
+      "validate_output"
+    ],
+    "uncertainty_level": 0.3,
+    "priority": "P2",
+    "tags": [
+      "coding",
+      "automation_setup"
+    ],
+    "created_at": "2026-03-10T22:30:20.896895",
+    "raw_message": "1. 消息入口 → ingress_router\n2. 文件修改前 → file_catalog precheck\n3. 扫描后 → 自动记录到 system_catalog  什么意思"
+  },
+  "memory_retrieval": {
+    "timestamp": "2026-03-10T22:30:20.900612",
+    "rules_track": {
+      "task_type": "coding",
+      "scenario": "automation_setup",
+      "risk_level": "low",
+      "rules": {
+        "P0_HARD": [
+          {
+            "id": "p0_001",
+            "name": "private_data_stays_private",
+            "description": "隐私数据必须保密，永不外泄",
+            "rule": "禁止将任何私人数据发送到系统外部",
+            "priority": "P0_HARD",
+            "category": "",
+            "action": "block"
+          },
+          {
+            "id": "p0_003",
+            "name": "ask_before_external_actions",
+            "description": "外部操作必须先询问人类",
+            "rule": "发送邮件、推文等操作前必须先获得批准",
+            "priority": "P0_HARD",
+            "category": "",
+            "action": "block"
+          },
+          {
+            "id": "p0_004",
+            "name": "high_risk_requires_approval",
+            "description": "高风险任务需要明确审批",
+            "rule": "涉及删除、部署等高风险操作需要确认",
+            "priority": "P0_HARD",
+            "category": "",
+            "action": "block"
+          },
+          {
+            "id": "p0_005",
+            "name": "sync_mechanism_and_code",
+            "description": "修改系统机制文件时，必须同步更新相关代码",
+            "rule": "当修改配置文件、数据库schema、规则等机制文件时，必须同步修改相关代码，确保行为一致",
+            "priority": "P0_HARD",
+            "category": "system",
+            "action": "suggest"
+          },
+          {
+            "id": "p0_006",
+            "name": "enforce_new_mechanisms",
+            "description": "新文件/新机制必须落实执行",
+            "rule": "创建新配置文件、技能、机制后，必须确保其被实际使用/执行，不能只是创建了事",
+            "priority": "P0_HARD",
+            "category": "system",
+            "action": "block"
+          }
+        ],
+        "P1_GOVERNANCE": [],
+        "P2_TASK_TYPE": [
+          {
+            "id": "p2_c002",
+            "name": "test_driven",
+            "description": "使用测试驱动开发",
+            "rule": "先写测试再写代码",
+            "priority": "P2_TASK_TYPE",
+            "category": "coding",
+            "action": "warn"
+          }
+        ],
+        "P3_SCENARIO": [],
+        "P4_SUGGESTION": [
+          {
+            "id": "p4_001",
+            "name": "use_cache",
+            "description": "考虑使用缓存",
+            "rule": "重复请求可使用缓存",
+            "priority": "P4_SUGGESTION",
+            "category": "",
+            "action": "suggest"
+          },
+          {
+            "id": "p4_002",
+            "name": "log_performance",
+            "description": "记录性能指标",
+            "rule": "记录响应时间和资源使用",
+            "priority": "P4_SUGGESTION",
+            "category": "",
+            "action": "suggest"
+          }
+        ]
+      },
+      "governance": {
+        "level": "advisory",
+        "auto_approve_categories": [
+          "scenario_discovery",
+          "knowledge"
+        ],
+        "auto_approve_min_confidence": 0.8
+      }
+    },
+    "experience_track": {
+      "episodic": {
+        "similar_tasks": [
+          {
+            "task_id": "t_20260310_ef2c",
+            "event": "started",
+            "timestamp": "2026-03-10T22:30:20.894799",
+            "task_type": "coding",
+            "scenario": "automation_setup",
+            "risk_level": "low",
+            "tags": [
+              "coding",
+              "automation_setup"
+            ],
+            "uncertainty": 0.3,
+            "similarity_score": 1.0
+          },
+          {
+            "task_id": "t_20260310_3331",
+            "event": "started",
+            "timestamp": "2026-03-10T22:12:22.361944",
+            "task_type": "coding",
+            "scenario": "code_development",
+            "risk_level": "low",
+            "tags": [
+              "code_development",
+              "coding"
+            ],
+            "uncertainty": 0.19999999999999998,
+            "similarity_score": 0.55
+          },
+          {
+            "task_id": "t_20260310_8721",
+            "event": "started",
+            "timestamp": "2026-03-10T22:12:22.370689",
+            "task_type": "coding",
+            "scenario": "code_development",
+            "risk_level": "low",
+            "tags": [
+              "code_development",
+              "coding"
+            ],
+            "uncertainty": 0.19999999999999998,
+            "similarity_score": 0.55
+          },
+          {
+            "task_id": "t_20260308_4efd",
+            "event": "started",
+            "timestamp": "2026-03-08T20:55:01.185114",
+            "task_type": "automation",
+            "scenario": "automation_setup",
+            "risk_level": "low",
+            "tags": [
+              "automation",
+              "automation_setup",
+              "scheduled"
+            ],
+            "uncertainty": 0.6,
+            "similarity_score": 0.39999999999999997
+          },
+          {
+            "task_id": "t_20260308_9eb3",
+            "event": "started",
+            "timestamp": "2026-03-08T21:00:01.911489",
+            "task_type": "automation",
+            "scenario": "automation_setup",
+            "risk_level": "low",
+            "tags": [
+              "scheduled",
+              "automation_setup",
+              "automation"
+            ],
+            "uncertainty": 0.6,
+            "similarity_score": 0.39999999999999997
+          },
+          {
+            "task_id": "t_20260308_8b4f",
+            "event": "started",
+            "timestamp": "2026-03-08T21:05:01.506937",
+            "task_type": "automation",
+            "scenario": "automation_setup",
+            "risk_level": "low",
+            "tags": [
+              "automation",
+              "automation_setup",
+              "scheduled"
+            ],
+            "uncertainty": 0.6,
+            "similarity_score": 0.39999999999999997
+          },
+          {
+            "task_id": "t_20260308_2953",
+            "event": "started",
+            "timestamp": "2026-03-08T21:10:01.364869",
+            "task_type": "automation",
+            "scenario": "automation_setup",
+            "risk_level": "low",
+            "tags": [
+              "scheduled",
+              "automation",
+              "automation_setup"
+            ],
+            "uncertainty": 0.6,
+            "similarity_score": 0.39999999999999997
+          },
+          {
+            "task_id": "t_20260308_d5ab",
+            "event": "started",
+            "timestamp": "2026-03-08T21:15:01.506266",
+            "task_type": "automation",
+            "scenario": "automation_setup",
+            "risk_level": "low",
+            "tags": [
+              "automation_setup",
+              "automation",
+              "scheduled"
+            ],
+            "uncertainty": 0.6,
+            "similarity_score": 0.39999999999999997
+          },
+          {
+            "task_id": "t_20260308_9b62",
+            "event": "started",
+            "timestamp": "2026-03-08T21:20:01.543865",
+            "task_type": "automation",
+            "scenario": "automation_setup",
+            "risk_level": "low",
+            "tags": [
+              "automation_setup",
+              "automation",
+              "scheduled"
+            ],
+            "uncertainty": 0.6,
+            "similarity_score": 0.39999999999999997
+          },
+          {
+            "task_id": "t_20260308_0a7a",
+            "event": "started",
+            "timestamp": "2026-03-08T21:25:01.847345",
+            "task_type": "automation",
+            "scenario": "automation_setup",
+            "risk_level": "low",
+            "tags": [
+              "automation_setup",
+              "automation",
+              "scheduled"
+            ],
+            "uncertainty": 0.6,
+            "similarity_score": 0.39999999999999997
+          }
+        ],
+        "success_patterns": [],
+        "failure_patterns": [
+          {
+            "task_id": "t_20260310_ef2c",
+            "task_type": "coding",
+            "outcome": null,
+            "timestamp": "2026-03-10T22:30:20.894799",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260310_3331",
+            "task_type": "coding",
+            "outcome": null,
+            "timestamp": "2026-03-10T22:12:22.361944",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260310_8721",
+            "task_type": "coding",
+            "outcome": null,
+            "timestamp": "2026-03-10T22:12:22.370689",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260308_4efd",
+            "task_type": "automation",
+            "outcome": null,
+            "timestamp": "2026-03-08T20:55:01.185114",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260308_9eb3",
+            "task_type": "automation",
+            "outcome": null,
+            "timestamp": "2026-03-08T21:00:01.911489",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260308_8b4f",
+            "task_type": "automation",
+            "outcome": null,
+            "timestamp": "2026-03-08T21:05:01.506937",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260308_2953",
+            "task_type": "automation",
+            "outcome": null,
+            "timestamp": "2026-03-08T21:10:01.364869",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260308_d5ab",
+            "task_type": "automation",
+            "outcome": null,
+            "timestamp": "2026-03-08T21:15:01.506266",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260308_9b62",
+            "task_type": "automation",
+            "outcome": null,
+            "timestamp": "2026-03-08T21:20:01.543865",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260308_0a7a",
+            "task_type": "automation",
+            "outcome": null,
+            "timestamp": "2026-03-08T21:25:01.847345",
+            "reasons": [
+              "Unknown"
+            ]
+          }
+        ],
+        "learned_lessons": [
+          "Historical success rate: 0% (0/10)",
+          "Common issues to avoid:",
+          "  • unknown... (10x)"
+        ],
+        "skill_recommendations": [],
+        "confidence": 0.0
+      },
+      "semantic": [
+        {
+          "score": 0.4015,
+          "type": "notable",
+          "timestamp": null,
+          "content": "根据反馈完成入口统一与文件治理落地：cron消息改为统一走ingress_router；新增root_file_registry与system_catalog盘点表。",
+          "source": null
+        },
+        {
+          "score": 0.2356,
+          "type": "routine",
+          "timestamp": null,
+          "content": "修复build_file_catalog_db.py中file_id生成引号问题并复测通过。",
+          "source": null
+        },
+        {
+          "score": 0.1117,
+          "type": "notable",
+          "timestamp": null,
+          "content": "新增docs/system-user-manual-2026-03-10.md，整理入口、记忆库、反馈接口、文件治理与排障的详细使用手册。",
+          "source": null
+        },
+        {
+          "score": 0.1106,
+          "type": "notable",
+          "timestamp": null,
+          "content": "新增系统协调性校验器，检查catalog与readable checklist写库、after_task反馈入库结构、入口到记忆链路一致性。",
+          "source": null
+        },
+        {
+          "score": 0.0604,
+          "type": "conversation",
+          "timestamp": "2026-03-10T22:14:05+00:00",
+          "content": "用户查找并阅读系统用户手册，询问入口层消息处理流程（收→验→限→续→处理）和整个系统14节点流水线机制。",
+          "source": "conversation"
+        }
+      ],
+      "memories": [],
+      "candidate": [],
+      "graph": []
+    },
+    "context_summary": "📊 经验:\n   • Historical success rate: 0% (0/10)\n   • Common issues to avoid:\n   •   • unknown... (10x)\n\n⚠️ 注意:\n   • 历史有 10 次失败记录\n\n🧠 语义命中: 5条",
+    "hits": {
+      "rules": true,
+      "episodic": true,
+      "semantic": true,
+      "memories": false,
+      "candidate": false,
+      "graph": false
+    },
+    "retrieval_stats": {
+      "total_calls": 217,
+      "updated_at": "2026-03-10T22:30:20.900078",
+      "tracks": {
+        "rules": {
+          "hit": 217,
+          "miss": 0
+        },
+        "episodic": {
+          "hit": 209,
+          "miss": 8
+        },
+        "semantic": {
+          "hit": 87,
+          "miss": 130
+        },
+        "memories": {
+          "hit": 176,
+          "miss": 41
+        },
+        "candidate": {
+          "hit": 14,
+          "miss": 203
+        },
+        "graph": {
+          "hit": 0,
+          "miss": 217
+        }
+      }
+    }
+  },
+  "rules": {
+    "P0_HARD": [
+      {
+        "id": "p0_001",
+        "name": "private_data_stays_private",
+        "description": "隐私数据必须保密，永不外泄",
+        "rule": "禁止将任何私人数据发送到系统外部",
+        "priority": "P0_HARD",
+        "category": "",
+        "action": "block"
+      },
+      {
+        "id": "p0_003",
+        "name": "ask_before_external_actions",
+        "description": "外部操作必须先询问人类",
+        "rule": "发送邮件、推文等操作前必须先获得批准",
+        "priority": "P0_HARD",
+        "category": "",
+        "action": "block"
+      },
+      {
+        "id": "p0_004",
+        "name": "high_risk_requires_approval",
+        "description": "高风险任务需要明确审批",
+        "rule": "涉及删除、部署等高风险操作需要确认",
+        "priority": "P0_HARD",
+        "category": "",
+        "action": "block"
+      },
+      {
+        "id": "p0_005",
+        "name": "sync_mechanism_and_code",
+        "description": "修改系统机制文件时，必须同步更新相关代码",
+        "rule": "当修改配置文件、数据库schema、规则等机制文件时，必须同步修改相关代码，确保行为一致",
+        "priority": "P0_HARD",
+        "category": "system",
+        "action": "suggest"
+      },
+      {
+        "id": "p0_006",
+        "name": "enforce_new_mechanisms",
+        "description": "新文件/新机制必须落实执行",
+        "rule": "创建新配置文件、技能、机制后，必须确保其被实际使用/执行，不能只是创建了事",
+        "priority": "P0_HARD",
+        "category": "system",
+        "action": "block"
+      }
+    ],
+    "P1_GOVERNANCE": [],
+    "P2_TASK_TYPE": [
+      {
+        "id": "p2_c002",
+        "name": "test_driven",
+        "description": "使用测试驱动开发",
+        "rule": "先写测试再写代码",
+        "priority": "P2_TASK_TYPE",
+        "category": "coding",
+        "action": "warn"
+      }
+    ],
+    "P3_SCENARIO": [],
+    "P4_SUGGESTION": [
+      {
+        "id": "p4_001",
+        "name": "use_cache",
+        "description": "考虑使用缓存",
+        "rule": "重复请求可使用缓存",
+        "priority": "P4_SUGGESTION",
+        "category": "",
+        "action": "suggest"
+      },
+      {
+        "id": "p4_002",
+        "name": "log_performance",
+        "description": "记录性能指标",
+        "rule": "记录响应时间和资源使用",
+        "priority": "P4_SUGGESTION",
+        "category": "",
+        "action": "suggest"
+      }
+    ]
+  },
+  "rule_constraints": {
+    "blocking_rules": [
+      {
+        "id": "p0_001",
+        "name": "private_data_stays_private",
+        "description": "隐私数据必须保密，永不外泄",
+        "rule": "禁止将任何私人数据发送到系统外部",
+        "priority": "P0_HARD",
+        "category": "",
+        "action": "block"
+      },
+      {
+        "id": "p0_003",
+        "name": "ask_before_external_actions",
+        "description": "外部操作必须先询问人类",
+        "rule": "发送邮件、推文等操作前必须先获得批准",
+        "priority": "P0_HARD",
+        "category": "",
+        "action": "block"
+      },
+      {
+        "id": "p0_004",
+        "name": "high_risk_requires_approval",
+        "description": "高风险任务需要明确审批",
+        "rule": "涉及删除、部署等高风险操作需要确认",
+        "priority": "P0_HARD",
+        "category": "",
+        "action": "block"
+      },
+      {
+        "id": "p0_006",
+        "name": "enforce_new_mechanisms",
+        "description": "新文件/新机制必须落实执行",
+        "rule": "创建新配置文件、技能、机制后，必须确保其被实际使用/执行，不能只是创建了事",
+        "priority": "P0_HARD",
+        "category": "system",
+        "action": "block"
+      }
+    ],
+    "blocking_count": 4
+  },
+  "rule_description": "P0:5 P1:0 P2:1 P3:0",
+  "experience": {
+    "similar_tasks": [
+      {
+        "task_id": "t_20260310_ef2c",
+        "event": "started",
+        "timestamp": "2026-03-10T22:30:20.894799",
+        "task_type": "coding",
+        "scenario": "automation_setup",
+        "risk_level": "low",
+        "tags": [
+          "coding",
+          "automation_setup"
+        ],
+        "uncertainty": 0.3,
+        "similarity_score": 1.0
+      },
+      {
+        "task_id": "t_20260310_3331",
+        "event": "started",
+        "timestamp": "2026-03-10T22:12:22.361944",
+        "task_type": "coding",
+        "scenario": "code_development",
+        "risk_level": "low",
+        "tags": [
+          "code_development",
+          "coding"
+        ],
+        "uncertainty": 0.19999999999999998,
+        "similarity_score": 0.55
+      },
+      {
+        "task_id": "t_20260310_8721",
+        "event": "started",
+        "timestamp": "2026-03-10T22:12:22.370689",
+        "task_type": "coding",
+        "scenario": "code_development",
+        "risk_level": "low",
+        "tags": [
+          "code_development",
+          "coding"
+        ],
+        "uncertainty": 0.19999999999999998,
+        "similarity_score": 0.55
+      },
+      {
+        "task_id": "t_20260308_4efd",
+        "event": "started",
+        "timestamp": "2026-03-08T20:55:01.185114",
+        "task_type": "automation",
+        "scenario": "automation_setup",
+        "risk_level": "low",
+        "tags": [
+          "automation",
+          "automation_setup",
+          "scheduled"
+        ],
+        "uncertainty": 0.6,
+        "similarity_score": 0.39999999999999997
+      },
+      {
+        "task_id": "t_20260308_9eb3",
+        "event": "started",
+        "timestamp": "2026-03-08T21:00:01.911489",
+        "task_type": "automation",
+        "scenario": "automation_setup",
+        "risk_level": "low",
+        "tags": [
+          "scheduled",
+          "automation_setup",
+          "automation"
+        ],
+        "uncertainty": 0.6,
+        "similarity_score": 0.39999999999999997
+      },
+      {
+        "task_id": "t_20260308_8b4f",
+        "event": "started",
+        "timestamp": "2026-03-08T21:05:01.506937",
+        "task_type": "automation",
+        "scenario": "automation_setup",
+        "risk_level": "low",
+        "tags": [
+          "automation",
+          "automation_setup",
+          "scheduled"
+        ],
+        "uncertainty": 0.6,
+        "similarity_score": 0.39999999999999997
+      },
+      {
+        "task_id": "t_20260308_2953",
+        "event": "started",
+        "timestamp": "2026-03-08T21:10:01.364869",
+        "task_type": "automation",
+        "scenario": "automation_setup",
+        "risk_level": "low",
+        "tags": [
+          "scheduled",
+          "automation",
+          "automation_setup"
+        ],
+        "uncertainty": 0.6,
+        "similarity_score": 0.39999999999999997
+      },
+      {
+        "task_id": "t_20260308_d5ab",
+        "event": "started",
+        "timestamp": "2026-03-08T21:15:01.506266",
+        "task_type": "automation",
+        "scenario": "automation_setup",
+        "risk_level": "low",
+        "tags": [
+          "automation_setup",
+          "automation",
+          "scheduled"
+        ],
+        "uncertainty": 0.6,
+        "similarity_score": 0.39999999999999997
+      },
+      {
+        "task_id": "t_20260308_9b62",
+        "event": "started",
+        "timestamp": "2026-03-08T21:20:01.543865",
+        "task_type": "automation",
+        "scenario": "automation_setup",
+        "risk_level": "low",
+        "tags": [
+          "automation_setup",
+          "automation",
+          "scheduled"
+        ],
+        "uncertainty": 0.6,
+        "similarity_score": 0.39999999999999997
+      },
+      {
+        "task_id": "t_20260308_0a7a",
+        "event": "started",
+        "timestamp": "2026-03-08T21:25:01.847345",
+        "task_type": "automation",
+        "scenario": "automation_setup",
+        "risk_level": "low",
+        "tags": [
+          "automation_setup",
+          "automation",
+          "scheduled"
+        ],
+        "uncertainty": 0.6,
+        "similarity_score": 0.39999999999999997
+      }
+    ],
+    "success_patterns": [],
+    "failure_patterns": [
+      {
+        "task_id": "t_20260310_ef2c",
+        "task_type": "coding",
+        "outcome": null,
+        "timestamp": "2026-03-10T22:30:20.894799",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260310_3331",
+        "task_type": "coding",
+        "outcome": null,
+        "timestamp": "2026-03-10T22:12:22.361944",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260310_8721",
+        "task_type": "coding",
+        "outcome": null,
+        "timestamp": "2026-03-10T22:12:22.370689",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260308_4efd",
+        "task_type": "automation",
+        "outcome": null,
+        "timestamp": "2026-03-08T20:55:01.185114",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260308_9eb3",
+        "task_type": "automation",
+        "outcome": null,
+        "timestamp": "2026-03-08T21:00:01.911489",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260308_8b4f",
+        "task_type": "automation",
+        "outcome": null,
+        "timestamp": "2026-03-08T21:05:01.506937",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260308_2953",
+        "task_type": "automation",
+        "outcome": null,
+        "timestamp": "2026-03-08T21:10:01.364869",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260308_d5ab",
+        "task_type": "automation",
+        "outcome": null,
+        "timestamp": "2026-03-08T21:15:01.506266",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260308_9b62",
+        "task_type": "automation",
+        "outcome": null,
+        "timestamp": "2026-03-08T21:20:01.543865",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260308_0a7a",
+        "task_type": "automation",
+        "outcome": null,
+        "timestamp": "2026-03-08T21:25:01.847345",
+        "reasons": [
+          "Unknown"
+        ]
+      }
+    ],
+    "learned_lessons": [
+      "Historical success rate: 0% (0/10)",
+      "Common issues to avoid:",
+      "  • unknown... (10x)"
+    ],
+    "skill_recommendations": [],
+    "confidence": 0.0
+  },
+  "context_summary": "📊 经验:\n   • Historical success rate: 0% (0/10)\n   • Common issues to avoid:\n   •   • unknown... (10x)\n\n⚠️ 注意:\n   • 历史有 10 次失败记录\n\n🧠 语义命中: 5条",
+  "ready_to_execute": false
+}

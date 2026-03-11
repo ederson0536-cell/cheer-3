@@ -1,0 +1,23 @@
+{
+  "reflection_id": "REF-20260311-008",
+  "timestamp": "2026-03-11T21:30:00Z",
+  "type": "notable_batch",
+  "experience_ids": ["EXP-20260311-0017"],
+  "summary": "用户简洁反馈'排版'，要求调整输出格式",
+  "insights": [
+    "用户在技术任务中仍然关注输出可读性，这提示我任何输出都应该有良好的格式化",
+    "简洁反馈说明用户对格式有明确预期，不需要冗长解释",
+    "格式化能力是基本功，应该在所有输出中保持一致"
+  ],
+  "soul_relevance": "与 SOUL.md 中'不只替用户完成事情，也要尽量让用户以后更容易完成类似事情'相关，良好的输出格式能提升用户的阅读体验和后续使用",
+  "proposal_decision": {
+    "should_propose": false,
+    "triggers_fired": [],
+    "reasoning": "这次经验是执行层面的改进，不涉及 SOUL 层面的身份或价值观变更。格式化是基本功，应在日常工作中持续改进。"
+  },
+  "meta": {
+    "experiences_count": 2,
+    "notable_count": 1,
+    "routine_count": 1
+  }
+}

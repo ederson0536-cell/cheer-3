@@ -1,0 +1,92 @@
+{
+  "hook": "before_subtask",
+  "timestamp": "2026-03-10T23:14:11.967382",
+  "parent_task_id": "task_week5",
+  "subtask": {
+    "subtask_id": "st_week5",
+    "subtask_type": "edit_file",
+    "goal": "edit docs",
+    "file_scope": [
+      "docs/implementation-rollout-plan-2026-03-10.md"
+    ]
+  },
+  "routing": {
+    "skill_id": "filesystem",
+    "skill_name": "Filesystem Operations",
+    "routing_score": 0.828,
+    "hard_constraints_pass": true,
+    "constraints_violated": [],
+    "reason": "高可信度 + 低返工率",
+    "alternatives": [
+      {
+        "skill_id": "code_analysis",
+        "score": 0.797
+      }
+    ],
+    "ready_to_execute": true
+  },
+  "rules": {
+    "hard_rules": [
+      "verify_path_before_write",
+      "backup_before_modify"
+    ],
+    "local_rules": [
+      "preserve_original",
+      "test_after_change"
+    ],
+    "guidelines": []
+  },
+  "local_experience": {
+    "similar_subtasks": [
+      {
+        "subtask_id": "st_week5",
+        "outcome": null,
+        "error": null
+      },
+      {
+        "subtask_id": "st_week5",
+        "outcome": null,
+        "error": null
+      }
+    ],
+    "total_found": 2
+  },
+  "checklist": [
+    {
+      "item": "Execute subtask: edit_file",
+      "done": false,
+      "required": true
+    },
+    {
+      "item": "Using skill: Filesystem Operations",
+      "done": false,
+      "required": true
+    },
+    {
+      "item": "Backup original file",
+      "done": false,
+      "required": false
+    },
+    {
+      "item": "Verify syntax after edit",
+      "done": false,
+      "required": true
+    },
+    {
+      "item": "Verify done_criteria met",
+      "done": false,
+      "required": true
+    }
+  ],
+  "file_governance": {
+    "catalog_precheck": {
+      "pass": true,
+      "blocked": [],
+      "allowed": [
+        "docs/implementation-rollout-plan-2026-03-10.md"
+      ],
+      "policy_version": "v1"
+    }
+  },
+  "ready_to_execute": true
+}

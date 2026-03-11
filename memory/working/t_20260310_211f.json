@@ -1,0 +1,532 @@
+{
+  "hook": "before_task",
+  "timestamp": "2026-03-10T21:42:46.792170",
+  "task": {
+    "task_id": "t_20260310_211f",
+    "parent_task_id": null,
+    "task_type": "conversation",
+    "scenario": "conversation_general",
+    "complexity_level": "L0",
+    "risk_level": "low",
+    "file_write_flag": false,
+    "file_scope": null,
+    "requires_tools": [
+      "conversation"
+    ],
+    "candidate_subtasks": [
+      "execute_primary_action"
+    ],
+    "uncertainty_level": 0.6,
+    "priority": "P2",
+    "tags": [
+      "conversation_general",
+      "conversation"
+    ],
+    "created_at": "2026-03-10T21:42:46.787876",
+    "raw_message": "修复"
+  },
+  "memory_retrieval": {
+    "timestamp": "2026-03-10T21:42:46.792070",
+    "rules_track": {
+      "task_type": "conversation",
+      "scenario": "conversation_general",
+      "risk_level": "low",
+      "rules": {
+        "P0_HARD": [
+          {
+            "id": "p0_001",
+            "name": "private_data_stays_private",
+            "description": "隐私数据必须保密，永不外泄",
+            "rule": "禁止将任何私人数据发送到系统外部",
+            "priority": "P0_HARD",
+            "category": "",
+            "action": "block"
+          },
+          {
+            "id": "p0_003",
+            "name": "ask_before_external_actions",
+            "description": "外部操作必须先询问人类",
+            "rule": "发送邮件、推文等操作前必须先获得批准",
+            "priority": "P0_HARD",
+            "category": "",
+            "action": "block"
+          },
+          {
+            "id": "p0_004",
+            "name": "high_risk_requires_approval",
+            "description": "高风险任务需要明确审批",
+            "rule": "涉及删除、部署等高风险操作需要确认",
+            "priority": "P0_HARD",
+            "category": "",
+            "action": "block"
+          },
+          {
+            "id": "p0_005",
+            "name": "sync_mechanism_and_code",
+            "description": "修改系统机制文件时，必须同步更新相关代码",
+            "rule": "当修改配置文件、数据库schema、规则等机制文件时，必须同步修改相关代码，确保行为一致",
+            "priority": "P0_HARD",
+            "category": "system",
+            "action": "suggest"
+          },
+          {
+            "id": "p0_006",
+            "name": "enforce_new_mechanisms",
+            "description": "新文件/新机制必须落实执行",
+            "rule": "创建新配置文件、技能、机制后，必须确保其被实际使用/执行，不能只是创建了事",
+            "priority": "P0_HARD",
+            "category": "system",
+            "action": "block"
+          }
+        ],
+        "P1_GOVERNANCE": [],
+        "P2_TASK_TYPE": [],
+        "P3_SCENARIO": [],
+        "P4_SUGGESTION": [
+          {
+            "id": "p4_001",
+            "name": "use_cache",
+            "description": "考虑使用缓存",
+            "rule": "重复请求可使用缓存",
+            "priority": "P4_SUGGESTION",
+            "category": "",
+            "action": "suggest"
+          },
+          {
+            "id": "p4_002",
+            "name": "log_performance",
+            "description": "记录性能指标",
+            "rule": "记录响应时间和资源使用",
+            "priority": "P4_SUGGESTION",
+            "category": "",
+            "action": "suggest"
+          }
+        ]
+      },
+      "governance": {
+        "level": "advisory",
+        "auto_approve_categories": [
+          "scenario_discovery",
+          "knowledge"
+        ],
+        "auto_approve_min_confidence": 0.8
+      }
+    },
+    "experience_track": {
+      "episodic": {
+        "similar_tasks": [
+          {
+            "task_id": "t_20260310_b6d2",
+            "event": "started",
+            "timestamp": "2026-03-10T21:42:46.715966",
+            "task_type": "conversation",
+            "scenario": "conversation_general",
+            "risk_level": "low",
+            "tags": [
+              "conversation_general",
+              "conversation"
+            ],
+            "uncertainty": 0.6,
+            "similarity_score": 1.0
+          },
+          {
+            "task_id": "t_20260308_05dc",
+            "event": "started",
+            "timestamp": "2026-03-08T22:43:01.486057",
+            "task_type": "conversation",
+            "scenario": "conversation_general",
+            "risk_level": "low",
+            "tags": [
+              "conversation",
+              "conversation_general"
+            ],
+            "uncertainty": 0.6,
+            "similarity_score": 1.0
+          },
+          {
+            "task_id": "t_20260308_c84d",
+            "event": "started",
+            "timestamp": "2026-03-08T22:44:05.597684",
+            "task_type": "conversation",
+            "scenario": "conversation_general",
+            "risk_level": "low",
+            "tags": [
+              "conversation_general",
+              "conversation"
+            ],
+            "uncertainty": 0.6,
+            "similarity_score": 1.0
+          },
+          {
+            "task_id": "t_20260308_d43e",
+            "event": "started",
+            "timestamp": "2026-03-08T22:57:39.165029",
+            "task_type": "conversation",
+            "scenario": "conversation_general",
+            "risk_level": "low",
+            "tags": [
+              "conversation",
+              "conversation_general"
+            ],
+            "uncertainty": 0.3,
+            "similarity_score": 1.0
+          }
+        ],
+        "success_patterns": [],
+        "failure_patterns": [
+          {
+            "task_id": "t_20260310_b6d2",
+            "task_type": "conversation",
+            "outcome": null,
+            "timestamp": "2026-03-10T21:42:46.715966",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260308_05dc",
+            "task_type": "conversation",
+            "outcome": null,
+            "timestamp": "2026-03-08T22:43:01.486057",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260308_c84d",
+            "task_type": "conversation",
+            "outcome": null,
+            "timestamp": "2026-03-08T22:44:05.597684",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260308_d43e",
+            "task_type": "conversation",
+            "outcome": null,
+            "timestamp": "2026-03-08T22:57:39.165029",
+            "reasons": [
+              "Unknown"
+            ]
+          }
+        ],
+        "learned_lessons": [
+          "Historical success rate: 0% (0/4)",
+          "Common issues to avoid:",
+          "  • unknown... (4x)"
+        ],
+        "skill_recommendations": [],
+        "confidence": 0.0
+      },
+      "semantic": [
+        {
+          "score": 0.3186,
+          "type": "conversation",
+          "timestamp": "2026-03-10T21:06:43.803264+00:00",
+          "content": "用户要求检查系统运行问题、修复并生成详细使用手册；已完成校验器修复与手册编写。",
+          "source": "conversation"
+        },
+        {
+          "score": 0.2052,
+          "type": "routine",
+          "timestamp": null,
+          "content": "修复build_file_catalog_db.py中file_id生成引号问题并复测通过。",
+          "source": null
+        }
+      ],
+      "memories": [
+        {
+          "id": "EXP-20260310-0900",
+          "type": "conversation",
+          "content": "用户要求检查系统运行问题、修复并生成详细使用手册；已完成校验器修复与手册编写。",
+          "source": "conversation",
+          "timestamp": "2026-03-10T21:06:43.803264+00:00",
+          "significance": "routine",
+          "score": -0.9997
+        },
+        {
+          "id": "EXP-20260310-0901",
+          "type": "conversation",
+          "content": "用户要求将系统改成完全由数据库读写；已将巡检、RSS写入与语义检索切换到memory.db优先。",
+          "source": "conversation",
+          "timestamp": "2026-03-10T21:16:33.947605+00:00",
+          "significance": "routine",
+          "score": -0.9356
+        },
+        {
+          "id": "EXP-20260310-0902",
+          "type": "conversation",
+          "content": "按要求更新README/AGENTS/MEMORY并清理历史无运行依赖文档文件，完成DB-first说明对齐。",
+          "source": "conversation",
+          "timestamp": "2026-03-10T21:27:27.514391+00:00",
+          "significance": "routine",
+          "score": -0.8792
+        }
+      ],
+      "candidate": [],
+      "graph": []
+    },
+    "context_summary": "📊 经验:\n   • Historical success rate: 0% (0/4)\n   • Common issues to avoid:\n   •   • unknown... (4x)\n\n⚠️ 注意:\n   • 历史有 4 次失败记录\n\n🧠 语义命中: 2条\n🗂️ 记忆命中: 3条",
+    "hits": {
+      "rules": true,
+      "episodic": true,
+      "semantic": true,
+      "memories": true,
+      "candidate": false,
+      "graph": false
+    },
+    "retrieval_stats": {
+      "total_calls": 131,
+      "updated_at": "2026-03-10T21:42:46.791738",
+      "tracks": {
+        "rules": {
+          "hit": 131,
+          "miss": 0
+        },
+        "episodic": {
+          "hit": 125,
+          "miss": 6
+        },
+        "semantic": {
+          "hit": 29,
+          "miss": 102
+        },
+        "memories": {
+          "hit": 104,
+          "miss": 27
+        },
+        "candidate": {
+          "hit": 14,
+          "miss": 117
+        },
+        "graph": {
+          "hit": 0,
+          "miss": 131
+        }
+      }
+    }
+  },
+  "rules": {
+    "P0_HARD": [
+      {
+        "id": "p0_001",
+        "name": "private_data_stays_private",
+        "description": "隐私数据必须保密，永不外泄",
+        "rule": "禁止将任何私人数据发送到系统外部",
+        "priority": "P0_HARD",
+        "category": "",
+        "action": "block"
+      },
+      {
+        "id": "p0_003",
+        "name": "ask_before_external_actions",
+        "description": "外部操作必须先询问人类",
+        "rule": "发送邮件、推文等操作前必须先获得批准",
+        "priority": "P0_HARD",
+        "category": "",
+        "action": "block"
+      },
+      {
+        "id": "p0_004",
+        "name": "high_risk_requires_approval",
+        "description": "高风险任务需要明确审批",
+        "rule": "涉及删除、部署等高风险操作需要确认",
+        "priority": "P0_HARD",
+        "category": "",
+        "action": "block"
+      },
+      {
+        "id": "p0_005",
+        "name": "sync_mechanism_and_code",
+        "description": "修改系统机制文件时，必须同步更新相关代码",
+        "rule": "当修改配置文件、数据库schema、规则等机制文件时，必须同步修改相关代码，确保行为一致",
+        "priority": "P0_HARD",
+        "category": "system",
+        "action": "suggest"
+      },
+      {
+        "id": "p0_006",
+        "name": "enforce_new_mechanisms",
+        "description": "新文件/新机制必须落实执行",
+        "rule": "创建新配置文件、技能、机制后，必须确保其被实际使用/执行，不能只是创建了事",
+        "priority": "P0_HARD",
+        "category": "system",
+        "action": "block"
+      }
+    ],
+    "P1_GOVERNANCE": [],
+    "P2_TASK_TYPE": [],
+    "P3_SCENARIO": [],
+    "P4_SUGGESTION": [
+      {
+        "id": "p4_001",
+        "name": "use_cache",
+        "description": "考虑使用缓存",
+        "rule": "重复请求可使用缓存",
+        "priority": "P4_SUGGESTION",
+        "category": "",
+        "action": "suggest"
+      },
+      {
+        "id": "p4_002",
+        "name": "log_performance",
+        "description": "记录性能指标",
+        "rule": "记录响应时间和资源使用",
+        "priority": "P4_SUGGESTION",
+        "category": "",
+        "action": "suggest"
+      }
+    ]
+  },
+  "rule_constraints": {
+    "blocking_rules": [
+      {
+        "id": "p0_001",
+        "name": "private_data_stays_private",
+        "description": "隐私数据必须保密，永不外泄",
+        "rule": "禁止将任何私人数据发送到系统外部",
+        "priority": "P0_HARD",
+        "category": "",
+        "action": "block"
+      },
+      {
+        "id": "p0_003",
+        "name": "ask_before_external_actions",
+        "description": "外部操作必须先询问人类",
+        "rule": "发送邮件、推文等操作前必须先获得批准",
+        "priority": "P0_HARD",
+        "category": "",
+        "action": "block"
+      },
+      {
+        "id": "p0_004",
+        "name": "high_risk_requires_approval",
+        "description": "高风险任务需要明确审批",
+        "rule": "涉及删除、部署等高风险操作需要确认",
+        "priority": "P0_HARD",
+        "category": "",
+        "action": "block"
+      },
+      {
+        "id": "p0_006",
+        "name": "enforce_new_mechanisms",
+        "description": "新文件/新机制必须落实执行",
+        "rule": "创建新配置文件、技能、机制后，必须确保其被实际使用/执行，不能只是创建了事",
+        "priority": "P0_HARD",
+        "category": "system",
+        "action": "block"
+      }
+    ],
+    "blocking_count": 4
+  },
+  "rule_description": "P0:5 P1:0 P2:0 P3:0",
+  "experience": {
+    "similar_tasks": [
+      {
+        "task_id": "t_20260310_b6d2",
+        "event": "started",
+        "timestamp": "2026-03-10T21:42:46.715966",
+        "task_type": "conversation",
+        "scenario": "conversation_general",
+        "risk_level": "low",
+        "tags": [
+          "conversation_general",
+          "conversation"
+        ],
+        "uncertainty": 0.6,
+        "similarity_score": 1.0
+      },
+      {
+        "task_id": "t_20260308_05dc",
+        "event": "started",
+        "timestamp": "2026-03-08T22:43:01.486057",
+        "task_type": "conversation",
+        "scenario": "conversation_general",
+        "risk_level": "low",
+        "tags": [
+          "conversation",
+          "conversation_general"
+        ],
+        "uncertainty": 0.6,
+        "similarity_score": 1.0
+      },
+      {
+        "task_id": "t_20260308_c84d",
+        "event": "started",
+        "timestamp": "2026-03-08T22:44:05.597684",
+        "task_type": "conversation",
+        "scenario": "conversation_general",
+        "risk_level": "low",
+        "tags": [
+          "conversation_general",
+          "conversation"
+        ],
+        "uncertainty": 0.6,
+        "similarity_score": 1.0
+      },
+      {
+        "task_id": "t_20260308_d43e",
+        "event": "started",
+        "timestamp": "2026-03-08T22:57:39.165029",
+        "task_type": "conversation",
+        "scenario": "conversation_general",
+        "risk_level": "low",
+        "tags": [
+          "conversation",
+          "conversation_general"
+        ],
+        "uncertainty": 0.3,
+        "similarity_score": 1.0
+      }
+    ],
+    "success_patterns": [],
+    "failure_patterns": [
+      {
+        "task_id": "t_20260310_b6d2",
+        "task_type": "conversation",
+        "outcome": null,
+        "timestamp": "2026-03-10T21:42:46.715966",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260308_05dc",
+        "task_type": "conversation",
+        "outcome": null,
+        "timestamp": "2026-03-08T22:43:01.486057",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260308_c84d",
+        "task_type": "conversation",
+        "outcome": null,
+        "timestamp": "2026-03-08T22:44:05.597684",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260308_d43e",
+        "task_type": "conversation",
+        "outcome": null,
+        "timestamp": "2026-03-08T22:57:39.165029",
+        "reasons": [
+          "Unknown"
+        ]
+      }
+    ],
+    "learned_lessons": [
+      "Historical success rate: 0% (0/4)",
+      "Common issues to avoid:",
+      "  • unknown... (4x)"
+    ],
+    "skill_recommendations": [],
+    "confidence": 0.0
+  },
+  "context_summary": "📊 经验:\n   • Historical success rate: 0% (0/4)\n   • Common issues to avoid:\n   •   • unknown... (4x)\n\n⚠️ 注意:\n   • 历史有 4 次失败记录\n\n🧠 语义命中: 2条\n🗂️ 记忆命中: 3条",
+  "ready_to_execute": false
+}

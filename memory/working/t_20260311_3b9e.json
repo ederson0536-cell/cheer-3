@@ -1,0 +1,818 @@
+{
+  "hook": "before_task",
+  "timestamp": "2026-03-11T02:19:38.815945",
+  "task": {
+    "task_id": "t_20260311_3b9e",
+    "parent_task_id": null,
+    "task_type": "coding",
+    "scenario": "coding_general",
+    "complexity_level": "L0",
+    "risk_level": "low",
+    "file_write_flag": true,
+    "file_scope": [
+      "你可以主动写入记忆数据库吗"
+    ],
+    "requires_tools": [
+      "filesystem"
+    ],
+    "candidate_subtasks": [
+      "analyze_requirements",
+      "write_code",
+      "validate_output"
+    ],
+    "uncertainty_level": 0.6,
+    "priority": "P2",
+    "tags": [
+      "coding_general",
+      "coding"
+    ],
+    "created_at": "2026-03-11T02:19:38.811757",
+    "raw_message": "你可以主动写入记忆数据库吗"
+  },
+  "memory_retrieval": {
+    "timestamp": "2026-03-11T02:19:38.815935",
+    "rules_track": {
+      "task_type": "coding",
+      "scenario": "coding_general",
+      "risk_level": "low",
+      "rules": {
+        "P0_HARD": [
+          {
+            "id": "p0_001",
+            "name": "private_data_stays_private",
+            "description": "隐私数据必须保密，永不外泄",
+            "rule": "禁止将任何私人数据发送到系统外部",
+            "priority": "P0_HARD",
+            "category": "",
+            "action": "block"
+          },
+          {
+            "id": "p0_003",
+            "name": "ask_before_external_actions",
+            "description": "外部操作必须先询问人类",
+            "rule": "发送邮件、推文等操作前必须先获得批准",
+            "priority": "P0_HARD",
+            "category": "",
+            "action": "block"
+          },
+          {
+            "id": "p0_004",
+            "name": "high_risk_requires_approval",
+            "description": "高风险任务需要明确审批",
+            "rule": "涉及删除、部署等高风险操作需要确认",
+            "priority": "P0_HARD",
+            "category": "",
+            "action": "block"
+          },
+          {
+            "id": "p0_005",
+            "name": "sync_mechanism_and_code",
+            "description": "修改系统机制文件时，必须同步更新相关代码",
+            "rule": "当修改配置文件、数据库schema、规则等机制文件时，必须同步修改相关代码，确保行为一致",
+            "priority": "P0_HARD",
+            "category": "system",
+            "action": "suggest"
+          },
+          {
+            "id": "p0_006",
+            "name": "enforce_new_mechanisms",
+            "description": "新文件/新机制必须落实执行",
+            "rule": "创建新配置文件、技能、机制后，必须确保其被实际使用/执行，不能只是创建了事",
+            "priority": "P0_HARD",
+            "category": "system",
+            "action": "block"
+          }
+        ],
+        "P1_GOVERNANCE": [],
+        "P2_TASK_TYPE": [
+          {
+            "id": "p2_c002",
+            "name": "test_driven",
+            "description": "使用测试驱动开发",
+            "rule": "先写测试再写代码",
+            "priority": "P2_TASK_TYPE",
+            "category": "coding",
+            "action": "warn"
+          }
+        ],
+        "P3_SCENARIO": [],
+        "P4_SUGGESTION": [
+          {
+            "id": "p4_001",
+            "name": "use_cache",
+            "description": "考虑使用缓存",
+            "rule": "重复请求可使用缓存",
+            "priority": "P4_SUGGESTION",
+            "category": "",
+            "action": "suggest"
+          },
+          {
+            "id": "p4_002",
+            "name": "log_performance",
+            "description": "记录性能指标",
+            "rule": "记录响应时间和资源使用",
+            "priority": "P4_SUGGESTION",
+            "category": "",
+            "action": "suggest"
+          }
+        ]
+      },
+      "governance": {
+        "level": "advisory",
+        "auto_approve_categories": [
+          "scenario_discovery",
+          "knowledge"
+        ],
+        "auto_approve_min_confidence": 0.8
+      }
+    },
+    "experience_track": {
+      "episodic": {
+        "similar_tasks": [
+          {
+            "task_id": "t_20260311_3273",
+            "event": "started",
+            "timestamp": "2026-03-11T02:19:38.807204",
+            "task_type": "coding",
+            "scenario": "coding_general",
+            "risk_level": "low",
+            "tags": [
+              "coding_general",
+              "coding"
+            ],
+            "uncertainty": 0.6,
+            "similarity_score": 1.0
+          },
+          {
+            "task_id": "t_20260310_3475",
+            "event": "started",
+            "timestamp": "2026-03-10T22:51:23.334461",
+            "task_type": "coding",
+            "scenario": "coding_general",
+            "risk_level": "low",
+            "tags": [
+              "coding_general",
+              "coding"
+            ],
+            "uncertainty": 0.19999999999999998,
+            "similarity_score": 1.0
+          },
+          {
+            "task_id": "t_20260310_4b89",
+            "event": "started",
+            "timestamp": "2026-03-10T22:51:23.346071",
+            "task_type": "coding",
+            "scenario": "coding_general",
+            "risk_level": "low",
+            "tags": [
+              "coding_general",
+              "coding"
+            ],
+            "uncertainty": 0.19999999999999998,
+            "similarity_score": 1.0
+          },
+          {
+            "task_id": "t_20260310_3afd",
+            "event": "started",
+            "timestamp": "2026-03-10T23:13:52.938967",
+            "task_type": "coding",
+            "scenario": "coding_general",
+            "risk_level": "low",
+            "tags": [
+              "coding_general",
+              "coding"
+            ],
+            "uncertainty": 0.3,
+            "similarity_score": 1.0
+          },
+          {
+            "task_id": "t_20260310_ceba",
+            "event": "started",
+            "timestamp": "2026-03-10T23:13:52.949891",
+            "task_type": "coding",
+            "scenario": "coding_general",
+            "risk_level": "low",
+            "tags": [
+              "coding_general",
+              "coding"
+            ],
+            "uncertainty": 0.3,
+            "similarity_score": 1.0
+          },
+          {
+            "task_id": "t_20260311_bb49",
+            "event": "started",
+            "timestamp": "2026-03-11T02:00:50.744910",
+            "task_type": "coding",
+            "scenario": "code_development",
+            "risk_level": "low",
+            "tags": [
+              "code_development",
+              "coding"
+            ],
+            "uncertainty": 0.3,
+            "similarity_score": 0.55
+          },
+          {
+            "task_id": "t_20260311_d66c",
+            "event": "started",
+            "timestamp": "2026-03-11T02:00:50.762722",
+            "task_type": "coding",
+            "scenario": "code_development",
+            "risk_level": "low",
+            "tags": [
+              "code_development",
+              "coding"
+            ],
+            "uncertainty": 0.3,
+            "similarity_score": 0.55
+          },
+          {
+            "task_id": "t_20260310_3331",
+            "event": "started",
+            "timestamp": "2026-03-10T22:12:22.361944",
+            "task_type": "coding",
+            "scenario": "code_development",
+            "risk_level": "low",
+            "tags": [
+              "code_development",
+              "coding"
+            ],
+            "uncertainty": 0.19999999999999998,
+            "similarity_score": 0.55
+          },
+          {
+            "task_id": "t_20260310_8721",
+            "event": "started",
+            "timestamp": "2026-03-10T22:12:22.370689",
+            "task_type": "coding",
+            "scenario": "code_development",
+            "risk_level": "low",
+            "tags": [
+              "code_development",
+              "coding"
+            ],
+            "uncertainty": 0.19999999999999998,
+            "similarity_score": 0.55
+          },
+          {
+            "task_id": "t_20260310_ef2c",
+            "event": "started",
+            "timestamp": "2026-03-10T22:30:20.894799",
+            "task_type": "coding",
+            "scenario": "automation_setup",
+            "risk_level": "low",
+            "tags": [
+              "coding",
+              "automation_setup"
+            ],
+            "uncertainty": 0.3,
+            "similarity_score": 0.55
+          }
+        ],
+        "success_patterns": [],
+        "failure_patterns": [
+          {
+            "task_id": "t_20260311_3273",
+            "task_type": "coding",
+            "outcome": null,
+            "timestamp": "2026-03-11T02:19:38.807204",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260310_3475",
+            "task_type": "coding",
+            "outcome": null,
+            "timestamp": "2026-03-10T22:51:23.334461",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260310_4b89",
+            "task_type": "coding",
+            "outcome": null,
+            "timestamp": "2026-03-10T22:51:23.346071",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260310_3afd",
+            "task_type": "coding",
+            "outcome": null,
+            "timestamp": "2026-03-10T23:13:52.938967",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260310_ceba",
+            "task_type": "coding",
+            "outcome": null,
+            "timestamp": "2026-03-10T23:13:52.949891",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260311_bb49",
+            "task_type": "coding",
+            "outcome": null,
+            "timestamp": "2026-03-11T02:00:50.744910",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260311_d66c",
+            "task_type": "coding",
+            "outcome": null,
+            "timestamp": "2026-03-11T02:00:50.762722",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260310_3331",
+            "task_type": "coding",
+            "outcome": null,
+            "timestamp": "2026-03-10T22:12:22.361944",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260310_8721",
+            "task_type": "coding",
+            "outcome": null,
+            "timestamp": "2026-03-10T22:12:22.370689",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260310_ef2c",
+            "task_type": "coding",
+            "outcome": null,
+            "timestamp": "2026-03-10T22:30:20.894799",
+            "reasons": [
+              "Unknown"
+            ]
+          }
+        ],
+        "learned_lessons": [
+          "Historical success rate: 0% (0/10)",
+          "Common issues to avoid:",
+          "  • unknown... (10x)"
+        ],
+        "skill_recommendations": [],
+        "confidence": 0.0
+      },
+      "semantic": [
+        {
+          "score": 0.2617,
+          "type": "conversation",
+          "timestamp": "2026-03-10T21:16:33.947605+00:00",
+          "content": "用户要求将系统改成完全由数据库读写；已将巡检、RSS写入与语义检索切换到memory.db优先。",
+          "source": "conversation"
+        },
+        {
+          "score": 0.1681,
+          "type": "notable",
+          "timestamp": null,
+          "content": "根据新反馈将可读清单落为独立数据库表system_readable_checklist，并补充memory/README、AGENTS/TOOLS职责说明。",
+          "source": null
+        },
+        {
+          "score": 0.0918,
+          "type": "notable",
+          "timestamp": null,
+          "content": "新增docs/system-user-manual-2026-03-10.md，整理入口、记忆库、反馈接口、文件治理与排障的详细使用手册。",
+          "source": null
+        },
+        {
+          "score": 0.0835,
+          "type": "notable",
+          "timestamp": null,
+          "content": "新增系统协调性校验器，检查catalog与readable checklist写库、after_task反馈入库结构、入口到记忆链路一致性。",
+          "source": null
+        }
+      ],
+      "memories": [],
+      "candidate": [],
+      "graph": []
+    },
+    "context_summary": "📊 经验:\n   • Historical success rate: 0% (0/10)\n   • Common issues to avoid:\n   •   • unknown... (10x)\n\n⚠️ 注意:\n   • 历史有 10 次失败记录\n\n🧠 语义命中: 4条",
+    "hits": {
+      "rules": true,
+      "episodic": true,
+      "semantic": true,
+      "memories": false,
+      "candidate": false,
+      "graph": false
+    },
+    "retrieval_stats": {
+      "total_calls": 283,
+      "updated_at": "2026-03-11T02:19:38.815735",
+      "tracks": {
+        "rules": {
+          "hit": 283,
+          "miss": 0
+        },
+        "episodic": {
+          "hit": 273,
+          "miss": 10
+        },
+        "semantic": {
+          "hit": 139,
+          "miss": 144
+        },
+        "memories": {
+          "hit": 210,
+          "miss": 73
+        },
+        "candidate": {
+          "hit": 14,
+          "miss": 269
+        },
+        "graph": {
+          "hit": 0,
+          "miss": 283
+        }
+      }
+    }
+  },
+  "rules": {
+    "P0_HARD": [
+      {
+        "id": "p0_001",
+        "name": "private_data_stays_private",
+        "description": "隐私数据必须保密，永不外泄",
+        "rule": "禁止将任何私人数据发送到系统外部",
+        "priority": "P0_HARD",
+        "category": "",
+        "action": "block"
+      },
+      {
+        "id": "p0_003",
+        "name": "ask_before_external_actions",
+        "description": "外部操作必须先询问人类",
+        "rule": "发送邮件、推文等操作前必须先获得批准",
+        "priority": "P0_HARD",
+        "category": "",
+        "action": "block"
+      },
+      {
+        "id": "p0_004",
+        "name": "high_risk_requires_approval",
+        "description": "高风险任务需要明确审批",
+        "rule": "涉及删除、部署等高风险操作需要确认",
+        "priority": "P0_HARD",
+        "category": "",
+        "action": "block"
+      },
+      {
+        "id": "p0_005",
+        "name": "sync_mechanism_and_code",
+        "description": "修改系统机制文件时，必须同步更新相关代码",
+        "rule": "当修改配置文件、数据库schema、规则等机制文件时，必须同步修改相关代码，确保行为一致",
+        "priority": "P0_HARD",
+        "category": "system",
+        "action": "suggest"
+      },
+      {
+        "id": "p0_006",
+        "name": "enforce_new_mechanisms",
+        "description": "新文件/新机制必须落实执行",
+        "rule": "创建新配置文件、技能、机制后，必须确保其被实际使用/执行，不能只是创建了事",
+        "priority": "P0_HARD",
+        "category": "system",
+        "action": "block"
+      }
+    ],
+    "P1_GOVERNANCE": [],
+    "P2_TASK_TYPE": [
+      {
+        "id": "p2_c002",
+        "name": "test_driven",
+        "description": "使用测试驱动开发",
+        "rule": "先写测试再写代码",
+        "priority": "P2_TASK_TYPE",
+        "category": "coding",
+        "action": "warn"
+      }
+    ],
+    "P3_SCENARIO": [],
+    "P4_SUGGESTION": [
+      {
+        "id": "p4_001",
+        "name": "use_cache",
+        "description": "考虑使用缓存",
+        "rule": "重复请求可使用缓存",
+        "priority": "P4_SUGGESTION",
+        "category": "",
+        "action": "suggest"
+      },
+      {
+        "id": "p4_002",
+        "name": "log_performance",
+        "description": "记录性能指标",
+        "rule": "记录响应时间和资源使用",
+        "priority": "P4_SUGGESTION",
+        "category": "",
+        "action": "suggest"
+      }
+    ]
+  },
+  "rule_constraints": {
+    "blocking_rules": [
+      {
+        "id": "p0_001",
+        "name": "private_data_stays_private",
+        "description": "隐私数据必须保密，永不外泄",
+        "rule": "禁止将任何私人数据发送到系统外部",
+        "priority": "P0_HARD",
+        "category": "",
+        "action": "block"
+      },
+      {
+        "id": "p0_003",
+        "name": "ask_before_external_actions",
+        "description": "外部操作必须先询问人类",
+        "rule": "发送邮件、推文等操作前必须先获得批准",
+        "priority": "P0_HARD",
+        "category": "",
+        "action": "block"
+      },
+      {
+        "id": "p0_004",
+        "name": "high_risk_requires_approval",
+        "description": "高风险任务需要明确审批",
+        "rule": "涉及删除、部署等高风险操作需要确认",
+        "priority": "P0_HARD",
+        "category": "",
+        "action": "block"
+      },
+      {
+        "id": "p0_006",
+        "name": "enforce_new_mechanisms",
+        "description": "新文件/新机制必须落实执行",
+        "rule": "创建新配置文件、技能、机制后，必须确保其被实际使用/执行，不能只是创建了事",
+        "priority": "P0_HARD",
+        "category": "system",
+        "action": "block"
+      }
+    ],
+    "blocking_count": 4
+  },
+  "rule_description": "P0:5 P1:0 P2:1 P3:0",
+  "experience": {
+    "similar_tasks": [
+      {
+        "task_id": "t_20260311_3273",
+        "event": "started",
+        "timestamp": "2026-03-11T02:19:38.807204",
+        "task_type": "coding",
+        "scenario": "coding_general",
+        "risk_level": "low",
+        "tags": [
+          "coding_general",
+          "coding"
+        ],
+        "uncertainty": 0.6,
+        "similarity_score": 1.0
+      },
+      {
+        "task_id": "t_20260310_3475",
+        "event": "started",
+        "timestamp": "2026-03-10T22:51:23.334461",
+        "task_type": "coding",
+        "scenario": "coding_general",
+        "risk_level": "low",
+        "tags": [
+          "coding_general",
+          "coding"
+        ],
+        "uncertainty": 0.19999999999999998,
+        "similarity_score": 1.0
+      },
+      {
+        "task_id": "t_20260310_4b89",
+        "event": "started",
+        "timestamp": "2026-03-10T22:51:23.346071",
+        "task_type": "coding",
+        "scenario": "coding_general",
+        "risk_level": "low",
+        "tags": [
+          "coding_general",
+          "coding"
+        ],
+        "uncertainty": 0.19999999999999998,
+        "similarity_score": 1.0
+      },
+      {
+        "task_id": "t_20260310_3afd",
+        "event": "started",
+        "timestamp": "2026-03-10T23:13:52.938967",
+        "task_type": "coding",
+        "scenario": "coding_general",
+        "risk_level": "low",
+        "tags": [
+          "coding_general",
+          "coding"
+        ],
+        "uncertainty": 0.3,
+        "similarity_score": 1.0
+      },
+      {
+        "task_id": "t_20260310_ceba",
+        "event": "started",
+        "timestamp": "2026-03-10T23:13:52.949891",
+        "task_type": "coding",
+        "scenario": "coding_general",
+        "risk_level": "low",
+        "tags": [
+          "coding_general",
+          "coding"
+        ],
+        "uncertainty": 0.3,
+        "similarity_score": 1.0
+      },
+      {
+        "task_id": "t_20260311_bb49",
+        "event": "started",
+        "timestamp": "2026-03-11T02:00:50.744910",
+        "task_type": "coding",
+        "scenario": "code_development",
+        "risk_level": "low",
+        "tags": [
+          "code_development",
+          "coding"
+        ],
+        "uncertainty": 0.3,
+        "similarity_score": 0.55
+      },
+      {
+        "task_id": "t_20260311_d66c",
+        "event": "started",
+        "timestamp": "2026-03-11T02:00:50.762722",
+        "task_type": "coding",
+        "scenario": "code_development",
+        "risk_level": "low",
+        "tags": [
+          "code_development",
+          "coding"
+        ],
+        "uncertainty": 0.3,
+        "similarity_score": 0.55
+      },
+      {
+        "task_id": "t_20260310_3331",
+        "event": "started",
+        "timestamp": "2026-03-10T22:12:22.361944",
+        "task_type": "coding",
+        "scenario": "code_development",
+        "risk_level": "low",
+        "tags": [
+          "code_development",
+          "coding"
+        ],
+        "uncertainty": 0.19999999999999998,
+        "similarity_score": 0.55
+      },
+      {
+        "task_id": "t_20260310_8721",
+        "event": "started",
+        "timestamp": "2026-03-10T22:12:22.370689",
+        "task_type": "coding",
+        "scenario": "code_development",
+        "risk_level": "low",
+        "tags": [
+          "code_development",
+          "coding"
+        ],
+        "uncertainty": 0.19999999999999998,
+        "similarity_score": 0.55
+      },
+      {
+        "task_id": "t_20260310_ef2c",
+        "event": "started",
+        "timestamp": "2026-03-10T22:30:20.894799",
+        "task_type": "coding",
+        "scenario": "automation_setup",
+        "risk_level": "low",
+        "tags": [
+          "coding",
+          "automation_setup"
+        ],
+        "uncertainty": 0.3,
+        "similarity_score": 0.55
+      }
+    ],
+    "success_patterns": [],
+    "failure_patterns": [
+      {
+        "task_id": "t_20260311_3273",
+        "task_type": "coding",
+        "outcome": null,
+        "timestamp": "2026-03-11T02:19:38.807204",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260310_3475",
+        "task_type": "coding",
+        "outcome": null,
+        "timestamp": "2026-03-10T22:51:23.334461",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260310_4b89",
+        "task_type": "coding",
+        "outcome": null,
+        "timestamp": "2026-03-10T22:51:23.346071",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260310_3afd",
+        "task_type": "coding",
+        "outcome": null,
+        "timestamp": "2026-03-10T23:13:52.938967",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260310_ceba",
+        "task_type": "coding",
+        "outcome": null,
+        "timestamp": "2026-03-10T23:13:52.949891",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260311_bb49",
+        "task_type": "coding",
+        "outcome": null,
+        "timestamp": "2026-03-11T02:00:50.744910",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260311_d66c",
+        "task_type": "coding",
+        "outcome": null,
+        "timestamp": "2026-03-11T02:00:50.762722",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260310_3331",
+        "task_type": "coding",
+        "outcome": null,
+        "timestamp": "2026-03-10T22:12:22.361944",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260310_8721",
+        "task_type": "coding",
+        "outcome": null,
+        "timestamp": "2026-03-10T22:12:22.370689",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260310_ef2c",
+        "task_type": "coding",
+        "outcome": null,
+        "timestamp": "2026-03-10T22:30:20.894799",
+        "reasons": [
+          "Unknown"
+        ]
+      }
+    ],
+    "learned_lessons": [
+      "Historical success rate: 0% (0/10)",
+      "Common issues to avoid:",
+      "  • unknown... (10x)"
+    ],
+    "skill_recommendations": [],
+    "confidence": 0.0
+  },
+  "context_summary": "📊 经验:\n   • Historical success rate: 0% (0/10)\n   • Common issues to avoid:\n   •   • unknown... (10x)\n\n⚠️ 注意:\n   • 历史有 10 次失败记录\n\n🧠 语义命中: 4条",
+  "ready_to_execute": false
+}

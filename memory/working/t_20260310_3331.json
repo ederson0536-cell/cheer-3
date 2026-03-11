@@ -1,0 +1,356 @@
+{
+  "hook": "before_task",
+  "timestamp": "2026-03-10T22:12:22.361164",
+  "task": {
+    "task_id": "t_20260310_3331",
+    "parent_task_id": null,
+    "task_type": "coding",
+    "scenario": "code_development",
+    "complexity_level": "L2",
+    "risk_level": "low",
+    "file_write_flag": false,
+    "file_scope": null,
+    "requires_tools": [
+      "exec",
+      "message"
+    ],
+    "candidate_subtasks": [
+      "analyze_requirements",
+      "write_code",
+      "validate_output"
+    ],
+    "uncertainty_level": 0.19999999999999998,
+    "priority": "P1",
+    "tags": [
+      "code_development",
+      "coding"
+    ],
+    "created_at": "2026-03-10T22:12:22.357564",
+    "raw_message": "行。 以后我就这样说话，一句一句来，不列清单不分块。 你刚才问四个钩子有没有运行。我看了代码，它们都存在。但钩子需要被调用才会执行。普通聊天不会触发它们，只有跑正式任务才会。 你想验证的话，得给我一个具体任务，或者你告诉我怎么触发钩子。  列一坨不行"
+  },
+  "memory_retrieval": {
+    "timestamp": "2026-03-10T22:12:22.361153",
+    "rules_track": {
+      "task_type": "coding",
+      "scenario": "code_development",
+      "risk_level": "low",
+      "rules": {
+        "P0_HARD": [
+          {
+            "id": "p0_001",
+            "name": "private_data_stays_private",
+            "description": "隐私数据必须保密，永不外泄",
+            "rule": "禁止将任何私人数据发送到系统外部",
+            "priority": "P0_HARD",
+            "category": "",
+            "action": "block"
+          },
+          {
+            "id": "p0_003",
+            "name": "ask_before_external_actions",
+            "description": "外部操作必须先询问人类",
+            "rule": "发送邮件、推文等操作前必须先获得批准",
+            "priority": "P0_HARD",
+            "category": "",
+            "action": "block"
+          },
+          {
+            "id": "p0_004",
+            "name": "high_risk_requires_approval",
+            "description": "高风险任务需要明确审批",
+            "rule": "涉及删除、部署等高风险操作需要确认",
+            "priority": "P0_HARD",
+            "category": "",
+            "action": "block"
+          },
+          {
+            "id": "p0_005",
+            "name": "sync_mechanism_and_code",
+            "description": "修改系统机制文件时，必须同步更新相关代码",
+            "rule": "当修改配置文件、数据库schema、规则等机制文件时，必须同步修改相关代码，确保行为一致",
+            "priority": "P0_HARD",
+            "category": "system",
+            "action": "suggest"
+          },
+          {
+            "id": "p0_006",
+            "name": "enforce_new_mechanisms",
+            "description": "新文件/新机制必须落实执行",
+            "rule": "创建新配置文件、技能、机制后，必须确保其被实际使用/执行，不能只是创建了事",
+            "priority": "P0_HARD",
+            "category": "system",
+            "action": "block"
+          }
+        ],
+        "P1_GOVERNANCE": [],
+        "P2_TASK_TYPE": [
+          {
+            "id": "p2_c002",
+            "name": "test_driven",
+            "description": "使用测试驱动开发",
+            "rule": "先写测试再写代码",
+            "priority": "P2_TASK_TYPE",
+            "category": "coding",
+            "action": "warn"
+          }
+        ],
+        "P3_SCENARIO": [],
+        "P4_SUGGESTION": [
+          {
+            "id": "p4_001",
+            "name": "use_cache",
+            "description": "考虑使用缓存",
+            "rule": "重复请求可使用缓存",
+            "priority": "P4_SUGGESTION",
+            "category": "",
+            "action": "suggest"
+          },
+          {
+            "id": "p4_002",
+            "name": "log_performance",
+            "description": "记录性能指标",
+            "rule": "记录响应时间和资源使用",
+            "priority": "P4_SUGGESTION",
+            "category": "",
+            "action": "suggest"
+          }
+        ]
+      },
+      "governance": {
+        "level": "advisory",
+        "auto_approve_categories": [
+          "scenario_discovery",
+          "knowledge"
+        ],
+        "auto_approve_min_confidence": 0.8
+      }
+    },
+    "experience_track": {
+      "episodic": {
+        "similar_tasks": [],
+        "success_patterns": [],
+        "failure_patterns": [],
+        "learned_lessons": [
+          "No previous experience found for this task type"
+        ],
+        "skill_recommendations": [],
+        "confidence": 0.0
+      },
+      "semantic": [
+        {
+          "score": 0.1604,
+          "type": "notable",
+          "timestamp": null,
+          "content": "新增validate_wiring_coverage校验，验证关键文件都被运行链路消费，避免“只是文件未发挥作用”。",
+          "source": null
+        },
+        {
+          "score": 0.1375,
+          "type": "notable",
+          "timestamp": null,
+          "content": "根据新反馈将可读清单落为独立数据库表system_readable_checklist，并补充memory/README、AGENTS/TOOLS职责说明。",
+          "source": null
+        },
+        {
+          "score": 0.0835,
+          "type": "notable",
+          "timestamp": null,
+          "content": "按落实方案补齐入口缺口：新增幂等去重与限流门控，并补充验证脚本覆盖重复消息与突发流量。",
+          "source": null
+        },
+        {
+          "score": 0.0659,
+          "type": "conversation",
+          "timestamp": "2026-03-10T21:27:27.514391+00:00",
+          "content": "按要求更新README/AGENTS/MEMORY并清理历史无运行依赖文档文件，完成DB-first说明对齐。",
+          "source": "conversation"
+        },
+        {
+          "score": 0.0591,
+          "type": "notable",
+          "timestamp": null,
+          "content": "按要求清理系统运行不依赖的文档文件，删除两份docs手册与memory/README，并同步修正MEMORY.md索引。",
+          "source": null
+        }
+      ],
+      "memories": [],
+      "candidate": [],
+      "graph": []
+    },
+    "context_summary": "📊 经验:\n   • No previous experience found for this task type\n\n🧠 语义命中: 5条",
+    "hits": {
+      "rules": true,
+      "episodic": false,
+      "semantic": true,
+      "memories": false,
+      "candidate": false,
+      "graph": false
+    },
+    "retrieval_stats": {
+      "total_calls": 174,
+      "updated_at": "2026-03-10T22:12:22.360962",
+      "tracks": {
+        "rules": {
+          "hit": 174,
+          "miss": 0
+        },
+        "episodic": {
+          "hit": 167,
+          "miss": 7
+        },
+        "semantic": {
+          "hit": 54,
+          "miss": 120
+        },
+        "memories": {
+          "hit": 140,
+          "miss": 34
+        },
+        "candidate": {
+          "hit": 14,
+          "miss": 160
+        },
+        "graph": {
+          "hit": 0,
+          "miss": 174
+        }
+      }
+    }
+  },
+  "rules": {
+    "P0_HARD": [
+      {
+        "id": "p0_001",
+        "name": "private_data_stays_private",
+        "description": "隐私数据必须保密，永不外泄",
+        "rule": "禁止将任何私人数据发送到系统外部",
+        "priority": "P0_HARD",
+        "category": "",
+        "action": "block"
+      },
+      {
+        "id": "p0_003",
+        "name": "ask_before_external_actions",
+        "description": "外部操作必须先询问人类",
+        "rule": "发送邮件、推文等操作前必须先获得批准",
+        "priority": "P0_HARD",
+        "category": "",
+        "action": "block"
+      },
+      {
+        "id": "p0_004",
+        "name": "high_risk_requires_approval",
+        "description": "高风险任务需要明确审批",
+        "rule": "涉及删除、部署等高风险操作需要确认",
+        "priority": "P0_HARD",
+        "category": "",
+        "action": "block"
+      },
+      {
+        "id": "p0_005",
+        "name": "sync_mechanism_and_code",
+        "description": "修改系统机制文件时，必须同步更新相关代码",
+        "rule": "当修改配置文件、数据库schema、规则等机制文件时，必须同步修改相关代码，确保行为一致",
+        "priority": "P0_HARD",
+        "category": "system",
+        "action": "suggest"
+      },
+      {
+        "id": "p0_006",
+        "name": "enforce_new_mechanisms",
+        "description": "新文件/新机制必须落实执行",
+        "rule": "创建新配置文件、技能、机制后，必须确保其被实际使用/执行，不能只是创建了事",
+        "priority": "P0_HARD",
+        "category": "system",
+        "action": "block"
+      }
+    ],
+    "P1_GOVERNANCE": [],
+    "P2_TASK_TYPE": [
+      {
+        "id": "p2_c002",
+        "name": "test_driven",
+        "description": "使用测试驱动开发",
+        "rule": "先写测试再写代码",
+        "priority": "P2_TASK_TYPE",
+        "category": "coding",
+        "action": "warn"
+      }
+    ],
+    "P3_SCENARIO": [],
+    "P4_SUGGESTION": [
+      {
+        "id": "p4_001",
+        "name": "use_cache",
+        "description": "考虑使用缓存",
+        "rule": "重复请求可使用缓存",
+        "priority": "P4_SUGGESTION",
+        "category": "",
+        "action": "suggest"
+      },
+      {
+        "id": "p4_002",
+        "name": "log_performance",
+        "description": "记录性能指标",
+        "rule": "记录响应时间和资源使用",
+        "priority": "P4_SUGGESTION",
+        "category": "",
+        "action": "suggest"
+      }
+    ]
+  },
+  "rule_constraints": {
+    "blocking_rules": [
+      {
+        "id": "p0_001",
+        "name": "private_data_stays_private",
+        "description": "隐私数据必须保密，永不外泄",
+        "rule": "禁止将任何私人数据发送到系统外部",
+        "priority": "P0_HARD",
+        "category": "",
+        "action": "block"
+      },
+      {
+        "id": "p0_003",
+        "name": "ask_before_external_actions",
+        "description": "外部操作必须先询问人类",
+        "rule": "发送邮件、推文等操作前必须先获得批准",
+        "priority": "P0_HARD",
+        "category": "",
+        "action": "block"
+      },
+      {
+        "id": "p0_004",
+        "name": "high_risk_requires_approval",
+        "description": "高风险任务需要明确审批",
+        "rule": "涉及删除、部署等高风险操作需要确认",
+        "priority": "P0_HARD",
+        "category": "",
+        "action": "block"
+      },
+      {
+        "id": "p0_006",
+        "name": "enforce_new_mechanisms",
+        "description": "新文件/新机制必须落实执行",
+        "rule": "创建新配置文件、技能、机制后，必须确保其被实际使用/执行，不能只是创建了事",
+        "priority": "P0_HARD",
+        "category": "system",
+        "action": "block"
+      }
+    ],
+    "blocking_count": 4
+  },
+  "rule_description": "P0:5 P1:0 P2:1 P3:0",
+  "experience": {
+    "similar_tasks": [],
+    "success_patterns": [],
+    "failure_patterns": [],
+    "learned_lessons": [
+      "No previous experience found for this task type"
+    ],
+    "skill_recommendations": [],
+    "confidence": 0.0
+  },
+  "context_summary": "📊 经验:\n   • No previous experience found for this task type\n\n🧠 语义命中: 5条",
+  "ready_to_execute": false
+}

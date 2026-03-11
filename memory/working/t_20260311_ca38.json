@@ -1,0 +1,820 @@
+{
+  "hook": "before_task",
+  "timestamp": "2026-03-11T18:01:43.937496",
+  "task": {
+    "task_id": "t_20260311_ca38",
+    "parent_task_id": null,
+    "task_type": "research",
+    "scenario": "research_general",
+    "complexity_level": "L0",
+    "risk_level": "low",
+    "file_write_flag": false,
+    "file_scope": null,
+    "requires_tools": [
+      "conversation"
+    ],
+    "candidate_subtasks": [
+      "fetch_information",
+      "analyze_data",
+      "summarize_findings"
+    ],
+    "uncertainty_level": 0.19999999999999998,
+    "priority": "P2",
+    "tags": [
+      "research_general",
+      "research"
+    ],
+    "created_at": "2026-03-11T18:01:43.921543",
+    "raw_message": "| metadata_json | TEXT | 元数据                                 |\n| raw_json      | TEXT | 原始数据  | content       | TEXT | 主要内容 (JSON字符串)   这三个有什么区别"
+  },
+  "memory_retrieval": {
+    "timestamp": "2026-03-11T18:01:43.937465",
+    "rules_track": {
+      "task_type": "research",
+      "scenario": "research_general",
+      "risk_level": "low",
+      "rules": {
+        "P0_HARD": [
+          {
+            "id": "p0_001",
+            "name": "private_data_stays_private",
+            "description": "隐私数据必须保密，永不外泄",
+            "rule": "禁止将任何私人数据发送到系统外部",
+            "priority": "P0_HARD",
+            "category": "",
+            "action": "block"
+          },
+          {
+            "id": "p0_003",
+            "name": "ask_before_external_actions",
+            "description": "外部操作必须先询问人类",
+            "rule": "发送邮件、推文等操作前必须先获得批准",
+            "priority": "P0_HARD",
+            "category": "",
+            "action": "block"
+          },
+          {
+            "id": "p0_004",
+            "name": "high_risk_requires_approval",
+            "description": "高风险任务需要明确审批",
+            "rule": "涉及删除、部署等高风险操作需要确认",
+            "priority": "P0_HARD",
+            "category": "",
+            "action": "block"
+          },
+          {
+            "id": "p0_005",
+            "name": "sync_mechanism_and_code",
+            "description": "修改系统机制文件时，必须同步更新相关代码",
+            "rule": "当修改配置文件、数据库schema、规则等机制文件时，必须同步修改相关代码，确保行为一致",
+            "priority": "P0_HARD",
+            "category": "system",
+            "action": "suggest"
+          },
+          {
+            "id": "p0_006",
+            "name": "enforce_new_mechanisms",
+            "description": "新文件/新机制必须落实执行",
+            "rule": "创建新配置文件、技能、机制后，必须确保其被实际使用/执行，不能只是创建了事",
+            "priority": "P0_HARD",
+            "category": "system",
+            "action": "block"
+          }
+        ],
+        "P1_GOVERNANCE": [],
+        "P2_TASK_TYPE": [
+          {
+            "id": "p2_r001",
+            "name": "verify_source",
+            "description": "验证信息源可靠性",
+            "rule": "确保信息来源可信",
+            "priority": "P2_TASK_TYPE",
+            "category": "research",
+            "action": "warn"
+          },
+          {
+            "id": "p2_r002",
+            "name": "cite_sources",
+            "description": "引用来源",
+            "rule": "输出时标注参考来源",
+            "priority": "P2_TASK_TYPE",
+            "category": "research",
+            "action": "warn"
+          }
+        ],
+        "P3_SCENARIO": [],
+        "P4_SUGGESTION": [
+          {
+            "id": "p4_001",
+            "name": "use_cache",
+            "description": "考虑使用缓存",
+            "rule": "重复请求可使用缓存",
+            "priority": "P4_SUGGESTION",
+            "category": "",
+            "action": "suggest"
+          },
+          {
+            "id": "p4_002",
+            "name": "log_performance",
+            "description": "记录性能指标",
+            "rule": "记录响应时间和资源使用",
+            "priority": "P4_SUGGESTION",
+            "category": "",
+            "action": "suggest"
+          }
+        ]
+      },
+      "governance": {
+        "level": "advisory",
+        "auto_approve_categories": [
+          "scenario_discovery",
+          "knowledge"
+        ],
+        "auto_approve_min_confidence": 0.8
+      }
+    },
+    "experience_track": {
+      "episodic": {
+        "similar_tasks": [
+          {
+            "task_id": "t_20260311_1c71",
+            "event": "started",
+            "timestamp": "2026-03-11T02:48:45.443492",
+            "task_type": "research",
+            "scenario": "research_general",
+            "risk_level": "low",
+            "tags": [
+              "research_general",
+              "research"
+            ],
+            "uncertainty": 0.6,
+            "similarity_score": 1.0
+          },
+          {
+            "task_id": "t_20260311_50a2",
+            "event": "started",
+            "timestamp": "2026-03-11T02:48:45.479525",
+            "task_type": "research",
+            "scenario": "research_general",
+            "risk_level": "low",
+            "tags": [
+              "research_general",
+              "research"
+            ],
+            "uncertainty": 0.6,
+            "similarity_score": 1.0
+          },
+          {
+            "task_id": "t_20260311_5759",
+            "event": "started",
+            "timestamp": "2026-03-11T02:51:45.035353",
+            "task_type": "research",
+            "scenario": "research_general",
+            "risk_level": "low",
+            "tags": [
+              "research_general",
+              "research"
+            ],
+            "uncertainty": 0.6,
+            "similarity_score": 1.0
+          },
+          {
+            "task_id": "t_20260311_62b0",
+            "event": "started",
+            "timestamp": "2026-03-11T02:51:45.080693",
+            "task_type": "research",
+            "scenario": "research_general",
+            "risk_level": "low",
+            "tags": [
+              "research_general",
+              "research"
+            ],
+            "uncertainty": 0.6,
+            "similarity_score": 1.0
+          },
+          {
+            "task_id": "t_20260311_af38",
+            "event": "started",
+            "timestamp": "2026-03-11T02:53:02.327798",
+            "task_type": "research",
+            "scenario": "research_general",
+            "risk_level": "low",
+            "tags": [
+              "research_general",
+              "research"
+            ],
+            "uncertainty": 0.3,
+            "similarity_score": 1.0
+          },
+          {
+            "task_id": "t_20260311_7f7b",
+            "event": "started",
+            "timestamp": "2026-03-11T02:53:02.382238",
+            "task_type": "research",
+            "scenario": "research_general",
+            "risk_level": "low",
+            "tags": [
+              "research_general",
+              "research"
+            ],
+            "uncertainty": 0.3,
+            "similarity_score": 1.0
+          },
+          {
+            "task_id": "t_20260311_9e33",
+            "event": "started",
+            "timestamp": "2026-03-11T03:49:19.555287",
+            "task_type": "research",
+            "scenario": "research_general",
+            "risk_level": "low",
+            "tags": [
+              "research_general",
+              "research"
+            ],
+            "uncertainty": 0.6,
+            "similarity_score": 1.0
+          },
+          {
+            "task_id": "t_20260311_a427",
+            "event": "started",
+            "timestamp": "2026-03-11T03:49:19.564770",
+            "task_type": "research",
+            "scenario": "research_general",
+            "risk_level": "low",
+            "tags": [
+              "research_general",
+              "research"
+            ],
+            "uncertainty": 0.6,
+            "similarity_score": 1.0
+          },
+          {
+            "task_id": "t_20260311_3d28",
+            "event": "started",
+            "timestamp": "2026-03-11T13:18:38.572484",
+            "task_type": "research",
+            "scenario": "research_general",
+            "risk_level": "low",
+            "tags": [
+              "research_general",
+              "research"
+            ],
+            "uncertainty": 0.5,
+            "similarity_score": 1.0
+          },
+          {
+            "task_id": "t_20260311_3f9d",
+            "event": "started",
+            "timestamp": "2026-03-11T13:18:38.579814",
+            "task_type": "research",
+            "scenario": "research_general",
+            "risk_level": "low",
+            "tags": [
+              "research_general",
+              "research"
+            ],
+            "uncertainty": 0.5,
+            "similarity_score": 1.0
+          }
+        ],
+        "success_patterns": [],
+        "failure_patterns": [
+          {
+            "task_id": "t_20260311_1c71",
+            "task_type": "research",
+            "outcome": null,
+            "timestamp": "2026-03-11T02:48:45.443492",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260311_50a2",
+            "task_type": "research",
+            "outcome": null,
+            "timestamp": "2026-03-11T02:48:45.479525",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260311_5759",
+            "task_type": "research",
+            "outcome": null,
+            "timestamp": "2026-03-11T02:51:45.035353",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260311_62b0",
+            "task_type": "research",
+            "outcome": null,
+            "timestamp": "2026-03-11T02:51:45.080693",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260311_af38",
+            "task_type": "research",
+            "outcome": null,
+            "timestamp": "2026-03-11T02:53:02.327798",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260311_7f7b",
+            "task_type": "research",
+            "outcome": null,
+            "timestamp": "2026-03-11T02:53:02.382238",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260311_9e33",
+            "task_type": "research",
+            "outcome": null,
+            "timestamp": "2026-03-11T03:49:19.555287",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260311_a427",
+            "task_type": "research",
+            "outcome": null,
+            "timestamp": "2026-03-11T03:49:19.564770",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260311_3d28",
+            "task_type": "research",
+            "outcome": null,
+            "timestamp": "2026-03-11T13:18:38.572484",
+            "reasons": [
+              "Unknown"
+            ]
+          },
+          {
+            "task_id": "t_20260311_3f9d",
+            "task_type": "research",
+            "outcome": null,
+            "timestamp": "2026-03-11T13:18:38.579814",
+            "reasons": [
+              "Unknown"
+            ]
+          }
+        ],
+        "learned_lessons": [
+          "Historical success rate: 0% (0/10)",
+          "Common issues to avoid:",
+          "  • unknown... (10x)"
+        ],
+        "skill_recommendations": [],
+        "confidence": 0.0
+      },
+      "semantic": [
+        {
+          "score": 0.1735,
+          "type": "notable",
+          "timestamp": null,
+          "content": "根据新反馈将可读清单落为独立数据库表system_readable_checklist，并补充memory/README、AGENTS/TOOLS职责说明。",
+          "source": null
+        },
+        {
+          "score": 0.162,
+          "type": "conversation",
+          "timestamp": "2026-03-10T21:16:33.947605+00:00",
+          "content": "用户要求将系统改成完全由数据库读写；已将巡检、RSS写入与语义检索切换到memory.db优先。",
+          "source": "conversation"
+        }
+      ],
+      "memories": [],
+      "candidate": [],
+      "graph": []
+    },
+    "context_summary": "📊 经验:\n   • Historical success rate: 0% (0/10)\n   • Common issues to avoid:\n   •   • unknown... (10x)\n\n⚠️ 注意:\n   • 历史有 10 次失败记录\n\n🧠 语义命中: 2条",
+    "hits": {
+      "rules": true,
+      "episodic": true,
+      "semantic": true,
+      "memories": false,
+      "candidate": false,
+      "graph": false
+    },
+    "retrieval_stats": {
+      "total_calls": 472,
+      "updated_at": "2026-03-11T18:01:43.931093",
+      "tracks": {
+        "rules": {
+          "hit": 472,
+          "miss": 0
+        },
+        "episodic": {
+          "hit": 462,
+          "miss": 10
+        },
+        "semantic": {
+          "hit": 258,
+          "miss": 214
+        },
+        "memories": {
+          "hit": 338,
+          "miss": 134
+        },
+        "candidate": {
+          "hit": 14,
+          "miss": 458
+        },
+        "graph": {
+          "hit": 0,
+          "miss": 472
+        }
+      }
+    }
+  },
+  "rules": {
+    "P0_HARD": [
+      {
+        "id": "p0_001",
+        "name": "private_data_stays_private",
+        "description": "隐私数据必须保密，永不外泄",
+        "rule": "禁止将任何私人数据发送到系统外部",
+        "priority": "P0_HARD",
+        "category": "",
+        "action": "block"
+      },
+      {
+        "id": "p0_003",
+        "name": "ask_before_external_actions",
+        "description": "外部操作必须先询问人类",
+        "rule": "发送邮件、推文等操作前必须先获得批准",
+        "priority": "P0_HARD",
+        "category": "",
+        "action": "block"
+      },
+      {
+        "id": "p0_004",
+        "name": "high_risk_requires_approval",
+        "description": "高风险任务需要明确审批",
+        "rule": "涉及删除、部署等高风险操作需要确认",
+        "priority": "P0_HARD",
+        "category": "",
+        "action": "block"
+      },
+      {
+        "id": "p0_005",
+        "name": "sync_mechanism_and_code",
+        "description": "修改系统机制文件时，必须同步更新相关代码",
+        "rule": "当修改配置文件、数据库schema、规则等机制文件时，必须同步修改相关代码，确保行为一致",
+        "priority": "P0_HARD",
+        "category": "system",
+        "action": "suggest"
+      },
+      {
+        "id": "p0_006",
+        "name": "enforce_new_mechanisms",
+        "description": "新文件/新机制必须落实执行",
+        "rule": "创建新配置文件、技能、机制后，必须确保其被实际使用/执行，不能只是创建了事",
+        "priority": "P0_HARD",
+        "category": "system",
+        "action": "block"
+      }
+    ],
+    "P1_GOVERNANCE": [],
+    "P2_TASK_TYPE": [
+      {
+        "id": "p2_r001",
+        "name": "verify_source",
+        "description": "验证信息源可靠性",
+        "rule": "确保信息来源可信",
+        "priority": "P2_TASK_TYPE",
+        "category": "research",
+        "action": "warn"
+      },
+      {
+        "id": "p2_r002",
+        "name": "cite_sources",
+        "description": "引用来源",
+        "rule": "输出时标注参考来源",
+        "priority": "P2_TASK_TYPE",
+        "category": "research",
+        "action": "warn"
+      }
+    ],
+    "P3_SCENARIO": [],
+    "P4_SUGGESTION": [
+      {
+        "id": "p4_001",
+        "name": "use_cache",
+        "description": "考虑使用缓存",
+        "rule": "重复请求可使用缓存",
+        "priority": "P4_SUGGESTION",
+        "category": "",
+        "action": "suggest"
+      },
+      {
+        "id": "p4_002",
+        "name": "log_performance",
+        "description": "记录性能指标",
+        "rule": "记录响应时间和资源使用",
+        "priority": "P4_SUGGESTION",
+        "category": "",
+        "action": "suggest"
+      }
+    ]
+  },
+  "rule_constraints": {
+    "blocking_rules": [
+      {
+        "id": "p0_001",
+        "name": "private_data_stays_private",
+        "description": "隐私数据必须保密，永不外泄",
+        "rule": "禁止将任何私人数据发送到系统外部",
+        "priority": "P0_HARD",
+        "category": "",
+        "action": "block"
+      },
+      {
+        "id": "p0_003",
+        "name": "ask_before_external_actions",
+        "description": "外部操作必须先询问人类",
+        "rule": "发送邮件、推文等操作前必须先获得批准",
+        "priority": "P0_HARD",
+        "category": "",
+        "action": "block"
+      },
+      {
+        "id": "p0_004",
+        "name": "high_risk_requires_approval",
+        "description": "高风险任务需要明确审批",
+        "rule": "涉及删除、部署等高风险操作需要确认",
+        "priority": "P0_HARD",
+        "category": "",
+        "action": "block"
+      },
+      {
+        "id": "p0_006",
+        "name": "enforce_new_mechanisms",
+        "description": "新文件/新机制必须落实执行",
+        "rule": "创建新配置文件、技能、机制后，必须确保其被实际使用/执行，不能只是创建了事",
+        "priority": "P0_HARD",
+        "category": "system",
+        "action": "block"
+      }
+    ],
+    "blocking_count": 4
+  },
+  "rule_description": "P0:5 P1:0 P2:2 P3:0",
+  "experience": {
+    "similar_tasks": [
+      {
+        "task_id": "t_20260311_1c71",
+        "event": "started",
+        "timestamp": "2026-03-11T02:48:45.443492",
+        "task_type": "research",
+        "scenario": "research_general",
+        "risk_level": "low",
+        "tags": [
+          "research_general",
+          "research"
+        ],
+        "uncertainty": 0.6,
+        "similarity_score": 1.0
+      },
+      {
+        "task_id": "t_20260311_50a2",
+        "event": "started",
+        "timestamp": "2026-03-11T02:48:45.479525",
+        "task_type": "research",
+        "scenario": "research_general",
+        "risk_level": "low",
+        "tags": [
+          "research_general",
+          "research"
+        ],
+        "uncertainty": 0.6,
+        "similarity_score": 1.0
+      },
+      {
+        "task_id": "t_20260311_5759",
+        "event": "started",
+        "timestamp": "2026-03-11T02:51:45.035353",
+        "task_type": "research",
+        "scenario": "research_general",
+        "risk_level": "low",
+        "tags": [
+          "research_general",
+          "research"
+        ],
+        "uncertainty": 0.6,
+        "similarity_score": 1.0
+      },
+      {
+        "task_id": "t_20260311_62b0",
+        "event": "started",
+        "timestamp": "2026-03-11T02:51:45.080693",
+        "task_type": "research",
+        "scenario": "research_general",
+        "risk_level": "low",
+        "tags": [
+          "research_general",
+          "research"
+        ],
+        "uncertainty": 0.6,
+        "similarity_score": 1.0
+      },
+      {
+        "task_id": "t_20260311_af38",
+        "event": "started",
+        "timestamp": "2026-03-11T02:53:02.327798",
+        "task_type": "research",
+        "scenario": "research_general",
+        "risk_level": "low",
+        "tags": [
+          "research_general",
+          "research"
+        ],
+        "uncertainty": 0.3,
+        "similarity_score": 1.0
+      },
+      {
+        "task_id": "t_20260311_7f7b",
+        "event": "started",
+        "timestamp": "2026-03-11T02:53:02.382238",
+        "task_type": "research",
+        "scenario": "research_general",
+        "risk_level": "low",
+        "tags": [
+          "research_general",
+          "research"
+        ],
+        "uncertainty": 0.3,
+        "similarity_score": 1.0
+      },
+      {
+        "task_id": "t_20260311_9e33",
+        "event": "started",
+        "timestamp": "2026-03-11T03:49:19.555287",
+        "task_type": "research",
+        "scenario": "research_general",
+        "risk_level": "low",
+        "tags": [
+          "research_general",
+          "research"
+        ],
+        "uncertainty": 0.6,
+        "similarity_score": 1.0
+      },
+      {
+        "task_id": "t_20260311_a427",
+        "event": "started",
+        "timestamp": "2026-03-11T03:49:19.564770",
+        "task_type": "research",
+        "scenario": "research_general",
+        "risk_level": "low",
+        "tags": [
+          "research_general",
+          "research"
+        ],
+        "uncertainty": 0.6,
+        "similarity_score": 1.0
+      },
+      {
+        "task_id": "t_20260311_3d28",
+        "event": "started",
+        "timestamp": "2026-03-11T13:18:38.572484",
+        "task_type": "research",
+        "scenario": "research_general",
+        "risk_level": "low",
+        "tags": [
+          "research_general",
+          "research"
+        ],
+        "uncertainty": 0.5,
+        "similarity_score": 1.0
+      },
+      {
+        "task_id": "t_20260311_3f9d",
+        "event": "started",
+        "timestamp": "2026-03-11T13:18:38.579814",
+        "task_type": "research",
+        "scenario": "research_general",
+        "risk_level": "low",
+        "tags": [
+          "research_general",
+          "research"
+        ],
+        "uncertainty": 0.5,
+        "similarity_score": 1.0
+      }
+    ],
+    "success_patterns": [],
+    "failure_patterns": [
+      {
+        "task_id": "t_20260311_1c71",
+        "task_type": "research",
+        "outcome": null,
+        "timestamp": "2026-03-11T02:48:45.443492",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260311_50a2",
+        "task_type": "research",
+        "outcome": null,
+        "timestamp": "2026-03-11T02:48:45.479525",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260311_5759",
+        "task_type": "research",
+        "outcome": null,
+        "timestamp": "2026-03-11T02:51:45.035353",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260311_62b0",
+        "task_type": "research",
+        "outcome": null,
+        "timestamp": "2026-03-11T02:51:45.080693",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260311_af38",
+        "task_type": "research",
+        "outcome": null,
+        "timestamp": "2026-03-11T02:53:02.327798",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260311_7f7b",
+        "task_type": "research",
+        "outcome": null,
+        "timestamp": "2026-03-11T02:53:02.382238",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260311_9e33",
+        "task_type": "research",
+        "outcome": null,
+        "timestamp": "2026-03-11T03:49:19.555287",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260311_a427",
+        "task_type": "research",
+        "outcome": null,
+        "timestamp": "2026-03-11T03:49:19.564770",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260311_3d28",
+        "task_type": "research",
+        "outcome": null,
+        "timestamp": "2026-03-11T13:18:38.572484",
+        "reasons": [
+          "Unknown"
+        ]
+      },
+      {
+        "task_id": "t_20260311_3f9d",
+        "task_type": "research",
+        "outcome": null,
+        "timestamp": "2026-03-11T13:18:38.579814",
+        "reasons": [
+          "Unknown"
+        ]
+      }
+    ],
+    "learned_lessons": [
+      "Historical success rate: 0% (0/10)",
+      "Common issues to avoid:",
+      "  • unknown... (10x)"
+    ],
+    "skill_recommendations": [],
+    "confidence": 0.0
+  },
+  "context_summary": "📊 经验:\n   • Historical success rate: 0% (0/10)\n   • Common issues to avoid:\n   •   • unknown... (10x)\n\n⚠️ 注意:\n   • 历史有 10 次失败记录\n\n🧠 语义命中: 2条",
+  "ready_to_execute": false
+}
