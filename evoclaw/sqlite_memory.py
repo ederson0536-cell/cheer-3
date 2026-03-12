@@ -346,6 +346,104 @@ class SQLiteMemoryStore:
                 CREATE INDEX IF NOT EXISTS idx_task_runs_significance ON task_runs(significance);
                 CREATE INDEX IF NOT EXISTS idx_task_runs_task_type ON task_runs(task_type);
 
+
+                CREATE TABLE IF NOT EXISTS external_learning_events (
+                    event_id TEXT PRIMARY KEY,
+                    source_type TEXT NOT NULL DEFAULT '',
+                    source_name TEXT NOT NULL DEFAULT '',
+                    title TEXT NOT NULL DEFAULT '',
+                    content TEXT NOT NULL DEFAULT '',
+                    url TEXT NOT NULL DEFAULT '',
+                    collected_at TEXT NOT NULL DEFAULT '',
+                    significance TEXT NOT NULL DEFAULT 'routine',
+                    status TEXT NOT NULL DEFAULT 'new',
+                    metadata_json TEXT NOT NULL DEFAULT '{}'
+                );
+
+                CREATE INDEX IF NOT EXISTS idx_external_learning_events_source_type ON external_learning_events(source_type);
+                CREATE INDEX IF NOT EXISTS idx_external_learning_events_collected_at ON external_learning_events(collected_at);
+                CREATE INDEX IF NOT EXISTS idx_external_learning_events_status ON external_learning_events(status);
+
+                CREATE TABLE IF NOT EXISTS notebook_experiences (
+                    notebook_exp_id TEXT PRIMARY KEY,
+                    task_id TEXT,
+                    message_id TEXT NOT NULL DEFAULT '',
+                    source TEXT NOT NULL DEFAULT '',
+                    content TEXT NOT NULL DEFAULT '',
+                    summary TEXT NOT NULL DEFAULT '',
+                    significance TEXT NOT NULL DEFAULT 'routine',
+                    created_at TEXT NOT NULL DEFAULT '',
+                    updated_at TEXT NOT NULL DEFAULT '',
+                    metadata_json TEXT NOT NULL DEFAULT '{}',
+                    FOREIGN KEY(task_id) REFERENCES task_runs(task_id) ON UPDATE CASCADE ON DELETE SET NULL
+                );
+
+                CREATE INDEX IF NOT EXISTS idx_notebook_experiences_task_id ON notebook_experiences(task_id);
+                CREATE INDEX IF NOT EXISTS idx_notebook_experiences_significance ON notebook_experiences(significance);
+                CREATE INDEX IF NOT EXISTS idx_notebook_experiences_created_at ON notebook_experiences(created_at);
+
+                CREATE TABLE IF NOT EXISTS notebook_reflections (
+                    notebook_reflection_id TEXT PRIMARY KEY,
+                    notebook_exp_id TEXT,
+                    trigger TEXT NOT NULL DEFAULT '',
+                    analysis_json TEXT NOT NULL DEFAULT '{}',
+                    created_at TEXT NOT NULL DEFAULT '',
+                    metadata_json TEXT NOT NULL DEFAULT '{}',
+                    FOREIGN KEY(notebook_exp_id) REFERENCES notebook_experiences(notebook_exp_id) ON UPDATE CASCADE ON DELETE SET NULL
+                );
+
+                CREATE INDEX IF NOT EXISTS idx_notebook_reflections_exp_id ON notebook_reflections(notebook_exp_id);
+                CREATE INDEX IF NOT EXISTS idx_notebook_reflections_created_at ON notebook_reflections(created_at);
+
+                CREATE TABLE IF NOT EXISTS notebook_proposals (
+                    notebook_proposal_id TEXT PRIMARY KEY,
+                    notebook_reflection_id TEXT,
+                    proposal_type TEXT NOT NULL DEFAULT '',
+                    content TEXT NOT NULL DEFAULT '',
+                    priority TEXT NOT NULL DEFAULT 'medium',
+                    status TEXT NOT NULL DEFAULT 'pending',
+                    created_at TEXT NOT NULL DEFAULT '',
+                    updated_at TEXT NOT NULL DEFAULT '',
+                    metadata_json TEXT NOT NULL DEFAULT '{}',
+                    FOREIGN KEY(notebook_reflection_id) REFERENCES notebook_reflections(notebook_reflection_id) ON UPDATE CASCADE ON DELETE SET NULL
+                );
+
+                CREATE INDEX IF NOT EXISTS idx_notebook_proposals_reflection_id ON notebook_proposals(notebook_reflection_id);
+                CREATE INDEX IF NOT EXISTS idx_notebook_proposals_status ON notebook_proposals(status);
+
+                CREATE TABLE IF NOT EXISTS notebook_rules (
+                    notebook_rule_id TEXT PRIMARY KEY,
+                    notebook_proposal_id TEXT,
+                    rule_type TEXT NOT NULL DEFAULT '',
+                    content TEXT NOT NULL DEFAULT '',
+                    enabled INTEGER NOT NULL DEFAULT 1,
+                    created_at TEXT NOT NULL DEFAULT '',
+                    updated_at TEXT NOT NULL DEFAULT '',
+                    metadata_json TEXT NOT NULL DEFAULT '{}',
+                    FOREIGN KEY(notebook_proposal_id) REFERENCES notebook_proposals(notebook_proposal_id) ON UPDATE CASCADE ON DELETE SET NULL
+                );
+
+                CREATE INDEX IF NOT EXISTS idx_notebook_rules_proposal_id ON notebook_rules(notebook_proposal_id);
+                CREATE INDEX IF NOT EXISTS idx_notebook_rules_enabled ON notebook_rules(enabled);
+
+                CREATE TABLE IF NOT EXISTS semantic_knowledge (
+                    semantic_id TEXT PRIMARY KEY,
+                    entity_id TEXT,
+                    relation_id TEXT,
+                    content TEXT NOT NULL DEFAULT '',
+                    embedding_ref TEXT NOT NULL DEFAULT '',
+                    source TEXT NOT NULL DEFAULT '',
+                    created_at TEXT NOT NULL DEFAULT '',
+                    updated_at TEXT NOT NULL DEFAULT '',
+                    metadata_json TEXT NOT NULL DEFAULT '{}',
+                    FOREIGN KEY(entity_id) REFERENCES graph_entities(id) ON UPDATE CASCADE ON DELETE SET NULL,
+                    FOREIGN KEY(relation_id) REFERENCES graph_relations(id) ON UPDATE CASCADE ON DELETE SET NULL
+                );
+
+                CREATE INDEX IF NOT EXISTS idx_semantic_knowledge_entity_id ON semantic_knowledge(entity_id);
+                CREATE INDEX IF NOT EXISTS idx_semantic_knowledge_relation_id ON semantic_knowledge(relation_id);
+                CREATE INDEX IF NOT EXISTS idx_semantic_knowledge_created_at ON semantic_knowledge(created_at);
+
                 CREATE TABLE IF NOT EXISTS system_catalog (
                     object_key TEXT PRIMARY KEY,
                     object_type TEXT NOT NULL DEFAULT '',
@@ -378,9 +476,68 @@ class SQLiteMemoryStore:
             self._migrate_feedback_hook_records(conn)
             self._ensure_experiences_view(conn)
 
+    def _record_json_decode_warning(self, *, context: str, raw_value: Any, error: Exception) -> None:
+        now = datetime.now().isoformat()
+        raw_preview = str(raw_value)
+        if len(raw_preview) > 240:
+            raw_preview = raw_preview[:240] + "..."
+        with self._connect() as conn:
+            row = conn.execute("SELECT value_json FROM system_state WHERE key = ?", ("json_decode_warning_count",)).fetchone()
+            count = 0
+            if row and row[0]:
+                try:
+                    count = int(json.loads(row[0]).get("count", 0))
+                except Exception:
+                    count = 0
+            count += 1
+            conn.execute(
+                "INSERT OR REPLACE INTO system_state (key, value_json, updated_at) VALUES (?, ?, ?)",
+                ("json_decode_warning_count", json.dumps({"count": count}, ensure_ascii=False), now),
+            )
+            conn.execute(
+                """
+                INSERT INTO system_logs (
+                    id, log_type, source, content, created_at, updated_at, level, metadata_json, raw_json
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    self._stable_id("json_decode_warning", {"context": context, "time": now, "raw": raw_preview}),
+                    "json_decode_warning",
+                    "sqlite_memory",
+                    str(error),
+                    now,
+                    now,
+                    "warning",
+                    self._json_dumps({"context": context}, {}),
+                    self._json_dumps({"raw_preview": raw_preview}, {}),
+                ),
+            )
+
+    def _safe_json_loads(self, raw: Any, default: Any, *, context: str = "") -> Any:
+        if raw is None:
+            return default
+        if isinstance(raw, (dict, list)):
+            return raw
+        text = str(raw).strip()
+        if not text:
+            return default
+        try:
+            return json.loads(text)
+        except Exception as error:
+            self._record_json_decode_warning(context=context or "unknown", raw_value=text, error=error)
+            return default
+
     def _json_dumps(self, value: Any, default: Any) -> str:
         if value is None:
             value = default
+        if isinstance(default, dict) and not isinstance(value, dict):
+            value = self._safe_json_loads(value, default, context="write_schema.dict")
+            if not isinstance(value, dict):
+                value = default
+        elif isinstance(default, list) and not isinstance(value, list):
+            value = self._safe_json_loads(value, default, context="write_schema.list")
+            if not isinstance(value, list):
+                value = default
         return json.dumps(value, ensure_ascii=False)
 
     def _stable_id(self, prefix: str, payload: Any) -> str:
@@ -951,18 +1108,597 @@ class SQLiteMemoryStore:
                 "success": bool(row["success"]),
                 "satisfaction": row["satisfaction"],
                 "significance": row["significance"],
-                "skills": json.loads(row["skills_json"]) if row["skills_json"] else [],
-                "methods": json.loads(row["methods_json"]) if row["methods_json"] else [],
-                "execution_steps": json.loads(row["execution_steps_json"]) if row["execution_steps_json"] else [],
-                "thinking": json.loads(row["thinking_json"]) if row["thinking_json"] else [],
+                "skills": self._safe_json_loads(row["skills_json"], [], context="task_runs.skills_json"),
+                "methods": self._safe_json_loads(row["methods_json"], [], context="task_runs.methods_json"),
+                "execution_steps": self._safe_json_loads(row["execution_steps_json"], [], context="task_runs.execution_steps_json"),
+                "thinking": self._safe_json_loads(row["thinking_json"], [], context="task_runs.thinking_json"),
                 "output_summary": row["output_summary"],
                 "final_message": row["final_message"],
                 "source": row["source"],
                 "created_at": row["created_at"],
                 "updated_at": row["updated_at"],
-                "metadata": json.loads(row["metadata_json"]) if row["metadata_json"] else {},
+                "metadata": self._safe_json_loads(row["metadata_json"], {}, context="row.metadata_json"),
             })
         return result
+
+
+    def upsert_external_learning_event(self, event: dict[str, Any]) -> None:
+        row = {
+            "event_id": str(event.get("event_id") or self._stable_id("external_learning", event)),
+            "source_type": str(event.get("source_type") or ""),
+            "source_name": str(event.get("source_name") or ""),
+            "title": str(event.get("title") or ""),
+            "content": str(event.get("content") or ""),
+            "url": str(event.get("url") or ""),
+            "collected_at": str(event.get("collected_at") or event.get("created_at") or ""),
+            "significance": str(event.get("significance") or "routine"),
+            "status": str(event.get("status") or "new"),
+            "metadata_json": self._json_dumps(event.get("metadata"), {}),
+        }
+        with self._connect() as conn:
+            conn.execute(
+                """
+                INSERT INTO external_learning_events (
+                    event_id, source_type, source_name, title, content, url,
+                    collected_at, significance, status, metadata_json
+                ) VALUES (
+                    :event_id, :source_type, :source_name, :title, :content, :url,
+                    :collected_at, :significance, :status, :metadata_json
+                )
+                ON CONFLICT(event_id) DO UPDATE SET
+                    source_type=excluded.source_type,
+                    source_name=excluded.source_name,
+                    title=excluded.title,
+                    content=excluded.content,
+                    url=excluded.url,
+                    collected_at=excluded.collected_at,
+                    significance=excluded.significance,
+                    status=excluded.status,
+                    metadata_json=excluded.metadata_json
+                """,
+                row,
+            )
+
+    def upsert_notebook_experience(self, entry: dict[str, Any]) -> None:
+        created_at = str(entry.get("created_at") or datetime.now().isoformat())
+        row = {
+            "notebook_exp_id": str(entry.get("notebook_exp_id") or self._stable_id("notebook_exp", entry)),
+            "task_id": str(entry.get("task_id") or ""),
+            "message_id": str(entry.get("message_id") or ""),
+            "source": str(entry.get("source") or ""),
+            "content": str(entry.get("content") or ""),
+            "summary": str(entry.get("summary") or ""),
+            "significance": str(entry.get("significance") or "routine"),
+            "created_at": created_at,
+            "updated_at": str(entry.get("updated_at") or created_at),
+            "metadata_json": self._json_dumps(entry.get("metadata"), {}),
+        }
+        with self._connect() as conn:
+            conn.execute(
+                """
+                INSERT INTO notebook_experiences (
+                    notebook_exp_id, task_id, message_id, source, content, summary,
+                    significance, created_at, updated_at, metadata_json
+                ) VALUES (
+                    :notebook_exp_id, :task_id, :message_id, :source, :content, :summary,
+                    :significance, :created_at, :updated_at, :metadata_json
+                )
+                ON CONFLICT(notebook_exp_id) DO UPDATE SET
+                    task_id=excluded.task_id,
+                    message_id=excluded.message_id,
+                    source=excluded.source,
+                    content=excluded.content,
+                    summary=excluded.summary,
+                    significance=excluded.significance,
+                    created_at=excluded.created_at,
+                    updated_at=excluded.updated_at,
+                    metadata_json=excluded.metadata_json
+                """,
+                row,
+            )
+
+
+    def query_external_learning_events(
+        self,
+        *,
+        source_type: str | None = None,
+        status: str | None = None,
+        limit: int = 100,
+        offset: int = 0,
+    ) -> list[dict[str, Any]]:
+        where: list[str] = []
+        params: dict[str, Any] = {"limit": max(1, int(limit)), "offset": max(0, int(offset))}
+        if source_type:
+            where.append("source_type = :source_type")
+            params["source_type"] = source_type
+        if status:
+            where.append("status = :status")
+            params["status"] = status
+        where_clause = f"WHERE {' AND '.join(where)}" if where else ""
+
+        with self._connect() as conn:
+            rows = conn.execute(
+                f"""
+                SELECT event_id, source_type, source_name, title, content, url,
+                       collected_at, significance, status, metadata_json
+                FROM external_learning_events
+                {where_clause}
+                ORDER BY collected_at DESC, event_id DESC
+                LIMIT :limit OFFSET :offset
+                """,
+                params,
+            ).fetchall()
+
+        result: list[dict[str, Any]] = []
+        for row in rows:
+            result.append(
+                {
+                    "event_id": row["event_id"],
+                    "source_type": row["source_type"],
+                    "source_name": row["source_name"],
+                    "title": row["title"],
+                    "content": row["content"],
+                    "url": row["url"],
+                    "collected_at": row["collected_at"],
+                    "significance": row["significance"],
+                    "status": row["status"],
+                    "metadata": self._safe_json_loads(row["metadata_json"], {}, context="row.metadata_json"),
+                }
+            )
+        return result
+
+    def mark_external_learning_event_status(self, event_id: str, status: str) -> bool:
+        with self._connect() as conn:
+            cur = conn.execute(
+                "UPDATE external_learning_events SET status=:status WHERE event_id=:event_id",
+                {"event_id": str(event_id), "status": str(status)},
+            )
+        return cur.rowcount > 0
+
+    def query_notebook_experiences(self, *, task_id: str | None = None, limit: int = 100, offset: int = 0) -> list[dict[str, Any]]:
+        where = ""
+        params: dict[str, Any] = {"limit": max(1, int(limit)), "offset": max(0, int(offset))}
+        if task_id:
+            where = "WHERE task_id = :task_id"
+            params["task_id"] = task_id
+        with self._connect() as conn:
+            rows = conn.execute(
+                f"""
+                SELECT notebook_exp_id, task_id, message_id, source, content, summary,
+                       significance, created_at, updated_at, metadata_json
+                FROM notebook_experiences
+                {where}
+                ORDER BY created_at DESC, notebook_exp_id DESC
+                LIMIT :limit OFFSET :offset
+                """,
+                params,
+            ).fetchall()
+        out: list[dict[str, Any]] = []
+        for row in rows:
+            out.append(
+                {
+                    "notebook_exp_id": row["notebook_exp_id"],
+                    "task_id": row["task_id"],
+                    "message_id": row["message_id"],
+                    "source": row["source"],
+                    "content": row["content"],
+                    "summary": row["summary"],
+                    "significance": row["significance"],
+                    "created_at": row["created_at"],
+                    "updated_at": row["updated_at"],
+                    "metadata": self._safe_json_loads(row["metadata_json"], {}, context="row.metadata_json"),
+                }
+            )
+        return out
+
+    def mark_notebook_experience_status(self, notebook_exp_id: str, status: str) -> bool:
+        with self._connect() as conn:
+            row = conn.execute(
+                "SELECT metadata_json FROM notebook_experiences WHERE notebook_exp_id=?",
+                (str(notebook_exp_id),),
+            ).fetchone()
+            if row is None:
+                return False
+            md = self._safe_json_loads(row["metadata_json"], {}, context="row.metadata_json")
+            md["status"] = str(status)
+            md["status_updated_at"] = datetime.now().isoformat()
+            conn.execute(
+                "UPDATE notebook_experiences SET metadata_json=:md WHERE notebook_exp_id=:id",
+                {"id": str(notebook_exp_id), "md": self._json_dumps(md, {})},
+            )
+        return True
+
+    def upsert_notebook_reflection(self, reflection: dict[str, Any]) -> None:
+        created_at = str(reflection.get("created_at") or datetime.now().isoformat())
+        row = {
+            "notebook_reflection_id": str(reflection.get("notebook_reflection_id") or self._stable_id("notebook_reflection", reflection)),
+            "notebook_exp_id": str(reflection.get("notebook_exp_id") or ""),
+            "trigger": str(reflection.get("trigger") or ""),
+            "analysis_json": self._json_dumps(reflection.get("analysis"), {}),
+            "created_at": created_at,
+            "metadata_json": self._json_dumps(reflection.get("metadata"), {}),
+        }
+        with self._connect() as conn:
+            conn.execute(
+                """
+                INSERT INTO notebook_reflections (
+                    notebook_reflection_id, notebook_exp_id, trigger, analysis_json,
+                    created_at, metadata_json
+                ) VALUES (
+                    :notebook_reflection_id, :notebook_exp_id, :trigger, :analysis_json,
+                    :created_at, :metadata_json
+                )
+                ON CONFLICT(notebook_reflection_id) DO UPDATE SET
+                    notebook_exp_id=excluded.notebook_exp_id,
+                    trigger=excluded.trigger,
+                    analysis_json=excluded.analysis_json,
+                    created_at=excluded.created_at,
+                    metadata_json=excluded.metadata_json
+                """,
+                row,
+            )
+
+    def query_notebook_reflections(self, *, notebook_exp_id: str | None = None, limit: int = 100, offset: int = 0) -> list[dict[str, Any]]:
+        where = ""
+        params: dict[str, Any] = {"limit": max(1, int(limit)), "offset": max(0, int(offset))}
+        if notebook_exp_id:
+            where = "WHERE notebook_exp_id = :notebook_exp_id"
+            params["notebook_exp_id"] = notebook_exp_id
+        with self._connect() as conn:
+            rows = conn.execute(
+                f"""
+                SELECT notebook_reflection_id, notebook_exp_id, trigger, analysis_json,
+                       created_at, metadata_json
+                FROM notebook_reflections
+                {where}
+                ORDER BY created_at DESC, notebook_reflection_id DESC
+                LIMIT :limit OFFSET :offset
+                """,
+                params,
+            ).fetchall()
+        out: list[dict[str, Any]] = []
+        for row in rows:
+            out.append(
+                {
+                    "notebook_reflection_id": row["notebook_reflection_id"],
+                    "notebook_exp_id": row["notebook_exp_id"],
+                    "trigger": row["trigger"],
+                    "analysis": json.loads(row["analysis_json"]) if row["analysis_json"] else {},
+                    "created_at": row["created_at"],
+                    "metadata": self._safe_json_loads(row["metadata_json"], {}, context="row.metadata_json"),
+                }
+            )
+        return out
+
+    def mark_notebook_reflection_status(self, notebook_reflection_id: str, status: str) -> bool:
+        with self._connect() as conn:
+            row = conn.execute(
+                "SELECT metadata_json FROM notebook_reflections WHERE notebook_reflection_id=?",
+                (str(notebook_reflection_id),),
+            ).fetchone()
+            if row is None:
+                return False
+            md = self._safe_json_loads(row["metadata_json"], {}, context="row.metadata_json")
+            md["status"] = str(status)
+            md["status_updated_at"] = datetime.now().isoformat()
+            conn.execute(
+                "UPDATE notebook_reflections SET metadata_json=:md WHERE notebook_reflection_id=:id",
+                {"id": str(notebook_reflection_id), "md": self._json_dumps(md, {})},
+            )
+        return True
+
+    def upsert_notebook_proposal(self, proposal: dict[str, Any]) -> None:
+        created_at = str(proposal.get("created_at") or datetime.now().isoformat())
+        row = {
+            "notebook_proposal_id": str(proposal.get("notebook_proposal_id") or self._stable_id("notebook_proposal", proposal)),
+            "notebook_reflection_id": str(proposal.get("notebook_reflection_id") or ""),
+            "proposal_type": str(proposal.get("proposal_type") or ""),
+            "content": str(proposal.get("content") or ""),
+            "priority": str(proposal.get("priority") or "medium"),
+            "status": str(proposal.get("status") or "pending"),
+            "created_at": created_at,
+            "updated_at": str(proposal.get("updated_at") or created_at),
+            "metadata_json": self._json_dumps(proposal.get("metadata"), {}),
+        }
+        with self._connect() as conn:
+            conn.execute(
+                """
+                INSERT INTO notebook_proposals (
+                    notebook_proposal_id, notebook_reflection_id, proposal_type, content,
+                    priority, status, created_at, updated_at, metadata_json
+                ) VALUES (
+                    :notebook_proposal_id, :notebook_reflection_id, :proposal_type, :content,
+                    :priority, :status, :created_at, :updated_at, :metadata_json
+                )
+                ON CONFLICT(notebook_proposal_id) DO UPDATE SET
+                    notebook_reflection_id=excluded.notebook_reflection_id,
+                    proposal_type=excluded.proposal_type,
+                    content=excluded.content,
+                    priority=excluded.priority,
+                    status=excluded.status,
+                    created_at=excluded.created_at,
+                    updated_at=excluded.updated_at,
+                    metadata_json=excluded.metadata_json
+                """,
+                row,
+            )
+
+    def query_notebook_proposals(self, *, status: str | None = None, limit: int = 100, offset: int = 0) -> list[dict[str, Any]]:
+        where = ""
+        params: dict[str, Any] = {"limit": max(1, int(limit)), "offset": max(0, int(offset))}
+        if status:
+            where = "WHERE status = :status"
+            params["status"] = status
+        with self._connect() as conn:
+            rows = conn.execute(
+                f"""
+                SELECT notebook_proposal_id, notebook_reflection_id, proposal_type, content,
+                       priority, status, created_at, updated_at, metadata_json
+                FROM notebook_proposals
+                {where}
+                ORDER BY updated_at DESC, notebook_proposal_id DESC
+                LIMIT :limit OFFSET :offset
+                """,
+                params,
+            ).fetchall()
+        out: list[dict[str, Any]] = []
+        for row in rows:
+            out.append(
+                {
+                    "notebook_proposal_id": row["notebook_proposal_id"],
+                    "notebook_reflection_id": row["notebook_reflection_id"],
+                    "proposal_type": row["proposal_type"],
+                    "content": row["content"],
+                    "priority": row["priority"],
+                    "status": row["status"],
+                    "created_at": row["created_at"],
+                    "updated_at": row["updated_at"],
+                    "metadata": self._safe_json_loads(row["metadata_json"], {}, context="row.metadata_json"),
+                }
+            )
+        return out
+
+    def mark_notebook_proposal_status(self, notebook_proposal_id: str, status: str) -> bool:
+        with self._connect() as conn:
+            cur = conn.execute(
+                "UPDATE notebook_proposals SET status=:status, updated_at=:updated_at WHERE notebook_proposal_id=:id",
+                {"id": str(notebook_proposal_id), "status": str(status), "updated_at": datetime.now().isoformat()},
+            )
+        return cur.rowcount > 0
+
+    def upsert_notebook_rule(self, rule: dict[str, Any]) -> None:
+        now = datetime.now().isoformat()
+        row = {
+            "notebook_rule_id": str(rule.get("notebook_rule_id") or self._stable_id("notebook_rule", rule)),
+            "notebook_proposal_id": str(rule.get("notebook_proposal_id") or ""),
+            "rule_type": str(rule.get("rule_type") or ""),
+            "content": str(rule.get("content") or ""),
+            "enabled": 1 if bool(rule.get("enabled", True)) else 0,
+            "created_at": str(rule.get("created_at") or now),
+            "updated_at": str(rule.get("updated_at") or now),
+            "metadata_json": self._json_dumps(rule.get("metadata"), {}),
+        }
+        with self._connect() as conn:
+            conn.execute(
+                """
+                INSERT INTO notebook_rules (
+                    notebook_rule_id, notebook_proposal_id, rule_type, content,
+                    enabled, created_at, updated_at, metadata_json
+                ) VALUES (
+                    :notebook_rule_id, :notebook_proposal_id, :rule_type, :content,
+                    :enabled, :created_at, :updated_at, :metadata_json
+                )
+                ON CONFLICT(notebook_rule_id) DO UPDATE SET
+                    notebook_proposal_id=excluded.notebook_proposal_id,
+                    rule_type=excluded.rule_type,
+                    content=excluded.content,
+                    enabled=excluded.enabled,
+                    created_at=excluded.created_at,
+                    updated_at=excluded.updated_at,
+                    metadata_json=excluded.metadata_json
+                """,
+                row,
+            )
+
+    def query_notebook_rules(self, *, enabled: bool | None = None, limit: int = 100, offset: int = 0) -> list[dict[str, Any]]:
+        where = ""
+        params: dict[str, Any] = {"limit": max(1, int(limit)), "offset": max(0, int(offset))}
+        if enabled is not None:
+            where = "WHERE enabled = :enabled"
+            params["enabled"] = 1 if enabled else 0
+        with self._connect() as conn:
+            rows = conn.execute(
+                f"""
+                SELECT notebook_rule_id, notebook_proposal_id, rule_type, content,
+                       enabled, created_at, updated_at, metadata_json
+                FROM notebook_rules
+                {where}
+                ORDER BY updated_at DESC, notebook_rule_id DESC
+                LIMIT :limit OFFSET :offset
+                """,
+                params,
+            ).fetchall()
+        out: list[dict[str, Any]] = []
+        for row in rows:
+            out.append(
+                {
+                    "notebook_rule_id": row["notebook_rule_id"],
+                    "notebook_proposal_id": row["notebook_proposal_id"],
+                    "rule_type": row["rule_type"],
+                    "content": row["content"],
+                    "enabled": bool(row["enabled"]),
+                    "created_at": row["created_at"],
+                    "updated_at": row["updated_at"],
+                    "metadata": self._safe_json_loads(row["metadata_json"], {}, context="row.metadata_json"),
+                }
+            )
+        return out
+
+    def mark_notebook_rule_status(self, notebook_rule_id: str, enabled: bool) -> bool:
+        with self._connect() as conn:
+            cur = conn.execute(
+                "UPDATE notebook_rules SET enabled=:enabled, updated_at=:updated_at WHERE notebook_rule_id=:id",
+                {"id": str(notebook_rule_id), "enabled": 1 if enabled else 0, "updated_at": datetime.now().isoformat()},
+            )
+        return cur.rowcount > 0
+
+    def upsert_semantic_knowledge(self, record: dict[str, Any]) -> None:
+        now = datetime.now().isoformat()
+        row = {
+            "semantic_id": str(record.get("semantic_id") or self._stable_id("semantic_knowledge", record)),
+            "entity_id": str(record.get("entity_id") or ""),
+            "relation_id": str(record.get("relation_id") or ""),
+            "content": str(record.get("content") or ""),
+            "embedding_ref": str(record.get("embedding_ref") or ""),
+            "source": str(record.get("source") or ""),
+            "created_at": str(record.get("created_at") or now),
+            "updated_at": str(record.get("updated_at") or now),
+            "metadata_json": self._json_dumps(record.get("metadata"), {}),
+        }
+        with self._connect() as conn:
+            conn.execute(
+                """
+                INSERT INTO semantic_knowledge (
+                    semantic_id, entity_id, relation_id, content, embedding_ref,
+                    source, created_at, updated_at, metadata_json
+                ) VALUES (
+                    :semantic_id, :entity_id, :relation_id, :content, :embedding_ref,
+                    :source, :created_at, :updated_at, :metadata_json
+                )
+                ON CONFLICT(semantic_id) DO UPDATE SET
+                    entity_id=excluded.entity_id,
+                    relation_id=excluded.relation_id,
+                    content=excluded.content,
+                    embedding_ref=excluded.embedding_ref,
+                    source=excluded.source,
+                    created_at=excluded.created_at,
+                    updated_at=excluded.updated_at,
+                    metadata_json=excluded.metadata_json
+                """,
+                row,
+            )
+
+    def query_semantic_knowledge(self, *, entity_id: str | None = None, relation_id: str | None = None, limit: int = 100, offset: int = 0) -> list[dict[str, Any]]:
+        where: list[str] = []
+        params: dict[str, Any] = {"limit": max(1, int(limit)), "offset": max(0, int(offset))}
+        if entity_id:
+            where.append("entity_id = :entity_id")
+            params["entity_id"] = entity_id
+        if relation_id:
+            where.append("relation_id = :relation_id")
+            params["relation_id"] = relation_id
+        where_clause = f"WHERE {' AND '.join(where)}" if where else ""
+        with self._connect() as conn:
+            rows = conn.execute(
+                f"""
+                SELECT semantic_id, entity_id, relation_id, content, embedding_ref,
+                       source, created_at, updated_at, metadata_json
+                FROM semantic_knowledge
+                {where_clause}
+                ORDER BY updated_at DESC, semantic_id DESC
+                LIMIT :limit OFFSET :offset
+                """,
+                params,
+            ).fetchall()
+        out: list[dict[str, Any]] = []
+        for row in rows:
+            out.append(
+                {
+                    "semantic_id": row["semantic_id"],
+                    "entity_id": row["entity_id"],
+                    "relation_id": row["relation_id"],
+                    "content": row["content"],
+                    "embedding_ref": row["embedding_ref"],
+                    "source": row["source"],
+                    "created_at": row["created_at"],
+                    "updated_at": row["updated_at"],
+                    "metadata": self._safe_json_loads(row["metadata_json"], {}, context="row.metadata_json"),
+                }
+            )
+        return out
+
+    def mark_semantic_knowledge_status(self, semantic_id: str, status: str) -> bool:
+        with self._connect() as conn:
+            row = conn.execute("SELECT metadata_json FROM semantic_knowledge WHERE semantic_id=?", (str(semantic_id),)).fetchone()
+            if row is None:
+                return False
+            md = self._safe_json_loads(row["metadata_json"], {}, context="row.metadata_json")
+            md["status"] = str(status)
+            md["status_updated_at"] = datetime.now().isoformat()
+            conn.execute(
+                "UPDATE semantic_knowledge SET metadata_json=:md, updated_at=:updated_at WHERE semantic_id=:id",
+                {"id": str(semantic_id), "md": self._json_dumps(md, {}), "updated_at": datetime.now().isoformat()},
+            )
+        return True
+
+    def run_relationship_consistency_check(self, *, limit: int = 500) -> dict[str, Any]:
+        """Check cross-table relationship and timestamp consistency."""
+        checks: dict[str, int] = {}
+        with self._connect() as conn:
+            checks["orphan_notebook_experiences"] = conn.execute(
+                """
+                SELECT COUNT(*) AS c
+                FROM notebook_experiences ne
+                LEFT JOIN task_runs tr ON tr.task_id = ne.task_id
+                WHERE ne.task_id IS NOT NULL AND ne.task_id != '' AND tr.task_id IS NULL
+                """
+            ).fetchone()["c"]
+            checks["orphan_notebook_reflections"] = conn.execute(
+                """
+                SELECT COUNT(*) AS c
+                FROM notebook_reflections nr
+                LEFT JOIN notebook_experiences ne ON ne.notebook_exp_id = nr.notebook_exp_id
+                WHERE nr.notebook_exp_id IS NOT NULL AND nr.notebook_exp_id != '' AND ne.notebook_exp_id IS NULL
+                """
+            ).fetchone()["c"]
+            checks["orphan_notebook_proposals"] = conn.execute(
+                """
+                SELECT COUNT(*) AS c
+                FROM notebook_proposals np
+                LEFT JOIN notebook_reflections nr ON nr.notebook_reflection_id = np.notebook_reflection_id
+                WHERE np.notebook_reflection_id IS NOT NULL AND np.notebook_reflection_id != '' AND nr.notebook_reflection_id IS NULL
+                """
+            ).fetchone()["c"]
+            checks["orphan_notebook_rules"] = conn.execute(
+                """
+                SELECT COUNT(*) AS c
+                FROM notebook_rules nr
+                LEFT JOIN notebook_proposals np ON np.notebook_proposal_id = nr.notebook_proposal_id
+                WHERE nr.notebook_proposal_id IS NOT NULL AND nr.notebook_proposal_id != '' AND np.notebook_proposal_id IS NULL
+                """
+            ).fetchone()["c"]
+            checks["orphan_semantic_entity"] = conn.execute(
+                """
+                SELECT COUNT(*) AS c
+                FROM semantic_knowledge sk
+                LEFT JOIN graph_entities ge ON ge.id = sk.entity_id
+                WHERE sk.entity_id IS NOT NULL AND sk.entity_id != '' AND ge.id IS NULL
+                """
+            ).fetchone()["c"]
+            checks["orphan_semantic_relation"] = conn.execute(
+                """
+                SELECT COUNT(*) AS c
+                FROM semantic_knowledge sk
+                LEFT JOIN graph_relations gr ON gr.id = sk.relation_id
+                WHERE sk.relation_id IS NOT NULL AND sk.relation_id != '' AND gr.id IS NULL
+                """
+            ).fetchone()["c"]
+            checks["task_runs_time_reversed"] = conn.execute(
+                "SELECT COUNT(*) AS c FROM task_runs WHERE created_at != '' AND updated_at != '' AND created_at > updated_at"
+            ).fetchone()["c"]
+            checks["notebook_proposals_invalid_status"] = conn.execute(
+                """
+                SELECT COUNT(*) AS c FROM notebook_proposals
+                WHERE status NOT IN ('pending','approved','rejected','applied','draft')
+                """
+            ).fetchone()["c"]
+
+            fk_violations = conn.execute("PRAGMA foreign_key_check").fetchall()
+            checks["foreign_key_violations"] = len(fk_violations)
+
+        checks["total_issues"] = int(sum(v for v in checks.values()))
+        checks["checked_at"] = datetime.now().isoformat()
+        return checks
 
     def _normalized_system_log(self, log: dict[str, Any]) -> dict[str, Any]:
         metadata = log.get("metadata")
@@ -1058,7 +1794,7 @@ class SQLiteMemoryStore:
         for row in rows:
             value: Any = {}
             try:
-                value = json.loads(row["value_json"]) if row["value_json"] else {}
+                value = self._safe_json_loads(row["value_json"], {}, context="system_state.value_json")
             except (TypeError, ValueError, json.JSONDecodeError):
                 value = {}
             result.append(
@@ -1116,8 +1852,8 @@ class SQLiteMemoryStore:
 
         result: list[dict[str, Any]] = []
         for row in rows:
-            metadata = json.loads(row["metadata_json"]) if row["metadata_json"] else {}
-            raw = json.loads(row["raw_json"]) if row["raw_json"] else {}
+            metadata = self._safe_json_loads(row["metadata_json"], {}, context="row.metadata_json")
+            raw = self._safe_json_loads(row["raw_json"], {}, context="row.raw_json")
             result.append(
                 {
                     "id": row["id"],
@@ -1185,9 +1921,9 @@ class SQLiteMemoryStore:
 
         result: list[dict[str, Any]] = []
         for row in rows:
-            tags = json.loads(row["tags_json"]) if row["tags_json"] else []
-            metadata = json.loads(row["metadata_json"]) if row["metadata_json"] else {}
-            raw = json.loads(row["raw_json"]) if row["raw_json"] else {}
+            tags = self._safe_json_loads(row["tags_json"], [], context="memories.tags_json")
+            metadata = self._safe_json_loads(row["metadata_json"], {}, context="row.metadata_json")
+            raw = self._safe_json_loads(row["raw_json"], {}, context="row.raw_json")
             result.append(
                 {
                     "id": row["id"],
@@ -1237,12 +1973,12 @@ class SQLiteMemoryStore:
             # Deserialize JSON fields
             if d.get("analysis_json"):
                 try:
-                    d["analysis"] = json.loads(d["analysis_json"])
+                    d["analysis"] = self._safe_json_loads(d["analysis_json"], {}, context="reflections.analysis_json")
                 except:
                     d["analysis"] = {}
             if d.get("proposals_json"):
                 try:
-                    d["proposals"] = json.loads(d["proposals_json"])
+                    d["proposals"] = self._safe_json_loads(d["proposals_json"], [], context="reflections.proposals_json")
                 except:
                     d["proposals"] = []
             results.append(d)
@@ -1287,7 +2023,7 @@ class SQLiteMemoryStore:
             raw_content = item.get("content")
             if raw_content:
                 try:
-                    item["content_json"] = json.loads(raw_content)
+                    item["content_json"] = self._safe_json_loads(raw_content, {}, context="rules.content")
                 except (TypeError, ValueError, json.JSONDecodeError):
                     item["content_json"] = {}
             else:
@@ -1345,8 +2081,8 @@ class SQLiteMemoryStore:
 
         result: list[dict[str, Any]] = []
         for row in rows:
-            metadata = json.loads(row["metadata_json"]) if row["metadata_json"] else {}
-            raw = json.loads(row["raw_json"]) if row["raw_json"] else {}
+            metadata = self._safe_json_loads(row["metadata_json"], {}, context="row.metadata_json")
+            raw = self._safe_json_loads(row["raw_json"], {}, context="row.raw_json")
             result.append(
                 {
                     "id": row["id"],
@@ -1418,7 +2154,7 @@ class SQLiteMemoryStore:
         result: list[dict[str, Any]] = []
         for row in rows:
             item = dict(row)
-            item["metadata"] = json.loads(item.get("metadata_json") or "{}")
+            item["metadata"] = self._safe_json_loads(item.get("metadata_json"), {}, context="system_catalog.metadata_json")
             result.append(item)
         return result
 

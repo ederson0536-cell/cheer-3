@@ -1,5 +1,5 @@
 {
-  "version": "2026-03-09",
+  "version": "2026-03-12",
   "policy": {
     "single_write_source": "memory.db",
     "json_projection_only": true,
@@ -140,6 +140,138 @@
         "metadata_json": "structured metadata",
         "raw_json": "raw payload"
       }
+    },
+    "task_runs": {
+      "owner": "feedback_system.after_task",
+      "purpose": "single message-task run summary written once per message",
+      "field_sources": {
+        "task_id": "message-level stable task id",
+        "task_name": "message/task title",
+        "task_type": "analyzed task type",
+        "status": "task execution status",
+        "success": "execution success flag",
+        "satisfaction": "button feedback or default satisfied",
+        "significance": "routine/notable classification",
+        "skills_json": "skills used",
+        "methods_json": "methods used",
+        "execution_steps_json": "four-hook and execution traces",
+        "thinking_json": "reasoning trace",
+        "output_summary": "structured output summary",
+        "final_message": "assistant final response",
+        "source": "channel source",
+        "created_at": "task creation timestamp",
+        "updated_at": "last update timestamp",
+        "metadata_json": "message_id/session_id/feedback metadata"
+      }
+    },
+    "external_learning_events": {
+      "owner": "runtime.components.active_learning",
+      "purpose": "active learning records from external sources",
+      "field_sources": {
+        "id": "table primary id",
+        "content": "normalized content payload",
+        "source": "pipeline source",
+        "created_at": "creation timestamp",
+        "updated_at": "update timestamp",
+        "metadata_json": "structured metadata"
+      }
+    },
+    "notebook_experiences": {
+      "owner": "runtime.components.passive_learning",
+      "purpose": "notebook/task experience entries separated from generic memories",
+      "field_sources": {
+        "id": "table primary id",
+        "content": "normalized content payload",
+        "source": "pipeline source",
+        "created_at": "creation timestamp",
+        "updated_at": "update timestamp",
+        "metadata_json": "structured metadata"
+      }
+    },
+    "notebook_reflections": {
+      "owner": "runtime.components.passive_learning",
+      "purpose": "reflections extracted from notebook experiences",
+      "field_sources": {
+        "id": "table primary id",
+        "content": "normalized content payload",
+        "source": "pipeline source",
+        "created_at": "creation timestamp",
+        "updated_at": "update timestamp",
+        "metadata_json": "structured metadata"
+      }
+    },
+    "notebook_proposals": {
+      "owner": "runtime.components.passive_learning",
+      "purpose": "proposals extracted from notebook reflections",
+      "field_sources": {
+        "id": "table primary id",
+        "content": "normalized content payload",
+        "source": "pipeline source",
+        "created_at": "creation timestamp",
+        "updated_at": "update timestamp",
+        "metadata_json": "structured metadata"
+      }
+    },
+    "notebook_rules": {
+      "owner": "runtime.components.passive_learning",
+      "purpose": "rules published from notebook proposals",
+      "field_sources": {
+        "id": "table primary id",
+        "content": "normalized content payload",
+        "source": "pipeline source",
+        "created_at": "creation timestamp",
+        "updated_at": "update timestamp",
+        "metadata_json": "structured metadata"
+      }
+    },
+    "semantic_knowledge": {
+      "owner": "runtime.components.active_learning",
+      "purpose": "semantic layer linking graph entities/relations to text knowledge",
+      "field_sources": {
+        "id": "table primary id",
+        "content": "normalized content payload",
+        "source": "pipeline source",
+        "created_at": "creation timestamp",
+        "updated_at": "update timestamp",
+        "metadata_json": "structured metadata"
+      }
     }
+  },
+  "canonical_fields": {
+    "id_fields": [
+      "task_id",
+      "event_id",
+      "notebook_exp_id",
+      "notebook_reflection_id",
+      "notebook_proposal_id",
+      "notebook_rule_id",
+      "semantic_id"
+    ],
+    "time_fields": [
+      "created_at",
+      "updated_at",
+      "collected_at"
+    ],
+    "status_fields": [
+      "status",
+      "significance",
+      "satisfaction",
+      "enabled"
+    ],
+    "payload_fields": [
+      "content",
+      "summary",
+      "metadata_json",
+      "analysis_json",
+      "properties_json"
+    ]
+  },
+  "relationships": {
+    "task_runs.task_id": "notebook_experiences.task_id",
+    "notebook_experiences.notebook_exp_id": "notebook_reflections.notebook_exp_id",
+    "notebook_reflections.notebook_reflection_id": "notebook_proposals.notebook_reflection_id",
+    "notebook_proposals.notebook_proposal_id": "notebook_rules.notebook_proposal_id",
+    "graph_entities.id": "semantic_knowledge.entity_id",
+    "graph_relations.id": "semantic_knowledge.relation_id"
   }
 }

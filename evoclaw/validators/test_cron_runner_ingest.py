@@ -90,7 +90,7 @@ class CronRunnerIngestTests(unittest.TestCase):
         self.assertTrue(state.get("rss_fetch_history"))
         self.assertEqual(state["rss_fetch_history"][-1]["new_count"], 1)
 
-    def test_step1_ingest_conversation_fallback_from_message_log(self):
+    def test_step1_ingest_projects_task_runs_to_notebook_layers(self):
         self._write_config(
             {
                 "sources": {
@@ -99,51 +99,59 @@ class CronRunnerIngestTests(unittest.TestCase):
                 }
             }
         )
-        (self.workspace / "memory/evoclaw-state.json").write_text(
-            json.dumps({"last_conversation_check": "2026-03-07T00:00:00"}, ensure_ascii=False),
-            encoding="utf-8",
+
+        store = SQLiteMemoryStore(self.workspace / "memory/memory.db")
+        store.init_schema()
+        store.upsert_task_run(
+            {
+                "task_id": "task-satisfied",
+                "task_name": "满意任务",
+                "task_type": "conversation",
+                "status": "completed",
+                "success": True,
+                "satisfaction": "satisfied",
+                "created_at": "2026-03-08T10:00:00",
+                "updated_at": "2026-03-08T10:00:00",
+                "metadata": {"message_id": "msg-1", "user_message": "第一条消息"},
+            }
         )
-        (self.workspace / "logs/message_handler.jsonl").write_text(
-            "\n".join(
-                [
-                    json.dumps(
-                        {
-                            "timestamp": "2026-03-08T10:00:00",
-                            "event": "receive",
-                            "message": "第一条对话",
-                        },
-                        ensure_ascii=False,
-                    ),
-                    json.dumps(
-                        {
-                            "timestamp": "2026-03-08T10:05:00",
-                            "event": "task_started",
-                            "message": "ignored",
-                        },
-                        ensure_ascii=False,
-                    ),
-                    json.dumps(
-                        {
-                            "timestamp": "2026-03-08T10:06:00",
-                            "event": "receive",
-                            "message": "第二条对话",
-                        },
-                        ensure_ascii=False,
-                    ),
-                ]
-            )
-            + "\n",
-            encoding="utf-8",
+        store.upsert_task_run(
+            {
+                "task_id": "task-unsatisfied",
+                "task_name": "不满意任务",
+                "task_type": "conversation",
+                "status": "completed",
+                "success": True,
+                "satisfaction": "unsatisfied",
+                "significance": "notable",
+                "created_at": "2026-03-08T10:01:00",
+                "updated_at": "2026-03-08T10:01:00",
+                "metadata": {"message_id": "msg-2", "user_message": "第二条消息"},
+            }
         )
 
         created = cron_runner.step1_ingest()
-        self.assertEqual(created, 2)
+        self.assertEqual(created, 1)
 
-        store = SQLiteMemoryStore(self.workspace / "memory/memory.db")
-        conv_rows = store.query_experiences(exp_type="conversation", limit=10)
-        self.assertEqual(len(conv_rows), 2)
-        self.assertEqual({r["content"] for r in conv_rows}, {"第一条对话", "第二条对话"})
-        self.assertEqual({r["source"] for r in conv_rows}, {"message_handler"})
+        task_rows = store.query_experiences(exp_type="task_execution", source="task_runs", limit=10)
+        self.assertEqual(len(task_rows), 1)
+        self.assertEqual(task_rows[0]["metadata"].get("task_id"), "task-satisfied")
+
+        nb_exp = store.query_notebook_experiences(limit=10)
+        nb_ref = store.query_notebook_reflections(limit=10)
+        nb_prop = store.query_notebook_proposals(limit=10)
+        nb_rules = store.query_notebook_rules(limit=10)
+        self.assertEqual(len(nb_exp), 2)
+        self.assertEqual(len(nb_ref), 2)
+        self.assertEqual(len(nb_prop), 2)
+        self.assertEqual(len(nb_rules), 1)
+        self.assertEqual(nb_rules[0]["notebook_rule_id"], "nbrule-task-unsatisfied")
+
+        state = json.loads((self.workspace / "memory/evoclaw-state.json").read_text(encoding="utf-8"))
+        self.assertEqual(state.get("last_notebook_projection_counts", {}).get("notebook_experiences"), 2)
+        self.assertEqual(state.get("last_notebook_projection_counts", {}).get("notebook_reflections"), 2)
+        self.assertEqual(state.get("last_notebook_projection_counts", {}).get("notebook_proposals"), 2)
+        self.assertEqual(state.get("last_notebook_projection_counts", {}).get("notebook_rules"), 1)
 
         created_again = cron_runner.step1_ingest()
         self.assertEqual(created_again, 0)

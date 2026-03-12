@@ -80,7 +80,7 @@ python3 evoclaw/validators/validate_system_coordination.py
 `evoclaw/cron_runner.py` 典型阶段：
 
 1. Workspace 健康检查
-2. INGEST：RSS + 对话导入 experience
+2. INGEST：RSS + `task_runs` 被动提取 + notebook 分层投影
 3. REFLECT：按 significance 分级，触发反思/提案
 4. 治理与收尾：更新 state、写运行记录
 
@@ -169,11 +169,13 @@ python3 evoclaw/validators/validate_system_coordination.py
    ```
 3. 按 warning 修复计数不一致或日期漂移。
 
-### 场景 3：入口层消息被拦截
+### 场景 3：入口层消息/反馈被拦截
 
 1. 看是否 duplicate（幂等 key 重复）。
 2. 看是否 rate limit（同 channel 单窗口超过阈值）。
-3. 检查 `logs/message_handler.jsonl` 与 observability 指标。
+3. 若是反馈回调，确认发送到 `/feedback`（不是 `/message`），且 `event_type=feedback_button`。
+4. 检查 `X-Feedback-Signature` 与 `callback_data` 版本（`feedback:v1:...`）。
+5. 再检查 `logs/message_handler.jsonl` 与 observability 指标。
 
 ---
 
@@ -211,3 +213,30 @@ git status --short
 
 - 手册版本：`system-user-manual-2026-03-10`
 - 维护建议：每次新增 validator 或 memory schema 变更后更新本手册。
+
+
+## 11. 2026-03-12 链路更新（重点）
+
+### 11.1 每条消息=独立任务
+
+- `MessageHandler` 采用 single-message-task 语义。
+- 每条消息完成后都写入一条 `task_runs`。
+- 满意/不满意由按钮反馈驱动，不再使用自由文本确认状态机。
+
+### 11.2 分层投影链路
+
+- Cron Step1 被动学习从 `task_runs` 抽取 `task_execution` 经验（默认跳过 unsatisfied）。
+- 同步执行：
+  - `task_runs -> notebook_experiences`
+  - `notebook_experiences -> notebook_reflections`
+  - `notebook_reflections -> notebook_proposals`
+  - `notebook_proposals -> notebook_rules`（仅 unsatisfied）
+- 计数写入 `memory/evoclaw-state.json:last_notebook_projection_counts`。
+
+### 11.3 回调接口约束
+
+- 普通消息只走 `/message`。
+- 反馈回调只走 `/feedback`，并要求：
+  - `event_type=feedback_button`
+  - `callback_data` 使用 `feedback:v1:<task_id>:<value>`
+  - 配置密钥时校验 `X-Feedback-Signature`
