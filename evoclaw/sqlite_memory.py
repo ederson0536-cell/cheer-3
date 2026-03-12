@@ -320,6 +320,32 @@ class SQLiteMemoryStore:
                 CREATE INDEX IF NOT EXISTS idx_system_logs_level ON system_logs(level);
                 CREATE INDEX IF NOT EXISTS idx_system_logs_created_at ON system_logs(created_at);
 
+                CREATE TABLE IF NOT EXISTS task_runs (
+                    task_id TEXT PRIMARY KEY,
+                    task_name TEXT NOT NULL DEFAULT '',
+                    task_type TEXT NOT NULL DEFAULT '',
+                    status TEXT NOT NULL DEFAULT '',
+                    success INTEGER NOT NULL DEFAULT 1,
+                    satisfaction TEXT NOT NULL DEFAULT 'satisfied',
+                    significance TEXT NOT NULL DEFAULT 'routine',
+                    skills_json TEXT NOT NULL DEFAULT '[]',
+                    methods_json TEXT NOT NULL DEFAULT '[]',
+                    execution_steps_json TEXT NOT NULL DEFAULT '[]',
+                    thinking_json TEXT NOT NULL DEFAULT '[]',
+                    output_summary TEXT NOT NULL DEFAULT '',
+                    final_message TEXT NOT NULL DEFAULT '',
+                    source TEXT NOT NULL DEFAULT '',
+                    created_at TEXT NOT NULL DEFAULT '',
+                    updated_at TEXT NOT NULL DEFAULT '',
+                    metadata_json TEXT NOT NULL DEFAULT '{}'
+                );
+
+                CREATE INDEX IF NOT EXISTS idx_task_runs_created_at ON task_runs(created_at);
+                CREATE INDEX IF NOT EXISTS idx_task_runs_success ON task_runs(success);
+                CREATE INDEX IF NOT EXISTS idx_task_runs_satisfaction ON task_runs(satisfaction);
+                CREATE INDEX IF NOT EXISTS idx_task_runs_significance ON task_runs(significance);
+                CREATE INDEX IF NOT EXISTS idx_task_runs_task_type ON task_runs(task_type);
+
                 CREATE TABLE IF NOT EXISTS system_catalog (
                     object_key TEXT PRIMARY KEY,
                     object_type TEXT NOT NULL DEFAULT '',
@@ -819,6 +845,124 @@ class SQLiteMemoryStore:
                     "updated_at": updated_at or "",
                 },
             )
+
+    def _normalized_task_run(self, task_run: dict[str, Any]) -> dict[str, Any]:
+        created_at = str(task_run.get("created_at") or task_run.get("timestamp") or "")
+        updated_at = str(task_run.get("updated_at") or created_at)
+        task_id = str(task_run.get("task_id") or self._stable_id("task_run", task_run))
+        return {
+            "task_id": task_id,
+            "task_name": str(task_run.get("task_name") or ""),
+            "task_type": str(task_run.get("task_type") or ""),
+            "status": str(task_run.get("status") or ""),
+            "success": 1 if bool(task_run.get("success", True)) else 0,
+            "satisfaction": str(task_run.get("satisfaction") or "satisfied"),
+            "significance": str(task_run.get("significance") or "routine"),
+            "skills_json": self._json_dumps(task_run.get("skills"), []),
+            "methods_json": self._json_dumps(task_run.get("methods"), []),
+            "execution_steps_json": self._json_dumps(task_run.get("execution_steps"), []),
+            "thinking_json": self._json_dumps(task_run.get("thinking"), []),
+            "output_summary": str(task_run.get("output_summary") or ""),
+            "final_message": str(task_run.get("final_message") or ""),
+            "source": str(task_run.get("source") or "message_handler"),
+            "created_at": created_at,
+            "updated_at": updated_at,
+            "metadata_json": self._json_dumps(task_run.get("metadata"), {}),
+        }
+
+    def upsert_task_run(self, task_run: dict[str, Any]) -> None:
+        row = self._normalized_task_run(task_run)
+        with self._connect() as conn:
+            conn.execute(
+                """
+                INSERT INTO task_runs (
+                    task_id, task_name, task_type, status, success, satisfaction, significance,
+                    skills_json, methods_json, execution_steps_json, thinking_json,
+                    output_summary, final_message, source, created_at, updated_at, metadata_json
+                ) VALUES (
+                    :task_id, :task_name, :task_type, :status, :success, :satisfaction, :significance,
+                    :skills_json, :methods_json, :execution_steps_json, :thinking_json,
+                    :output_summary, :final_message, :source, :created_at, :updated_at, :metadata_json
+                )
+                ON CONFLICT(task_id) DO UPDATE SET
+                    task_name=excluded.task_name,
+                    task_type=excluded.task_type,
+                    status=excluded.status,
+                    success=excluded.success,
+                    satisfaction=excluded.satisfaction,
+                    significance=excluded.significance,
+                    skills_json=excluded.skills_json,
+                    methods_json=excluded.methods_json,
+                    execution_steps_json=excluded.execution_steps_json,
+                    thinking_json=excluded.thinking_json,
+                    output_summary=excluded.output_summary,
+                    final_message=excluded.final_message,
+                    source=excluded.source,
+                    created_at=excluded.created_at,
+                    updated_at=excluded.updated_at,
+                    metadata_json=excluded.metadata_json
+                """,
+                row,
+            )
+
+    def query_task_runs(
+        self,
+        *,
+        task_type: str | None = None,
+        satisfaction: str | None = None,
+        significance: str | None = None,
+        limit: int = 100,
+        offset: int = 0,
+    ) -> list[dict[str, Any]]:
+        where: list[str] = []
+        params: dict[str, Any] = {"limit": max(1, int(limit)), "offset": max(0, int(offset))}
+        if task_type:
+            where.append("task_type = :task_type")
+            params["task_type"] = task_type
+        if satisfaction:
+            where.append("satisfaction = :satisfaction")
+            params["satisfaction"] = satisfaction
+        if significance:
+            where.append("significance = :significance")
+            params["significance"] = significance
+        where_clause = f"WHERE {' AND '.join(where)}" if where else ""
+
+        with self._connect() as conn:
+            rows = conn.execute(
+                f"""
+                SELECT task_id, task_name, task_type, status, success, satisfaction, significance,
+                       skills_json, methods_json, execution_steps_json, thinking_json,
+                       output_summary, final_message, source, created_at, updated_at, metadata_json
+                FROM task_runs
+                {where_clause}
+                ORDER BY created_at DESC, task_id DESC
+                LIMIT :limit OFFSET :offset
+                """,
+                params,
+            ).fetchall()
+
+        result: list[dict[str, Any]] = []
+        for row in rows:
+            result.append({
+                "task_id": row["task_id"],
+                "task_name": row["task_name"],
+                "task_type": row["task_type"],
+                "status": row["status"],
+                "success": bool(row["success"]),
+                "satisfaction": row["satisfaction"],
+                "significance": row["significance"],
+                "skills": json.loads(row["skills_json"]) if row["skills_json"] else [],
+                "methods": json.loads(row["methods_json"]) if row["methods_json"] else [],
+                "execution_steps": json.loads(row["execution_steps_json"]) if row["execution_steps_json"] else [],
+                "thinking": json.loads(row["thinking_json"]) if row["thinking_json"] else [],
+                "output_summary": row["output_summary"],
+                "final_message": row["final_message"],
+                "source": row["source"],
+                "created_at": row["created_at"],
+                "updated_at": row["updated_at"],
+                "metadata": json.loads(row["metadata_json"]) if row["metadata_json"] else {},
+            })
+        return result
 
     def _normalized_system_log(self, log: dict[str, Any]) -> dict[str, Any]:
         metadata = log.get("metadata")

@@ -1,6 +1,10 @@
 # EvoClaw Runtime Framework
 
 > 基于 SYSTEM_FRAMEWORK_PROPOSAL.md 的完整落地实现 (v1.0)
+>
+> ⚠️ **运行态说明（重要）**：当前工作区已切换为 **DB-first**。`memory/memory.db` 是唯一主读写源；README 中出现的部分目录路径（如
+> `memory/tasks/`、`memory/proposals/`）属于早期文件制模型示意，现阶段主要用于
+> 历史兼容/迁移说明，而非运行时主通道。
 
 ## 概述
 
@@ -154,16 +158,30 @@ after_subtask → after_task
 
 ---
 
-## 记忆系统
+## 记忆系统（DB-first，已更新）
 
-| 类型 | 路径 | 功能 |
-|------|------|------|
-| Working | memory/working/ | 当前任务临时状态 |
-| Tasks | memory/tasks/ | 任务执行日志 |
-| Proposals | memory/proposals/ | 改进提案队列 |
-| Candidate | memory/candidate/ | 待验证知识 |
-| Semantic | memory/semantic/ | 已验证知识 |
-| Graph | memory/graph/ | 关系图谱 |
+### 当前主路径
+
+| 层级 | 主路径 | 说明 |
+|------|--------|------|
+| Canonical Store | `memory/memory.db` | 运行态唯一主读写源 |
+| Experience API | `experiences` (SQL VIEW) | 兼容入口，底层映射 `memories` |
+| Core Tables | `memories / proposals / reflections / task_runs / graph_entities / graph_relations / soul_history / system_state` | 统一结构化存储 |
+
+### 兼容目录（非主通道）
+
+以下目录概念保留用于历史文档、迁移脚本或离线归档，不作为运行时主写入目标：
+
+- `memory/working/`
+- `memory/tasks/`
+- `memory/subtasks/`
+- `memory/proposals/`
+- `memory/governance/`
+- `memory/candidate/`
+- `memory/semantic/`
+- `memory/graph/`
+
+如需核查当前运行状态，请优先检查 `memory/memory.db` 与 `evoclaw/sqlite_memory.py`。
 
 ---
 

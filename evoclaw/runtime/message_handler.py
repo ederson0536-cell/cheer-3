@@ -136,10 +136,6 @@ class MessageHandler:
                 self._log("hook_warn", {"hook": "after_task", "error": str(hook_err)})
 
     def _handle_new_task(self, message: str, analysis: dict) -> dict:
-        if analysis["complexity_level"] == "L0" and analysis["task_type"] == "conversation":
-            self._set_task_status("completed", "simple_task")
-            return self._execute_simple_task(message, analysis)
-
         self.state["active"] = True
         self.state["task_id"] = analysis["task_id"]
         self.state["waiting_for"] = "subtask_result"
@@ -165,13 +161,6 @@ class MessageHandler:
             "message": f"开始执行任务，已启动子任务: {subtask_type}"
         }
 
-    def _execute_simple_task(self, message: str, analysis: dict) -> dict:
-        return {
-            "type": "simple_task",
-            "task_type": analysis["task_type"],
-            "tags": analysis["tags"],
-            "message": f"识别为{analysis['task_type']}任务，标签: {', '.join(analysis['tags'])}"
-        }
 
     def _handle_continuation(self, message: str, analysis: dict) -> dict:
         if any(w in message for w in ["完成", "好了", "done", "success", "成功"]):
