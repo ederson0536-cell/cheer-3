@@ -15,11 +15,11 @@ sys.path.insert(0, str(WORKSPACE))
 
 from evoclaw.runtime.evoclaw_runtime import EvoClawRuntime
 from evoclaw.runtime.components.task_engine import analyze_task
-from evoclaw.hooks import before_task, after_task, handle_user_confirmation_reply
+from evoclaw.hooks import before_task, before_subtask, after_subtask, after_task
 from evoclaw.runtime.observability import increment_metric
 
 
-REQUIRED_CHAIN_FIELDS = ("message_id", "session_id", "ingested_by", "continuity_resolution")
+REQUIRED_CHAIN_FIELDS = ("message_id", "session_id", "ingested_by")
 
 
 class MessageHandler:
@@ -28,9 +28,7 @@ class MessageHandler:
     def __init__(self):
         self.runtime = EvoClawRuntime()
         self.state = {
-            "active": False,
             "task_id": None,
-            "waiting_for": None,
             "task_status": "new",
         }
         self.log_file = WORKSPACE / "logs" / "message_handler.jsonl"
@@ -68,14 +66,7 @@ class MessageHandler:
         metadata = metadata or {}
         self._enforce_chain_guard(metadata)
 
-        self._log("receive", {"message": message[:100], "metadata": metadata})
-        confirmation_result = handle_user_confirmation_reply(message)
-        if confirmation_result:
-            self._log("confirmation", {"message": message[:100], "satisfied": confirmation_result.get("satisfied")})
-            increment_metric("handler_success_total", source="message_handler", metadata={"path": "confirmation"})
-            return confirmation_result
-
-        continuity = metadata.get("continuity_resolution", {})
+        continuity = metadata.get("continuity_resolution") if isinstance(metadata.get("continuity_resolution"), dict) else {}
         task_info = {
             "name": message[:80] or "user_message",
             "type": "user_message",
@@ -86,10 +77,11 @@ class MessageHandler:
             "message_id": metadata.get("message_id"),
             "session_id": metadata.get("session_id"),
             "ingested_by": metadata.get("ingested_by"),
-            "continuity_type": continuity.get("continuity_type", "new_task"),
+            "continuity_type": continuity.get("continuity_type", "independent_message_task"),
             "sender": metadata.get("sender") or metadata.get("from") or metadata.get("user_id"),
             "timestamp": metadata.get("timestamp") or datetime.now().isoformat(),
         }
+        self._log("receive", {"message": message[:100], "metadata": metadata})
         result = None
         error = None
 
@@ -101,23 +93,25 @@ class MessageHandler:
         try:
             task_analysis = analyze_task(message)
             task_info["type"] = task_analysis.get("task_type", "user_message")
-            task_info["task_id"] = task_analysis.get("task_id")
+            msg_task_id = f"msgtask-{task_info.get('message_id') or datetime.now().strftime('%Y%m%d%H%M%S%f')}"
+            task_info["task_id"] = msg_task_id
+            task_info["analysis_task_id"] = task_analysis.get("task_id")
 
-            continuity_type = task_info["continuity_type"]
-            if self.state["active"] and continuity_type in {"continue_existing_task", "attach_as_subtask"}:
-                self._set_task_status("in_progress", f"continuity={continuity_type}")
-                result = self._handle_continuation(message, task_analysis)
-                increment_metric("handler_success_total", source="message_handler", metadata={"path": "continuation"})
-                return result
-
-            if self.state["active"] and continuity_type == "fork_from_existing_task":
-                # close current path then fork
-                self.runtime.complete(result="forking to new task")
-                self.state["active"] = False
-                self._set_task_status("archived", "fork_from_existing_task")
-
-            result = self._handle_new_task(message, task_analysis)
-            increment_metric("handler_success_total", source="message_handler", metadata={"path": "new_task"})
+            subtask = {
+                "name": str(task_analysis.get("task_type") or "message_task"),
+                "type": "message_execution",
+                "task_id": task_info.get("task_id"),
+            }
+            try:
+                before_subtask(subtask)
+            except Exception as hook_err:
+                self._log("hook_warn", {"hook": "before_subtask", "error": str(hook_err)})
+            result = self._handle_new_task(message, task_analysis, task_id=msg_task_id)
+            try:
+                after_subtask(subtask, result if isinstance(result, dict) else {"success": True})
+            except Exception as hook_err:
+                self._log("hook_warn", {"hook": "after_subtask", "error": str(hook_err)})
+            increment_metric("handler_success_total", source="message_handler", metadata={"path": "message_task"})
             return result
         except Exception as exc:
             error = exc
@@ -135,53 +129,37 @@ class MessageHandler:
             except Exception as hook_err:
                 self._log("hook_warn", {"hook": "after_task", "error": str(hook_err)})
 
-    def _handle_new_task(self, message: str, analysis: dict) -> dict:
-        self.state["active"] = True
-        self.state["task_id"] = analysis["task_id"]
-        self.state["waiting_for"] = "subtask_result"
-        self._set_task_status("open", "new_task")
+    def _handle_new_task(self, message: str, analysis: dict, *, task_id: str | None = None) -> dict:
+        current_task_id = str(task_id or analysis.get("task_id") or f"task-{datetime.now().strftime('%Y%m%d%H%M%S%f')}")
+        self.state["task_id"] = current_task_id
+        self._set_task_status("open", "single_message_task")
 
         self.runtime.start(message)
         subtask_type = self._infer_subtask_type(analysis)
-        result = self.runtime.execute_subtask(subtask_type, f"执行: {message[:30]}")
-        self._set_task_status("in_progress", "first_subtask_started")
+        exec_result = self.runtime.execute_subtask(subtask_type, f"执行: {message[:30]}")
+        self._set_task_status("in_progress", "single_message_subtask_executed")
+        self.runtime.complete(result=f"message-task:{current_task_id}")
 
-        self._log("task_started", {
-            "task_id": analysis["task_id"],
-            "task_type": analysis["task_type"],
-            "subtask": subtask_type
+        self.state["task_id"] = None
+        self._set_task_status("completed", "single_message_task_finished")
+
+        self._log("task_completed", {
+            "task_id": current_task_id,
+            "task_type": analysis.get("task_type"),
+            "subtask": subtask_type,
         })
 
         return {
-            "type": "task_started",
-            "task_id": analysis["task_id"],
-            "task_type": analysis["task_type"],
+            "type": "task_completed",
+            "task_id": current_task_id,
+            "task_type": analysis.get("task_type"),
             "subtask": subtask_type,
-            "skill": result.get("routing", {}).get("skill_name"),
-            "message": f"开始执行任务，已启动子任务: {subtask_type}"
+            "skill": exec_result.get("routing", {}).get("skill_name"),
+            "success": True,
+            "message": f"消息任务已完成: {subtask_type}",
         }
 
 
-    def _handle_continuation(self, message: str, analysis: dict) -> dict:
-        if any(w in message for w in ["完成", "好了", "done", "success", "成功"]):
-            self.runtime.complete_subtask(result=message)
-            if len(self.runtime.state.get("subtasks", [])) < 2:
-                result = self.runtime.complete(result=message)
-                self.state["active"] = False
-                self.state["task_id"] = None
-                self._set_task_status("completed", "task_done_by_user")
-                self._log("task_completed", {"task_id": result.get("task_id")})
-                return {"type": "task_completed", "message": "任务已完成！", "success": True}
-            else:
-                return {"type": "subtask_completed", "message": "子任务完成，继续执行..."}
-
-        if any(w in message for w in ["取消", "cancel", "停止", "stop"]):
-            self.runtime.complete(error="用户取消")
-            self.state["active"] = False
-            self._set_task_status("failed", "cancelled_by_user")
-            return {"type": "cancelled", "message": "任务已取消"}
-
-        return {"type": "waiting", "message": "任务进行中，请告诉我完成或取消"}
 
     def _infer_subtask_type(self, analysis: dict) -> str:
         tags = analysis.get("tags", [])
@@ -200,9 +178,7 @@ class MessageHandler:
 
     def get_status(self) -> dict:
         return {
-            "active": self.state["active"],
             "task_id": self.state["task_id"],
-            "waiting_for": self.state["waiting_for"],
             "task_status": self.state["task_status"],
         }
 
@@ -230,7 +206,6 @@ if __name__ == "__main__":
                     "message_id": "msg-direct",
                     "session_id": "sess-direct",
                     "ingested_by": "evoclaw",
-                    "continuity_resolution": {"continuity_type": "new_task", "confidence": 1.0},
                 },
             )
             print(json.dumps(result, indent=2, ensure_ascii=False))

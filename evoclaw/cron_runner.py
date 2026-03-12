@@ -572,6 +572,143 @@ def _import_task_experiences_from_task_runs() -> int:
     return new_count
 
 
+def _project_task_runs_to_notebook_layers() -> dict[str, int]:
+    """Project task_runs into notebook experience/reflection/proposal/rule tables."""
+    stats = {"notebook_experiences": 0, "notebook_reflections": 0, "notebook_proposals": 0, "notebook_rules": 0}
+    rows = _get_memory_store().query_task_runs(limit=5000)
+    if not rows:
+        return stats
+
+    existing_exp_ids = {r.get("notebook_exp_id") for r in _get_memory_store().query_notebook_experiences(limit=10000) if r.get("notebook_exp_id")}
+    existing_ref_ids = {r.get("notebook_reflection_id") for r in _get_memory_store().query_notebook_reflections(limit=10000) if r.get("notebook_reflection_id")}
+    existing_prop_ids = {r.get("notebook_proposal_id") for r in _get_memory_store().query_notebook_proposals(limit=10000) if r.get("notebook_proposal_id")}
+    existing_rule_ids = {r.get("notebook_rule_id") for r in _get_memory_store().query_notebook_rules(limit=10000) if r.get("notebook_rule_id")}
+
+    for run in rows:
+        task_id = str(run.get("task_id") or "")
+        if not task_id:
+            continue
+        exp_id = f"nbexp-{task_id}"
+        ref_id = f"nbref-{task_id}"
+        prop_id = f"nbprop-{task_id}"
+        rule_id = f"nbrule-{task_id}"
+
+        if exp_id not in existing_exp_ids:
+            _safe_db_write(
+                _get_memory_store().upsert_notebook_experience,
+                {
+                    "notebook_exp_id": exp_id,
+                    "task_id": task_id,
+                    "message_id": str((run.get("metadata") or {}).get("message_id") or ""),
+                    "source": "task_runs_projection",
+                    "content": str((run.get("metadata") or {}).get("user_message") or run.get("output_summary") or ""),
+                    "summary": str(run.get("output_summary") or "")[:500],
+                    "significance": str(run.get("significance") or "routine"),
+                    "created_at": str(run.get("created_at") or datetime.now().isoformat()),
+                    "updated_at": datetime.now().isoformat(),
+                    "metadata": {"task_status": run.get("status"), "satisfaction": run.get("satisfaction")},
+                },
+                "notebook_experience",
+            )
+            existing_exp_ids.add(exp_id)
+            stats["notebook_experiences"] += 1
+
+        if ref_id not in existing_ref_ids:
+            _safe_db_write(
+                _get_memory_store().upsert_notebook_reflection,
+                {
+                    "notebook_reflection_id": ref_id,
+                    "notebook_exp_id": exp_id,
+                    "trigger": "task_run_projection",
+                    "analysis": {
+                        "task_type": run.get("task_type"),
+                        "success": run.get("success"),
+                        "satisfaction": run.get("satisfaction"),
+                    },
+                    "created_at": datetime.now().isoformat(),
+                    "metadata": {"task_id": task_id},
+                },
+                "notebook_reflection",
+            )
+            existing_ref_ids.add(ref_id)
+            stats["notebook_reflections"] += 1
+
+        if prop_id not in existing_prop_ids:
+            _safe_db_write(
+                _get_memory_store().upsert_notebook_proposal,
+                {
+                    "notebook_proposal_id": prop_id,
+                    "notebook_reflection_id": ref_id,
+                    "proposal_type": "task_optimization",
+                    "content": f"复盘任务 {task_id} 的执行摘要并提炼可复用改进项",
+                    "priority": "medium",
+                    "status": "pending",
+                    "created_at": datetime.now().isoformat(),
+                    "updated_at": datetime.now().isoformat(),
+                    "metadata": {"task_id": task_id},
+                },
+                "notebook_proposal",
+            )
+            existing_prop_ids.add(prop_id)
+            stats["notebook_proposals"] += 1
+
+        if rule_id not in existing_rule_ids and str(run.get("satisfaction") or "satisfied") == "unsatisfied":
+            _safe_db_write(
+                _get_memory_store().upsert_notebook_rule,
+                {
+                    "notebook_rule_id": rule_id,
+                    "notebook_proposal_id": prop_id,
+                    "rule_type": "quality_guard",
+                    "content": f"任务 {task_id} 曾被标记不满意，后续同类任务需更严格校验输出",
+                    "enabled": True,
+                    "created_at": datetime.now().isoformat(),
+                    "updated_at": datetime.now().isoformat(),
+                    "metadata": {"task_id": task_id},
+                },
+                "notebook_rule",
+            )
+            existing_rule_ids.add(rule_id)
+            stats["notebook_rules"] += 1
+
+    return stats
+
+
+def _run_nightly_memory_consistency_check() -> dict[str, object]:
+    """Run daily relational consistency check for layered memory tables."""
+    state = load_state()
+    today = datetime.now().date().isoformat()
+    if state.get("last_memory_consistency_check_date") == today:
+        return {"skipped": True, "reason": "already_checked_today"}
+
+    report = _get_memory_store().run_relationship_consistency_check()
+    state["last_memory_consistency_check_date"] = today
+    state["last_memory_consistency_report"] = report
+    save_state(state)
+
+    total_issues = int(report.get("total_issues", 0))
+    if total_issues > 0:
+        print(f"  ⚠ Memory consistency issues detected: {total_issues}")
+    else:
+        print("  ✓ Memory consistency check passed")
+    return report
+
+
+def _check_json_decode_warning_metrics(hours: int = 24, threshold: int = 5) -> dict[str, object]:
+    """Monitor json decode compatibility issues surfaced by sqlite read layer."""
+    since = (datetime.now() - timedelta(hours=hours)).isoformat()
+    with _get_memory_store()._connect() as conn:
+        row = conn.execute(
+            "SELECT COUNT(*) AS cnt FROM system_logs WHERE log_type = 'json_decode_warning' AND created_at >= ?",
+            (since,),
+        ).fetchone()
+    count = int(row["cnt"]) if row is not None else 0
+    if count > threshold:
+        print(f"  ⚠ JSON decode warnings high: count={count} in last {hours}h (threshold={threshold})")
+    else:
+        print(f"  ✓ JSON decode warnings: count={count} in last {hours}h")
+    return {"count": count, "hours": hours, "threshold": threshold, "alert": count > threshold}
+
+
 def _count_today_experiences():
     now = datetime.now()
     start = now.replace(hour=0, minute=0, second=0, microsecond=0).isoformat()
@@ -599,7 +736,7 @@ def step0_workspace_check():
 
 # ========== Step 1: INGEST (Active + Passive) ==========
 def step1_ingest():
-    """Step 1: Fetch RSS (Active) + extract remaining task summaries (Passive, with conversation fallback)"""
+    """Step 1: Fetch RSS (Active) + extract remaining task summaries (Passive)"""
     print("\n=== Step 1: INGEST ===")
 
     total_new = 0
@@ -656,6 +793,22 @@ def step1_ingest():
 
                     for e in entries:
                         _safe_db_write(_get_memory_store().upsert_experience, e, "experience")
+                        _safe_db_write(
+                            _get_memory_store().upsert_external_learning_event,
+                            {
+                                "event_id": f"rss-{(e.get('metadata') or {}).get('entry_id') or e.get('id')}",
+                                "source_type": "rss",
+                                "source_name": feed_url,
+                                "title": e.get("title", ""),
+                                "content": e.get("content", ""),
+                                "url": (e.get("metadata") or {}).get("link", ""),
+                                "collected_at": e.get("created_at", datetime.now().isoformat()),
+                                "significance": e.get("significance", "routine"),
+                                "status": "new",
+                                "metadata": {"entry_id": (e.get("metadata") or {}).get("entry_id")},
+                            },
+                            "external_learning_event",
+                        )
 
                     print(f"  ✓ RSS: {len(entries)} from {feed_url[:30]}...")
                     total_new += len(entries)
@@ -672,61 +825,32 @@ def step1_ingest():
         print(f"RSS Error: {e}")
 
     # 1b. PASSIVE LEARNING: remaining tasks are learned from task_runs
-    print("\n--- Passive Learning: Task summaries (remaining tasks, conversation fallback) ---")
+    print("\n--- Passive Learning: Task summaries (remaining tasks) ---")
     try:
         task_new = _import_task_experiences_from_task_runs()
         total_new += task_new
 
-        # fallback: if no task summary imported, supplement from recent conversations
-        conv_new = 0
-        try:
-            import hashlib
-            msg_log = WORKSPACE / "logs/message_handler.jsonl"
-            if msg_log.exists():
-                existing = _get_memory_store().query_experiences(exp_type="conversation", limit=2000)
-                existing_hashes = set()
-                for e in existing:
-                    msg = e.get("content", "")
-                    if msg:
-                        existing_hashes.add(hashlib.md5(msg.encode()).hexdigest()[:16])
+        notebook_stats = _project_task_runs_to_notebook_layers()
+        print(
+            "  ✓ Notebook projection:" 
+            f" exp={notebook_stats['notebook_experiences']},"
+            f" ref={notebook_stats['notebook_reflections']},"
+            f" prop={notebook_stats['notebook_proposals']},"
+            f" rule={notebook_stats['notebook_rules']}"
+        )
+        if sum(notebook_stats.values()) == 0:
+            print("  ⚠ Notebook projection empty run")
 
-                with open(msg_log, "r", encoding="utf-8") as f:
-                    for line in f:
-                        line = line.strip()
-                        if not line:
-                            continue
-                        try:
-                            msg = json.loads(line)
-                        except Exception:
-                            continue
-                        if msg.get("event") != "receive":
-                            continue
-                        content = msg.get("message", "")
-                        if not content or len(content) < 2:
-                            continue
-                        msg_hash = hashlib.md5(content.encode()).hexdigest()[:16]
-                        if msg_hash in existing_hashes:
-                            continue
-                        existing_hashes.add(msg_hash)
-                        ts = msg.get("timestamp", datetime.now().isoformat())
-                        exp = _ensure_experience_defaults({
-                            "type": "conversation",
-                            "content": content,
-                            "source": "message_handler",
-                            "created_at": ts,
-                            "updated_at": ts,
-                            "significance": "routine",
-                        })
-                        _safe_db_write(_get_memory_store().upsert_experience, exp, "experience")
-                        conv_new += 1
-            if conv_new > 0:
-                print(f"  ~ Fallback imported {conv_new} conversation item(s)")
-                total_new += conv_new
-        except Exception as conv_err:
-            print(f"  ~ Conversation fallback skipped: {conv_err}")
+        consistency = _run_nightly_memory_consistency_check()
+        if not consistency.get("skipped"):
+            print(f"  - Consistency total_issues={consistency.get('total_issues', 0)}")
+
+        json_decode_metrics = _check_json_decode_warning_metrics()
 
         state = load_state()
-        state["last_conversation_check"] = datetime.now().isoformat()
+        state["last_json_decode_metrics"] = json_decode_metrics
+        state["last_notebook_projection"] = datetime.now().isoformat()
+        state["last_notebook_projection_counts"] = notebook_stats
         state["last_task_run_extract"] = datetime.now().isoformat()
         if rss_history_entries:
             state["rss_last_fetched"] = rss_history_entries[-1]["fetched_at"]

@@ -13,8 +13,6 @@ from uuid import uuid4
 
 WORKSPACE = Path(__file__).resolve().parents[1]
 MEMORY = WORKSPACE / "memory"
-CONFIRMATION_STATE_KEY = "feedback_confirmation_pending"
-SATISFACTION_PROMPT = "这个回答满足你的需求吗？"
 
 from evoclaw.sqlite_memory import SQLiteMemoryStore
 from evoclaw.runtime.hooks.before_task import run_before_task as run_runtime_before_task
@@ -336,7 +334,6 @@ def after_task(task, result):
     task_summary = build_task_summary(task, result, execution_steps)
     _persist_task_summary(task_summary)
     _append_satisfaction_prompt(task, result)
-    _record_conversation_memory(task, result)
     feedback = {
         "hook": "after_task",
         "task": task,
@@ -356,41 +353,6 @@ def after_task(task, result):
     print(f"✓ Hook after_task: {task.get('name', 'unknown')}")
     return result
 
-
-def _record_conversation_memory(task: dict, result: dict) -> None:
-    """Persist the incoming user message into memories as a conversation entry."""
-    message = str(task.get("message") or "").strip()
-    if not message:
-        return
-
-    now_iso = datetime.now().isoformat()
-    created_at = str(task.get("timestamp") or now_iso)
-    success = bool(result.get("success", True)) if isinstance(result, dict) else True
-    significance = "routine" if success else "notable"
-
-    message_id = str(task.get("message_id") or "")
-    if not message_id:
-        sender = str(task.get("sender") or "unknown")
-        window = created_at[:16]
-        message_id = f"msg-{sha1(f'{sender}|{message}|{window}'.encode('utf-8')).hexdigest()[:16]}"
-
-    memory_entry = {
-        "id": f"conversation-{message_id}",
-        "type": "conversation",
-        "content": message,
-        "source": str(task.get("source") or "message_handler"),
-        "created_at": created_at,
-        "updated_at": now_iso,
-        "significance": significance,
-        "metadata": {
-            "message_id": message_id,
-            "task_name": task.get("name"),
-            "task_type": task.get("type"),
-            "task_id": task.get("task_id"),
-            "result_success": success,
-        },
-    }
-    _safe_db_write(_get_memory_store().upsert_experience, memory_entry, "conversation_memory")
 
 # ========== Feedback Storage ==========
 
@@ -544,12 +506,17 @@ def build_task_summary(task: dict, result: dict, execution_steps: list[dict[str,
     skills = []
     if skill:
         skills.append(skill)
+    direct_skill = result.get("skill") if isinstance(result, dict) else None
+    if direct_skill and str(direct_skill) not in skills:
+        skills.append(str(direct_skill))
     if isinstance(result.get("skills_used"), list):
         for item in result.get("skills_used", []):
             if item and item not in skills:
                 skills.append(str(item))
 
-    methods = []
+    methods = ["message_handler", "analyze_task"]
+    continuity_type = str(task.get("continuity_type") or "new_task")
+    methods.append(f"continuity:{continuity_type}")
     if isinstance(result.get("tools_used"), list):
         methods.extend(str(x) for x in result.get("tools_used", []) if x)
     subtask = result.get("subtask")
@@ -593,6 +560,10 @@ def build_task_summary(task: dict, result: dict, execution_steps: list[dict[str,
             "message_id": task.get("message_id"),
             "session_id": task.get("session_id"),
             "continuity_type": task.get("continuity_type"),
+            "user_message": str(task.get("message") or ""),
+            "assistant_message": final_message,
+            "sender": task.get("sender"),
+            "channel": task.get("channel"),
         },
     }
 
@@ -602,141 +573,99 @@ def _persist_task_summary(task_summary: dict[str, Any]) -> None:
 
 
 def _append_satisfaction_prompt(task: dict, result: dict) -> None:
-    """Append satisfaction confirmation prompt to completion response."""
+    """Attach satisfaction buttons to the current response (no text confirmation reply flow)."""
     if not isinstance(result, dict):
         return
-    if SATISFACTION_PROMPT in str(result):
+
+    existing = result.get("feedback_buttons")
+    if isinstance(existing, list) and existing:
         return
 
-    appended = False
-    for key in ("message", "result", "response"):
-        text = result.get(key)
-        if isinstance(text, str) and text.strip():
-            result[key] = f"{text.rstrip()}\n\n{SATISFACTION_PROMPT}"
-            appended = True
-            break
-
-    if not appended:
-        result["message"] = SATISFACTION_PROMPT
-
-    result["needs_confirmation"] = True
     result["feedback_buttons"] = [
-        {"label": "满意", "value": "满意", "default": True},
-        {"label": "不满意", "value": "不满意", "default": False},
+        {"label": "满意", "value": "satisfied", "default": True},
+        {"label": "不满意", "value": "unsatisfied", "default": False},
     ]
-    now_iso = datetime.now().isoformat()
-    pending = {
-        "active": True,
-        "task_id": task.get("task_id"),
-        "task_name": task.get("name"),
-        "task_type": task.get("type"),
-        "prompt": SATISFACTION_PROMPT,
-        "created_at": now_iso,
-    }
-    _safe_db_write(
-        lambda payload: _get_memory_store().upsert_state(CONFIRMATION_STATE_KEY, payload, now_iso),
-        pending,
-        "feedback_confirmation_pending",
-    )
+    result["feedback_mode"] = "buttons"
 
 
-def _parse_confirmation(message: str) -> dict[str, Any]:
-    text = (message or "").strip().lower()
-    positive = ("满足", "满意", "可以", "是", "yes", "ok", "good", "thanks", "谢谢")
-    negative = ("不满足", "不满意", "不行", "否", "no", "not", "不好", "不对", "还不行")
-
-    if any(token in text for token in negative):
-        return {"recognized": True, "satisfied": False}
-    if any(token in text for token in positive):
-        return {"recognized": True, "satisfied": True}
-    return {"recognized": False, "satisfied": None}
+def _normalize_feedback_value(value: str | None) -> str | None:
+    normalized = str(value or "").strip().lower()
+    if normalized in {"unsatisfied", "not_satisfied", "bad", "down", "👎", "不满意"}:
+        return "unsatisfied"
+    if normalized in {"satisfied", "good", "up", "👍", "满意"}:
+        return "satisfied"
+    return None
 
 
-def handle_user_confirmation_reply(message: str) -> dict[str, Any] | None:
-    """Handle user reply to satisfaction confirmation prompt and log feedback."""
-    pending = _get_memory_store().get_state(CONFIRMATION_STATE_KEY, default={})
-    if not isinstance(pending, dict) or not pending.get("active"):
-        return None
+def apply_feedback_button(task_id: str, value: str, user_message: str | None = None) -> dict[str, Any]:
+    """Apply button-based satisfaction feedback to an existing task summary."""
+    normalized = _normalize_feedback_value(value)
+    if not normalized:
+        return {"success": False, "error": "invalid_feedback_value"}
 
-    parsed = _parse_confirmation(message)
-    if not parsed.get("recognized"):
-        return None
+    runs = _get_memory_store().query_task_runs(limit=5000)
+    target = next((t for t in runs if t.get("task_id") == str(task_id)), None)
+    if not target:
+        return {"success": False, "error": "task_not_found", "task_id": task_id}
 
     now_iso = datetime.now().isoformat()
-    confirmation_feedback = {
-        "hook": "user_confirmation",
+    target["satisfaction"] = normalized
+    target["updated_at"] = now_iso
+
+    metadata = target.get("metadata") if isinstance(target.get("metadata"), dict) else {}
+    metadata["feedback_value"] = normalized
+    metadata["feedback_updated_at"] = now_iso
+    if user_message:
+        metadata["feedback_message"] = user_message
+
+    if normalized == "unsatisfied":
+        target["significance"] = "notable"
+        metadata["unsatisfied_reason"] = user_message or "user_clicked_unsatisfied"
+
+    target["metadata"] = metadata
+    _safe_db_write(_get_memory_store().upsert_task_run, target, "task_run_feedback_button")
+
+    feedback = {
+        "hook": "user_feedback_button",
         "timestamp": now_iso,
         "status": "completed",
         "success": True,
-        "confirmation": {
-            "message": message,
-            "satisfied": parsed.get("satisfied"),
-            "task_name": pending.get("task_name"),
-            "task_type": pending.get("task_type"),
-            "prompt_created_at": pending.get("created_at"),
-            "confirmed_at": now_iso,
-        },
+        "task_id": task_id,
+        "satisfaction": normalized,
+        "message": user_message or "",
     }
-    save_feedback(confirmation_feedback)
+    save_feedback(feedback)
 
-    closed_state = {
-        **pending,
-        "active": False,
-        "response": message,
-        "satisfied": parsed.get("satisfied"),
-        "updated_at": now_iso,
-    }
-    _safe_db_write(
-        lambda payload: _get_memory_store().upsert_state(CONFIRMATION_STATE_KEY, payload, now_iso),
-        closed_state,
-        "feedback_confirmation_closed",
-    )
-
-    # 如果不满足，记录为 notable 并触发反思/提案
-    if parsed.get("satisfied") is False:
-        now_iso = datetime.now().isoformat()
+    if normalized == "unsatisfied":
         failed_exp = {
             "id": f"feedback-failed-{now_iso.replace(':', '').replace('.', '')}",
             "type": "feedback_failure",
-            "content": f"任务未满足需求: {pending.get('task_name')}",
-            "source": "user_confirmation",
+            "content": f"任务未满足需求: {target.get('task_name')}",
+            "source": "feedback_button",
             "created_at": now_iso,
             "updated_at": now_iso,
             "significance": "notable",
             "metadata": {
-                "task_name": pending.get("task_name"),
-                "task_type": pending.get("task_type"),
-                "task_id": pending.get("task_id"),
-                "user_response": message,
-                "reason": "用户确认需求未满足",
-            }
+                "task_name": target.get("task_name"),
+                "task_type": target.get("task_type"),
+                "task_id": task_id,
+                "user_response": user_message,
+                "reason": "用户点击不满意按钮",
+            },
         }
         _safe_db_write(_get_memory_store().upsert_experience, failed_exp, "feedback_failure_experience")
-
-        # update task_runs: unsatisfied + notable
-        if pending.get("task_id"):
-            task_runs = _get_memory_store().query_task_runs(limit=2000)
-            target = next((t for t in task_runs if t.get("task_id") == pending.get("task_id")), None)
-            if target:
-                target["satisfaction"] = "unsatisfied"
-                target["significance"] = "notable"
-                target["updated_at"] = now_iso
-                md = target.get("metadata") if isinstance(target.get("metadata"), dict) else {}
-                md["unsatisfied_reason"] = message
-                target["metadata"] = md
-                _safe_db_write(_get_memory_store().upsert_task_run, target, "task_run_unsatisfied")
 
         reflection = {
             "id": f"REF-unsat-{now_iso.replace(':', '').replace('-', '').replace('.', '')}",
             "timestamp": now_iso,
             "created_at": now_iso,
-            "trigger": "unsatisfied_feedback",
+            "trigger": "unsatisfied_feedback_button",
             "notable_count": 1,
             "analysis": {
-                "task_id": pending.get("task_id"),
-                "task_name": pending.get("task_name"),
-                "task_type": pending.get("task_type"),
-                "user_response": message,
+                "task_id": task_id,
+                "task_name": target.get("task_name"),
+                "task_type": target.get("task_type"),
+                "user_response": user_message,
                 "action": "mark_task_notable_and_reflect",
             },
             "proposals": [],
@@ -749,31 +678,24 @@ def handle_user_confirmation_reply(message: str) -> dict[str, Any] | None:
             "created_at": now_iso,
             "updated_at": now_iso,
             "type": "user_unsatisfied_improvement",
-            "content": f"用户对任务不满意，需要复盘与改进: {pending.get('task_name')}",
-            "source": "user_confirmation",
+            "content": f"用户对任务不满意，需要复盘与改进: {target.get('task_name')}",
+            "source": "feedback_button",
             "status": "pending",
             "priority": "high",
             "metadata": {
-                "task_id": pending.get("task_id"),
-                "task_type": pending.get("task_type"),
-                "user_response": message,
+                "task_id": task_id,
+                "task_type": target.get("task_type"),
+                "user_response": user_message,
             },
         }
         _safe_db_write(_get_memory_store().upsert_proposal, proposal, "unsatisfied_proposal")
-    
-    if parsed.get("satisfied"):
-        return {
-            "type": "feedback_confirmation",
-            "success": True,
-            "message": "收到，已记录你确认需求已满足。",
-            "satisfied": True,
-        }
-    return {
-        "type": "feedback_confirmation",
-        "success": True,
-        "message": "收到，已记录需求未满足。我会反思为什么没有满足你的需求，下次改进。",
-        "satisfied": False,
-    }
+
+    return {"success": True, "task_id": task_id, "satisfaction": normalized}
+
+
+def handle_user_confirmation_reply(message: str) -> dict[str, Any] | None:
+    """Deprecated: satisfaction feedback should come from UI buttons, not free-text replies."""
+    return None
 
 # ========== Proposal Processor ==========
 

@@ -21,7 +21,7 @@ class FeedbackSystemTests(unittest.TestCase):
     def tearDown(self):
         self.tmpdir.cleanup()
 
-    def test_after_task_records_execution_steps_and_appends_confirmation_prompt(self):
+    def test_after_task_records_execution_steps_and_appends_button_feedback(self):
         task = {"name": "编码任务", "type": "coding"}
         result = {
             "success": True,
@@ -32,10 +32,13 @@ class FeedbackSystemTests(unittest.TestCase):
         }
 
         feedback_system.after_task(task, result)
-        self.assertIn("这个回答满足你的需求吗？", result["message"])
-        self.assertTrue(result.get("needs_confirmation"))
+        self.assertEqual(result.get("feedback_mode"), "buttons")
+        self.assertEqual(len(result.get("feedback_buttons", [])), 2)
+        self.assertNotIn("这个回答满足你的需求吗", result.get("message", ""))
 
-        logs = feedback_system._get_memory_store().query_system_logs(log_type="feedback_hook", source="feedback_system", limit=20)
+        logs = feedback_system._get_memory_store().query_system_logs(
+            log_type="feedback_hook", source="feedback_system", limit=20
+        )
         after_task_payload = None
         for log in logs:
             payload = json.loads(log["content"])
@@ -45,59 +48,32 @@ class FeedbackSystemTests(unittest.TestCase):
 
         self.assertIsNotNone(after_task_payload)
         self.assertGreaterEqual(len(after_task_payload.get("execution_steps", [])), 3)
-        pending = feedback_system._get_memory_store().get_state(feedback_system.CONFIRMATION_STATE_KEY, default={})
-        self.assertTrue(pending.get("active"))
 
-    def test_handle_user_confirmation_reply_records_feedback_and_closes_pending(self):
-        now = "2026-03-08T12:00:00"
-        feedback_system._get_memory_store().upsert_state(
-            feedback_system.CONFIRMATION_STATE_KEY,
-            {
-                "active": True,
-                "task_name": "process-message",
-                "task_type": "messaging",
-                "created_at": now,
-            },
-            now,
-        )
-
+    def test_handle_user_confirmation_reply_is_deprecated_and_returns_none(self):
         response = feedback_system.handle_user_confirmation_reply("满足，谢谢")
-        self.assertIsNotNone(response)
-        self.assertTrue(response["success"])
-        self.assertTrue(response["satisfied"])
+        self.assertIsNone(response)
 
-        pending = feedback_system._get_memory_store().get_state(feedback_system.CONFIRMATION_STATE_KEY, default={})
-        self.assertFalse(pending.get("active"))
-
-        logs = feedback_system._get_memory_store().query_system_logs(log_type="feedback_hook", source="feedback_system", limit=20)
-        confirmation_payload = None
-        for log in logs:
-            payload = json.loads(log["content"])
-            if payload.get("hook") == "user_confirmation":
-                confirmation_payload = payload
-                break
-
-        self.assertIsNotNone(confirmation_payload)
-        self.assertTrue(confirmation_payload.get("confirmation", {}).get("satisfied"))
-
-    def test_after_task_writes_conversation_memory_into_memories_table(self):
+    def test_after_task_persists_task_run_summary_with_message_metadata(self):
         task = {
             "name": "用户消息",
             "type": "conversation",
             "source": "message_handler",
-            "message": "请记住这条用户对话"
+            "message": "请记住这条用户对话",
+            "message_id": "msg-1",
+            "session_id": "sess-1",
+            "channel": "cli",
+            "sender": "tester",
         }
         result = {"success": True, "message": "已处理"}
 
         feedback_system.after_task(task, result)
 
-        rows = feedback_system._get_memory_store().query_experiences(
-            exp_type="conversation",
-            source="message_handler",
-            limit=20,
-        )
-        target = next((row for row in rows if row.get("content") == "请记住这条用户对话"), None)
-        self.assertIsNotNone(target)
+        rows = feedback_system._get_memory_store().query_task_runs(limit=20)
+        self.assertTrue(rows)
+        target = rows[0]
+        self.assertEqual(target.get("task_type"), "conversation")
+        self.assertEqual(target.get("metadata", {}).get("user_message"), "请记住这条用户对话")
+        self.assertEqual(target.get("metadata", {}).get("assistant_message"), "已处理")
 
 
 if __name__ == "__main__":

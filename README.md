@@ -119,3 +119,22 @@ python3 evoclaw/validators/check_pipeline_ran.py memory --since-minutes 30
 - 所有验证脚本放 `evoclaw/validators/`
 
 这样可以保证：设计、契约、样本、验证、报告处于同一条可审计链路。
+
+
+## 8) 消息与反馈入口（2026-03-12 更新）
+
+当前入口约定：
+
+- `POST /message`：仅处理普通消息（进入 `route_message(...)`）
+- `POST /feedback`：仅处理满意/不满意按钮回调（`event_type=feedback_button`）
+
+反馈回调要求：
+
+- Header：`X-Feedback-Signature`（当配置 `FEEDBACK_WEBHOOK_SECRET` 时必填）
+- Body：建议带 `callback_data=feedback:v1:<task_id>:<value>`
+- `event_type` 必须为 `feedback_button`
+
+说明：
+
+- `/message` 已显式拒绝 feedback 事件，避免字段歧义。
+- 每条消息会落一条 `task_runs`，后续由 cron 投影到 `notebook_*` 分层表。
