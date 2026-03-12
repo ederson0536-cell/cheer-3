@@ -333,6 +333,8 @@ def after_subtask(subtask, result):
 def after_task(task, result):
     """Hook: After task completes - Main feedback capture point"""
     execution_steps = extract_execution_steps(task, result)
+    task_summary = build_task_summary(task, result, execution_steps)
+    _persist_task_summary(task_summary)
     _append_satisfaction_prompt(task, result)
     _record_conversation_memory(task, result)
     feedback = {
@@ -343,7 +345,8 @@ def after_task(task, result):
         "timestamp": datetime.now().isoformat(),
         "status": "completed",
         "success": result.get("success", True),
-        "metrics": extract_metrics(result)
+        "metrics": extract_metrics(result),
+        "task_summary": task_summary,
     }
     save_feedback(feedback)
     
@@ -468,6 +471,7 @@ def extract_metrics(result):
         "success": result.get("success", True),
         "duration_ms": result.get("duration_ms", 0),
         "tools_used": result.get("tools_used", []),
+        "skills_used": result.get("skills_used", []),
         "errors": result.get("errors", [])
     }
 
@@ -533,6 +537,70 @@ def extract_execution_steps(task: dict, result: dict) -> list[dict[str, Any]]:
     return steps
 
 
+def build_task_summary(task: dict, result: dict, execution_steps: list[dict[str, Any]]) -> dict[str, Any]:
+    """Build unified task summary for storage/audit/proposal pipeline."""
+    routing = result.get("routing", {}) if isinstance(result, dict) else {}
+    skill = routing.get("skill_name") if isinstance(routing, dict) else None
+    skills = []
+    if skill:
+        skills.append(skill)
+    if isinstance(result.get("skills_used"), list):
+        for item in result.get("skills_used", []):
+            if item and item not in skills:
+                skills.append(str(item))
+
+    methods = []
+    if isinstance(result.get("tools_used"), list):
+        methods.extend(str(x) for x in result.get("tools_used", []) if x)
+    subtask = result.get("subtask")
+    if subtask:
+        methods.append(f"subtask:{subtask}")
+    methods = list(dict.fromkeys(methods))
+
+    thinking = []
+    reasoning = result.get("reasoning") or result.get("analysis") or result.get("thinking")
+    if isinstance(reasoning, str) and reasoning.strip():
+        thinking.append(reasoning.strip()[:400])
+    elif isinstance(reasoning, list):
+        thinking.extend(str(x)[:200] for x in reasoning[:6])
+
+    final_message = ""
+    for key in ("message", "result", "response"):
+        v = result.get(key)
+        if isinstance(v, str) and v.strip():
+            final_message = v.strip()
+            break
+
+    return {
+        "task_id": str(task.get("task_id") or f"task-{uuid4().hex[:12]}"),
+        "task_name": str(task.get("name") or "user_message"),
+        "task_type": str(task.get("type") or "user_message"),
+        "status": str(result.get("type") or "completed"),
+        "success": bool(result.get("success", True)),
+        "satisfaction": "satisfied",  # default when user doesn't click buttons
+        "significance": "routine" if bool(result.get("success", True)) else "notable",
+        "skills": skills,
+        "methods": methods,
+        "execution_steps": execution_steps,
+        "thinking": thinking,
+        "output_summary": str(result)[:500],
+        "final_message": final_message,
+        "source": str(task.get("source") or "message_handler"),
+        "created_at": str(task.get("timestamp") or datetime.now().isoformat()),
+        "updated_at": datetime.now().isoformat(),
+        "metadata": {
+            "trace_id": task.get("trace_id"),
+            "message_id": task.get("message_id"),
+            "session_id": task.get("session_id"),
+            "continuity_type": task.get("continuity_type"),
+        },
+    }
+
+
+def _persist_task_summary(task_summary: dict[str, Any]) -> None:
+    _safe_db_write(_get_memory_store().upsert_task_run, task_summary, "task_run")
+
+
 def _append_satisfaction_prompt(task: dict, result: dict) -> None:
     """Append satisfaction confirmation prompt to completion response."""
     if not isinstance(result, dict):
@@ -552,9 +620,14 @@ def _append_satisfaction_prompt(task: dict, result: dict) -> None:
         result["message"] = SATISFACTION_PROMPT
 
     result["needs_confirmation"] = True
+    result["feedback_buttons"] = [
+        {"label": "满意", "value": "满意", "default": True},
+        {"label": "不满意", "value": "不满意", "default": False},
+    ]
     now_iso = datetime.now().isoformat()
     pending = {
         "active": True,
+        "task_id": task.get("task_id"),
         "task_name": task.get("name"),
         "task_type": task.get("type"),
         "prompt": SATISFACTION_PROMPT,
@@ -619,13 +692,9 @@ def handle_user_confirmation_reply(message: str) -> dict[str, Any] | None:
         "feedback_confirmation_closed",
     )
 
-    # 如果不满足，记录为 notable 并触发反思
+    # 如果不满足，记录为 notable 并触发反思/提案
     if parsed.get("satisfied") is False:
-        # 记录失败的反馈为 notable 经验
-        from evoclaw.sqlite_memory import SQLiteMemoryStore
-        store = SQLiteMemoryStore("memory/memory.db")
         now_iso = datetime.now().isoformat()
-        
         failed_exp = {
             "id": f"feedback-failed-{now_iso.replace(':', '').replace('.', '')}",
             "type": "feedback_failure",
@@ -633,15 +702,64 @@ def handle_user_confirmation_reply(message: str) -> dict[str, Any] | None:
             "source": "user_confirmation",
             "created_at": now_iso,
             "updated_at": now_iso,
-            "significance": "notable",  # 标记为 notable
+            "significance": "notable",
             "metadata": {
                 "task_name": pending.get("task_name"),
                 "task_type": pending.get("task_type"),
+                "task_id": pending.get("task_id"),
                 "user_response": message,
                 "reason": "用户确认需求未满足",
             }
         }
-        store.upsert_experience(failed_exp)
+        _safe_db_write(_get_memory_store().upsert_experience, failed_exp, "feedback_failure_experience")
+
+        # update task_runs: unsatisfied + notable
+        if pending.get("task_id"):
+            task_runs = _get_memory_store().query_task_runs(limit=2000)
+            target = next((t for t in task_runs if t.get("task_id") == pending.get("task_id")), None)
+            if target:
+                target["satisfaction"] = "unsatisfied"
+                target["significance"] = "notable"
+                target["updated_at"] = now_iso
+                md = target.get("metadata") if isinstance(target.get("metadata"), dict) else {}
+                md["unsatisfied_reason"] = message
+                target["metadata"] = md
+                _safe_db_write(_get_memory_store().upsert_task_run, target, "task_run_unsatisfied")
+
+        reflection = {
+            "id": f"REF-unsat-{now_iso.replace(':', '').replace('-', '').replace('.', '')}",
+            "timestamp": now_iso,
+            "created_at": now_iso,
+            "trigger": "unsatisfied_feedback",
+            "notable_count": 1,
+            "analysis": {
+                "task_id": pending.get("task_id"),
+                "task_name": pending.get("task_name"),
+                "task_type": pending.get("task_type"),
+                "user_response": message,
+                "action": "mark_task_notable_and_reflect",
+            },
+            "proposals": [],
+        }
+        _safe_db_write(_get_memory_store().upsert_reflection, reflection, "unsatisfied_reflection")
+
+        proposal = {
+            "id": f"prop-unsat-{now_iso.replace(':', '').replace('-', '').replace('.', '')}",
+            "timestamp": now_iso,
+            "created_at": now_iso,
+            "updated_at": now_iso,
+            "type": "user_unsatisfied_improvement",
+            "content": f"用户对任务不满意，需要复盘与改进: {pending.get('task_name')}",
+            "source": "user_confirmation",
+            "status": "pending",
+            "priority": "high",
+            "metadata": {
+                "task_id": pending.get("task_id"),
+                "task_type": pending.get("task_type"),
+                "user_response": message,
+            },
+        }
+        _safe_db_write(_get_memory_store().upsert_proposal, proposal, "unsatisfied_proposal")
     
     if parsed.get("satisfied"):
         return {

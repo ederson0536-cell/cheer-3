@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 EvoClaw Complete Learning Flow - Full 10-Step Implementation
-Covers BOTH Active Learning (RSS) AND Passive Learning (Conversation)
+Covers BOTH Active Learning (RSS) AND Passive Learning (Task-summary driven)
 """
 import sys
 import json
@@ -15,6 +15,7 @@ from hashlib import sha1
 from uuid import uuid4
 
 WORKSPACE = Path(__file__).resolve().parents[1]
+MEMORY = WORKSPACE / "memory"
 sys.path.insert(0, str(WORKSPACE))
 
 from evoclaw.hooks import before_task, after_task, governance_gate
@@ -192,6 +193,11 @@ def load_state():
 
 def save_state(state):
     _get_memory_store().upsert_state("evoclaw_state", state, datetime.now().isoformat())
+    # compatibility projection for legacy tooling/tests
+    state_path = WORKSPACE / "memory" / "evoclaw-state.json"
+    state_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(state_path, "w", encoding="utf-8") as f:
+        json.dump(state, f, ensure_ascii=False, indent=2)
 
 def classify_significance(text):
     """Classify text as Notable based on keywords"""
@@ -509,6 +515,63 @@ def _load_soul_changes_for_id_generation():
         rows = []
     return rows
 
+def _import_task_experiences_from_task_runs() -> int:
+    """Import passive-learning experiences from structured task_runs table."""
+    rows = _get_memory_store().query_task_runs(limit=5000)
+    if not rows:
+        print("  - No task_runs found")
+        return 0
+
+    existing_ids = {
+        row.get("id")
+        for row in _get_memory_store().query_experiences(exp_type="task_execution", limit=50000)
+        if row.get("id")
+    }
+
+    new_count = 0
+    for run in rows:
+        task_id = str(run.get("task_id") or "")
+        created_at = str(run.get("created_at") or datetime.now().isoformat())
+        # unsatisfied tasks are handled immediately in feedback loop; cron focuses on remaining tasks
+        if str(run.get("satisfaction") or "").lower() == "unsatisfied":
+            continue
+
+        exp_id = f"task-run-exp-{task_id}"
+        if exp_id in existing_ids:
+            continue
+
+        exp = _ensure_experience_defaults({
+            "id": exp_id,
+            "type": "task_execution",
+            "content": (
+                f"任务总结: task_id={task_id or 'unknown'}, type={run.get('task_type')}, "
+                f"status={run.get('status')}, success={run.get('success')}, "
+                f"skills={','.join(run.get('skills') or [])}"
+            ),
+            "source": "task_runs",
+            "created_at": created_at,
+            "updated_at": datetime.now().isoformat(),
+            "significance": "routine",
+            "metadata": {
+                "task_id": task_id,
+                "task_type": run.get("task_type"),
+                "status": run.get("status"),
+                "success": run.get("success"),
+                "skills": run.get("skills") or [],
+                "methods": run.get("methods") or [],
+            },
+        })
+        _safe_db_write(_get_memory_store().upsert_experience, exp, "experience")
+        existing_ids.add(exp_id)
+        new_count += 1
+
+    if new_count > 0:
+        print(f"  ✓ Imported {new_count} task summaries from task_runs")
+    else:
+        print("  - No new task summaries")
+    return new_count
+
+
 def _count_today_experiences():
     now = datetime.now()
     start = now.replace(hour=0, minute=0, second=0, microsecond=0).isoformat()
@@ -536,7 +599,7 @@ def step0_workspace_check():
 
 # ========== Step 1: INGEST (Active + Passive) ==========
 def step1_ingest():
-    """Step 1: Fetch RSS (Active) + Log Conversations (Passive)"""
+    """Step 1: Fetch RSS (Active) + extract remaining task summaries (Passive, with conversation fallback)"""
     print("\n=== Step 1: INGEST ===")
 
     total_new = 0
@@ -555,7 +618,23 @@ def step1_ingest():
                 try:
                     feed = feedparser.parse(feed_url)
                     entries = []
+
+                    existing_rows = _get_memory_store().query_experiences(exp_type="rss_active", source=feed_url, limit=5000)
+                    existing_links = set()
+                    existing_entry_ids = set()
+                    for row in existing_rows:
+                        md = row.get("metadata") if isinstance(row.get("metadata"), dict) else {}
+                        if md.get("link"):
+                            existing_links.add(str(md.get("link")))
+                        if md.get("entry_id"):
+                            existing_entry_ids.add(str(md.get("entry_id")))
+
                     for entry in feed.entries[:10]:
+                        entry_id = str(entry.get("id") or "")
+                        link = str(entry.get("link") or "")
+                        if (entry_id and entry_id in existing_entry_ids) or (link and link in existing_links):
+                            continue
+
                         now_iso = datetime.now().isoformat()
                         title = entry.get("title", "")
                         summary = entry.get("summary", "")[:500]
@@ -571,6 +650,7 @@ def step1_ingest():
                             "timestamp": now_iso,
                             "created_at": now_iso,
                             "updated_at": now_iso,
+                            "metadata": {"entry_id": entry_id, "link": link},
                         })
                         entries.append(exp)
 
@@ -591,75 +671,63 @@ def step1_ingest():
     except Exception as e:
         print(f"RSS Error: {e}")
 
-    # 1b. PASSIVE LEARNING: Process recent messages through handler
-    _process_recent_messages()
-    
-    # 处理语音文件
-    _process_voice_messages()
-    print("\n--- Passive Learning: Conversations ---")
+    # 1b. PASSIVE LEARNING: remaining tasks are learned from task_runs
+    print("\n--- Passive Learning: Task summaries (remaining tasks, conversation fallback) ---")
     try:
-        import hashlib
-        msg_log = WORKSPACE / "logs/message_handler.jsonl"
-        
-        if msg_log.exists():
-            # Get existing conversation IDs
-            existing = _get_memory_store().query_experiences(exp_type="conversation", limit=1000)
-            existing_hashes = set()
-            for e in existing:
-                msg = e.get("content", "")
-                if msg:
-                    h = hashlib.md5(msg.encode()).hexdigest()[:16]
-                    existing_hashes.add(h)
-            
-            new_count = 0
-            with open(msg_log, "r", encoding="utf-8") as f:
-                for line in f:
-                    line = line.strip()
-                    if not line:
-                        continue
-                    try:
-                        msg = json.loads(line)
-                    except Exception as parse_err:
-                        print(f"  ~ Skipping malformed message log line: {parse_err}")
-                        continue
-                    
-                    if msg.get("event") != "receive":
-                        continue
-                    
-                    content = msg.get("message", "")
-                    if not content or len(content) < 2:
-                        continue
-                    
-                    # Dedup
-                    msg_hash = hashlib.md5(content.encode()).hexdigest()[:16]
-                    if msg_hash in existing_hashes:
-                        continue
-                    existing_hashes.add(msg_hash)
-                    
-                    # Write experience
-                    ts = msg.get("timestamp", datetime.now().isoformat())
-                    exp = _ensure_experience_defaults({
-                        "type": "conversation",
-                        "content": content,
-                        "source": "message_handler",
-                        "created_at": ts,
-                        "updated_at": ts,
-                        "significance": "routine",
-                    })
-                    _get_memory_store().upsert_experience(exp)
-                    new_count += 1
-            
-            if new_count > 0:
-                print(f"  ✓ Imported {new_count} conversations")
-                total_new += new_count
-            else:
-                print(f"  - No new conversations")
-        else:
-            print(f"  - No message log found")
-        
-        # Update checkpoint
+        task_new = _import_task_experiences_from_task_runs()
+        total_new += task_new
+
+        # fallback: if no task summary imported, supplement from recent conversations
+        conv_new = 0
+        try:
+            import hashlib
+            msg_log = WORKSPACE / "logs/message_handler.jsonl"
+            if msg_log.exists():
+                existing = _get_memory_store().query_experiences(exp_type="conversation", limit=2000)
+                existing_hashes = set()
+                for e in existing:
+                    msg = e.get("content", "")
+                    if msg:
+                        existing_hashes.add(hashlib.md5(msg.encode()).hexdigest()[:16])
+
+                with open(msg_log, "r", encoding="utf-8") as f:
+                    for line in f:
+                        line = line.strip()
+                        if not line:
+                            continue
+                        try:
+                            msg = json.loads(line)
+                        except Exception:
+                            continue
+                        if msg.get("event") != "receive":
+                            continue
+                        content = msg.get("message", "")
+                        if not content or len(content) < 2:
+                            continue
+                        msg_hash = hashlib.md5(content.encode()).hexdigest()[:16]
+                        if msg_hash in existing_hashes:
+                            continue
+                        existing_hashes.add(msg_hash)
+                        ts = msg.get("timestamp", datetime.now().isoformat())
+                        exp = _ensure_experience_defaults({
+                            "type": "conversation",
+                            "content": content,
+                            "source": "message_handler",
+                            "created_at": ts,
+                            "updated_at": ts,
+                            "significance": "routine",
+                        })
+                        _safe_db_write(_get_memory_store().upsert_experience, exp, "experience")
+                        conv_new += 1
+            if conv_new > 0:
+                print(f"  ~ Fallback imported {conv_new} conversation item(s)")
+                total_new += conv_new
+        except Exception as conv_err:
+            print(f"  ~ Conversation fallback skipped: {conv_err}")
+
         state = load_state()
         state["last_conversation_check"] = datetime.now().isoformat()
+        state["last_task_run_extract"] = datetime.now().isoformat()
         if rss_history_entries:
             state["rss_last_fetched"] = rss_history_entries[-1]["fetched_at"]
             history = state.get("rss_fetch_history", [])
@@ -687,11 +755,12 @@ def step2_reflect():
 
     # Count by type
     active_rss = sum(1 for e in experiences if e.get('type') == 'rss_active')
+    passive_task = sum(1 for e in experiences if e.get('type') == 'task_execution')
     passive_conv = sum(1 for e in experiences if e.get('type') == 'conversation')
     routine = sum(1 for e in experiences if e.get('significance') == 'routine')
     notable = sum(1 for e in experiences if e.get('significance') == 'notable')
 
-    print(f"Total: {len(experiences)} (Active RSS: {active_rss}, Passive: {passive_conv})")
+    print(f"Total: {len(experiences)} (Active RSS: {active_rss}, Passive tasks: {passive_task}, Passive conversations: {passive_conv})")
     print(f"  Routine: {routine}, Notable: {notable}")
 
     # Upgrade if needed
@@ -731,6 +800,7 @@ def step2_reflect():
         "analysis": {
             "total_count": len(experiences),
             "active_rss_count": active_rss,
+            "passive_task_count": passive_task,
             "passive_conversation_count": passive_conv,
             "routine_count": routine,
             "notable_count": notable,
@@ -768,7 +838,9 @@ def step3_propose(notable_count):
         if notable_exps:
             # Check sources
             active = sum(1 for e in notable_exps if e.get('type') == 'rss_active')
-            passive = sum(1 for e in notable_exps if e.get('type') == 'conversation')
+            passive_tasks = sum(1 for e in notable_exps if e.get('type') == 'task_execution')
+            passive_conversations = sum(1 for e in notable_exps if e.get('type') == 'conversation')
+            passive = passive_tasks + passive_conversations
             # Get insights from latest reflection
             reflection_insights = ""
             try:
@@ -787,7 +859,7 @@ def step3_propose(notable_count):
             if reflection_insights:
                 proposal_content = f"从 {notable_count} 条 Notable 经验中发现趋势 ({reflection_insights})"
             else:
-                proposal_content = f"从 {notable_count} 条 Notable 经验中发现趋势 (主动: {active}, 被动: {passive})"
+                proposal_content = f"从 {notable_count} 条 Notable 经验中发现趋势 (主动: {active}, 被动任务: {passive_tasks}, 被动对话: {passive_conversations})"
 
             # Dedup: skip similar learning_insight proposal from last 10 minutes
             now = datetime.now()
@@ -814,7 +886,7 @@ def step3_propose(notable_count):
                 "updated_at": proposal_now,
                 "type": "learning_insight",
                 "content": proposal_content,
-                "sources": {"active": active, "passive": passive},
+                "sources": {"active": active, "passive": passive, "passive_tasks": passive_tasks, "passive_conversations": passive_conversations},
                 "status": "pending",
                 "priority": "medium"
             }
@@ -1323,7 +1395,7 @@ def step9_final_check():
 
 def step10_report():
     print("\n=== Step 10: PIPELINE REPORT ===")
-    report = {"timestamp": datetime.now().isoformat(), "status": "complete", "sources": ["active_rss", "passive_conversation"]}
+    report = {"timestamp": datetime.now().isoformat(), "status": "complete", "sources": ["active_rss", "passive_task", "passive_conversation"]}
     history = _get_memory_store().get_state("pipeline_reports", [])
     if not isinstance(history, list):
         history = []
@@ -1339,7 +1411,7 @@ def main():
 
     print(f"\n{'='*60}")
     print(f"EvoClaw Full Learning Flow - {datetime.now()}")
-    print(f"Active Learning (RSS) + Passive Learning (Conversation)")
+    print(f"Active Learning (RSS) + Passive Learning (Task-summary driven)")
     print('='*60)
 
     if not step0_workspace_check():
@@ -1357,7 +1429,7 @@ def main():
     step10_report()
 
     print("\n" + "="*60)
-    print("✓ Full flow complete (Active + Passive)")
+    print("✓ Full flow complete (Active + Passive task-wide)")
     print("="*60)
 
     # Feedback: after task
