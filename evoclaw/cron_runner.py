@@ -1277,7 +1277,7 @@ def _apply_to_rules(approved_proposals):
 
 # ========== Helper Functions for Apply to Semantic ==========
 def _apply_to_semantic(approved_proposals):
-    """Apply approved knowledge proposals to SQLite semantic memories."""
+    """Apply approved knowledge proposals to SQLite semantic_knowledge table."""
 
     applied = []
     now = datetime.now()
@@ -1295,36 +1295,34 @@ def _apply_to_semantic(approved_proposals):
             if not content:
                 continue
 
-            # Persist semantic knowledge in SQLite only.
-            entry = _ensure_experience_defaults({
-                "type": "knowledge",
-                "significance": "notable",
+            # Persist semantic knowledge in semantic_knowledge table
+            semantic_entry = {
+                "semantic_id": f"sem-{prop.get('id')}",
                 "content": content,
                 "source": "proposal",
-                "source_id": prop.get("id"),
-                "created_at": now.isoformat(),
-                "updated_at": now.isoformat(),
                 "proposal_id": prop.get("id"),
                 "reason": prop.get("reason", ""),
+                "semantic_type": prop_type,
+                "created_at": now.isoformat(),
+                "updated_at": now.isoformat(),
                 "metadata": {
                     "source_id": prop.get("id"),
                     "proposal_id": prop.get("id"),
                     "reason": prop.get("reason", ""),
                     "semantic_type": prop_type,
                 },
-                "tags": ["semantic", "knowledge"],
-            })
-            _safe_db_write(_get_memory_store().upsert_experience, entry, "knowledge")
+            }
+            _safe_db_write(_get_memory_store().upsert_semantic_knowledge, semantic_entry, "semantic_knowledge")
 
             applied.append({
                 "proposal_id": prop.get("id"),
-                "target": "sqlite:memories(category=knowledge)",
+                "target": "sqlite:semantic_knowledge",
                 "change_type": "add_knowledge"
             })
-            print(f"  ✓ Knowledge added: {prop.get('id')} -> SQLite")
+            print(f"  ✓ Knowledge added: {prop.get('id')} -> semantic_knowledge")
 
     if applied:
-        print(f"✓ Applied {len(applied)} knowledge to SQLite semantic memories")
+        print(f"✓ Applied {len(applied)} knowledge to semantic_knowledge table")
 
     return applied
 def step5_apply():
