@@ -744,6 +744,62 @@ def step1_ingest():
     print(f"\n✓ Step 1 complete: {total_new} new experiences")
     return total_new
 
+# ========== Step 1b: EXTRACT NOTABLE FROM EXTERNAL LEARNING ==========
+def step1b_extract_notable_from_external():
+    """从 external_learning_events 提取 notable 到 memories"""
+    print("\n--- Extract Notable from External Learning ---")
+    try:
+        store = _get_memory_store()
+        
+        # 查询未处理的 external_learning_events
+        external_events = store.query_external_learning_events(status="new", limit=100)
+        if not external_events:
+            print("  - No new external events to extract")
+            return 0
+        
+        print(f"  Found {len(external_events)} external events")
+        
+        extracted_count = 0
+        for event in external_events:
+            event_id = event.get("event_id")
+            significance = event.get("significance", "routine")
+            
+            # 只有 notable 以上的才提取到 memories
+            if significance in ("notable", "pivotal"):
+                # 检查是否已存在
+                existing = store.query_experiences(source=event.get("url", ""), limit=1)
+                if existing:
+                    # 已存在，标记为 processed
+                    store.mark_external_learning_event_status(event_id, "extracted")
+                    continue
+                
+                # 写入 memories
+                now = datetime.now().isoformat()
+                exp = {
+                    "id": f"ext-{event.get('event_id')}",
+                    "type": "rss_active",
+                    "source": event.get("source_name", ""),
+                    "content": f"{event.get('title', '')}\n{event.get('content', '')}".strip(),
+                    "significance": significance,
+                    "created_at": event.get("collected_at", now),
+                    "updated_at": now,
+                    "metadata": {"event_id": event_id, "url": event.get("url", "")},
+                }
+                store.upsert_experience(exp)
+                store.mark_external_learning_event_status(event_id, "extracted")
+                extracted_count += 1
+            else:
+                # routine 也标记为处理
+                store.mark_external_learning_event_status(event_id, "processed")
+        
+        print(f"  ✓ Extracted {extracted_count} notable events to memories")
+        return extracted_count
+        
+    except Exception as e:
+        print(f"  ✗ Extract error: {e}")
+        return 0
+
+
 # ========== Step 2: REFLECT ==========
 def step2_reflect():
     """Step 2: Process ALL experiences (Active + Passive)"""
@@ -1427,6 +1483,7 @@ def main():
         return
 
     step1_ingest()
+    step1b_extract_notable_from_external()
     notable = step2_reflect()
     proposals = step3_propose(notable)
     approved = step4_govern()
