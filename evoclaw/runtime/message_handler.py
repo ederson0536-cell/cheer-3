@@ -138,7 +138,8 @@ class MessageHandler:
         subtask_type = self._infer_subtask_type(analysis)
         exec_result = self.runtime.execute_subtask(subtask_type, f"执行: {message[:30]}")
         self._set_task_status("in_progress", "single_message_subtask_executed")
-        self.runtime.complete(result=f"message-task:{current_task_id}")
+        # Pass the actual skill result to complete
+        self.runtime.complete(result=exec_result)
 
         self.state["task_id"] = None
         self._set_task_status("completed", "single_message_task_finished")
@@ -149,6 +150,21 @@ class MessageHandler:
             "subtask": subtask_type,
         })
 
+        # Get the actual message from multiple sources
+        actual_message = ""
+        # 1. From exec_result message field
+        if exec_result.get("message"):
+            actual_message = str(exec_result.get("message"))
+        # 2. From exec_result result field
+        elif exec_result.get("result"):
+            actual_message = str(exec_result.get("result"))
+        # 3. From analysis
+        elif analysis.get("message"):
+            actual_message = str(analysis.get("message"))
+        # 4. Fallback
+        elif not actual_message:
+            actual_message = f"消息任务已完成: {subtask_type}"
+
         return {
             "type": "task_completed",
             "task_id": current_task_id,
@@ -156,7 +172,9 @@ class MessageHandler:
             "subtask": subtask_type,
             "skill": exec_result.get("routing", {}).get("skill_name"),
             "success": True,
-            "message": f"消息任务已完成: {subtask_type}",
+            "message": actual_message,
+            # Store actual response for reference
+            "actual_response": actual_message,
         }
 
 

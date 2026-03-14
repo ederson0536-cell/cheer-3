@@ -23,3 +23,13 @@ build/
 
 # OpenClaw
 memory_db
+*.db
+*.db-shm
+*.db-wal
+logs/*.log
+memory/experiences/
+memory/pipeline/
+memory/working/
+memory/tasks/
+memory/subtasks/
+

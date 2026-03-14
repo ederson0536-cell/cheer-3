@@ -158,6 +158,64 @@ def handle_message():
     )
 
 
+@app.route("/callback", methods=["POST"])
+def handle_callback():
+    """Handle Telegram inline button callback queries."""
+    data = request.get_json(silent=True) or {}
+    
+    # Handle Telegram callback_query
+    callback_query = data.get("callback_query", {})
+    if callback_query:
+        return _handle_telegram_callback(callback_query)
+    
+    # Handle direct feedback format
+    feedback_payload, error = _pick_feedback_payload(data)
+    if error:
+        return jsonify({"success": False, "error": error}), 400
+
+    applied = apply_feedback_button(
+        task_id=feedback_payload["task_id"],
+        value=feedback_payload["value"],
+        user_message=feedback_payload.get("message") or None,
+    )
+    status = 200 if applied.get("success") else 400
+    return jsonify(applied), status
+
+
+def _handle_telegram_callback(callback_query: dict) -> dict:
+    """Handle Telegram callback_query (button click)."""
+    from evoclaw.feedback_system import apply_feedback_button
+    
+    # Extract callback_data which contains: feedback:v1:message_id:value
+    callback_data = callback_query.get("data", "")
+    message = callback_query.get("message", {})
+    chat = message.get("chat", {})
+    
+    if not callback_data.startswith("feedback:"):
+        return jsonify({"success": False, "error": "unknown_callback"}), 400
+    
+    # Parse: feedback:v1:message_id:value
+    parts = callback_data.split(":")
+    if len(parts) >= 4:
+        task_id = parts[2]  # message_id
+        value = parts[3]    # satisfied or unsatisfied
+    else:
+        return jsonify({"success": False, "error": "invalid_callback_data"}), 400
+    
+    # Apply the feedback
+    applied = apply_feedback_button(
+        task_id=task_id,
+        value=value,
+        user_message=None,
+    )
+    
+    # Answer the callback to remove loading state
+    # (This would need the bot token to answer callback)
+    
+    status = 200 if applied.get("success") else 400
+    return jsonify(applied), status
+
+
 @app.route("/feedback", methods=["POST"])
 def handle_feedback():
     raw_body = request.get_data(cache=True) or b""

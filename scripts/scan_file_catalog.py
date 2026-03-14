@@ -10,7 +10,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 import hashlib
 
-WORKSPACE = Path("/home/bro/.openclaw/workspace-cheer")
+WORKSPACE = Path(__file__).resolve().parents[1]
 DB_PATH = WORKSPACE / "memory/file_catalog.sqlite"
 ROOT_REGISTRY = WORKSPACE / "evoclaw/runtime/config/root_file_registry.json"
 MEM_DIR_REGISTRY = WORKSPACE / "evoclaw/runtime/config/memory_directory_registry.json"

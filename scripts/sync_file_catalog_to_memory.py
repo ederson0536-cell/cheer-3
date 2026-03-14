@@ -6,7 +6,7 @@ import sqlite3
 from datetime import datetime, timezone
 from pathlib import Path
 
-WORKSPACE = Path("/home/bro/.openclaw/workspace-cheer")
+WORKSPACE = Path(__file__).resolve().parents[1]
 CATALOG_DB = WORKSPACE / "memory/file_catalog.sqlite"
 MEMORY_DB = WORKSPACE / "memory/memory.db"
 

@@ -618,15 +618,23 @@ class SQLiteMemoryStore:
         row = self._normalized_row(exp)
         category = self._experience_category(row["type"], row["source"])
         row["category"] = category
+        
+        # Handle reflected fields
+        reflected = 1 if exp.get("reflected") else 0
+        reflection_id = exp.get("reflection_id") or ""
+        reflected_at = exp.get("reflected_at") or ""
+        
         with self._connect() as conn:
             conn.execute(
                 """
                 INSERT INTO memories (
                     id, category, type, content, source, created_at, updated_at,
-                    significance, tags_json, metadata_json, raw_json
+                    significance, tags_json, metadata_json, raw_json,
+                    reflected, reflection_id, reflected_at
                 ) VALUES (
                     :id, :category, :type, :content, :source, :created_at, :updated_at,
-                    :significance, :tags_json, :metadata_json, :raw_json
+                    :significance, :tags_json, :metadata_json, :raw_json,
+                    :reflected, :reflection_id, :reflected_at
                 )
                 ON CONFLICT(id) DO UPDATE SET
                     category=excluded.category,
@@ -638,10 +646,70 @@ class SQLiteMemoryStore:
                     significance=excluded.significance,
                     tags_json=excluded.tags_json,
                     metadata_json=excluded.metadata_json,
-                    raw_json=excluded.raw_json
+                    raw_json=excluded.raw_json,
+                    reflected=excluded.reflected,
+                    reflection_id=excluded.reflection_id,
+                    reflected_at=excluded.reflected_at
                 """,
-                row,
+                {**row, "reflected": reflected, "reflection_id": reflection_id, "reflected_at": reflected_at},
             )
+
+    def mark_experiences_reflected(self, experience_ids: list[str], reflection_id: str) -> int:
+        """Mark multiple experiences as reflected"""
+        if not experience_ids:
+            return 0
+        reflected_at = datetime.now().isoformat()
+        with self._connect() as conn:
+            cursor = conn.execute(
+                """
+                UPDATE memories 
+                SET reflected = 1, reflection_id = :reflection_id, reflected_at = :reflected_at
+                WHERE id IN (""" + ",".join([f"'{e}'" for e in experience_ids]) + """)
+                """,
+                {"reflection_id": reflection_id, "reflected_at": reflected_at},
+            )
+            conn.commit()
+            return cursor.rowcount
+
+    def get_unreflected_experiences(self, significance: str | None = None, limit: int = 100) -> list[dict]:
+        """Get unreflected experiences, optionally filtered by significance"""
+        with self._connect() as conn:
+            cursor = conn.execute(
+                """
+                SELECT * FROM memories 
+                WHERE reflected = 0""" + (f" AND significance = '{significance}'" if significance else "") + """
+                ORDER BY created_at DESC LIMIT {limit}
+                """.format(limit=limit)
+            )
+            rows = cursor.fetchall()
+            columns = [desc[0] for desc in cursor.description]
+            return [dict(zip(columns, row)) for row in rows]
+
+    def count_unreflected_experiences(self, significance: str | None = None) -> dict:
+        """Count unreflected experiences, optionally by significance"""
+        with self._connect() as conn:
+            if significance:
+                row = conn.execute(
+                    "SELECT COUNT(*) FROM memories WHERE reflected = 0 AND significance = ?",
+                    (significance,),
+                ).fetchone()
+                return {"total": row[0] if row else 0, significance: row[0] if row else 0}
+            else:
+                row = conn.execute(
+                    "SELECT COUNT(*) FROM memories WHERE reflected = 0",
+                ).fetchone()
+                total = row[0] if row else 0
+                notable_row = conn.execute(
+                    "SELECT COUNT(*) FROM memories WHERE reflected = 0 AND significance = 'notable'",
+                ).fetchone()
+                routine_row = conn.execute(
+                    "SELECT COUNT(*) FROM memories WHERE reflected = 0 AND significance = 'routine'",
+                ).fetchone()
+                return {
+                    "total": total,
+                    "notable": notable_row[0] if notable_row else 0,
+                    "routine": routine_row[0] if routine_row else 0,
+                }
 
     def _normalized_proposal(self, proposal: dict[str, Any]) -> dict[str, Any]:
         metadata = proposal.get("metadata")
@@ -1010,7 +1078,9 @@ class SQLiteMemoryStore:
         return {
             "task_id": task_id,
             "task_name": str(task_run.get("task_name") or ""),
+            "user_message": str(task_run.get("user_message") or ""),
             "task_type": str(task_run.get("task_type") or ""),
+            "analysis_json": self._json_dumps(task_run.get("analysis_json"), {}),
             "status": str(task_run.get("status") or ""),
             "success": 1 if bool(task_run.get("success", True)) else 0,
             "satisfaction": str(task_run.get("satisfaction") or "satisfied"),
@@ -1033,17 +1103,19 @@ class SQLiteMemoryStore:
             conn.execute(
                 """
                 INSERT INTO task_runs (
-                    task_id, task_name, task_type, status, success, satisfaction, significance,
+                    task_id, task_name, user_message, task_type, analysis_json, status, success, satisfaction, significance,
                     skills_json, methods_json, execution_steps_json, thinking_json,
                     output_summary, final_message, source, created_at, updated_at, metadata_json
                 ) VALUES (
-                    :task_id, :task_name, :task_type, :status, :success, :satisfaction, :significance,
+                    :task_id, :task_name, :user_message, :task_type, :analysis_json, :status, :success, :satisfaction, :significance,
                     :skills_json, :methods_json, :execution_steps_json, :thinking_json,
                     :output_summary, :final_message, :source, :created_at, :updated_at, :metadata_json
                 )
                 ON CONFLICT(task_id) DO UPDATE SET
                     task_name=excluded.task_name,
+                    user_message=excluded.user_message,
                     task_type=excluded.task_type,
+                    analysis_json=excluded.analysis_json,
                     status=excluded.status,
                     success=excluded.success,
                     satisfaction=excluded.satisfaction,

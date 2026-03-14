@@ -193,7 +193,8 @@ class ExperienceRecall:
             if error_types:
                 lessons.append("Common issues to avoid:")
                 for err, count in sorted(error_types.items(), key=lambda x: -x[1])[:3]:
-                    lessons.append(f"  • {err[:50]}... ({count}x)")
+                    err_str = str(err)[:50] if err else "unknown"
+                    lessons.append(f"  • {err_str}... ({count}x)")
         
         return lessons
     

@@ -334,6 +334,10 @@ def after_task(task, result):
     task_summary = build_task_summary(task, result, execution_steps)
     _persist_task_summary(task_summary)
     _append_satisfaction_prompt(task, result)
+    
+    # Try to send inline buttons via Telegram
+    _try_send_telegram_buttons(task)
+    
     feedback = {
         "hook": "after_task",
         "task": task,
@@ -541,7 +545,13 @@ def build_task_summary(task: dict, result: dict, execution_steps: list[dict[str,
     return {
         "task_id": str(task.get("task_id") or f"task-{uuid4().hex[:12]}"),
         "task_name": str(task.get("name") or "user_message"),
+        "user_message": str(task.get("message") or ""),  # 用户原始消息
         "task_type": str(task.get("type") or "user_message"),
+        "analysis_json": json.dumps({
+            "task_type": task.get("type"),
+            "continuity_type": task.get("continuity_type"),
+            "source": task.get("source"),
+        }),
         "status": str(result.get("type") or "completed"),
         "success": bool(result.get("success", True)),
         "satisfaction": "satisfied",  # default when user doesn't click buttons
@@ -586,6 +596,72 @@ def _append_satisfaction_prompt(task: dict, result: dict) -> None:
         {"label": "不满意", "value": "unsatisfied", "default": False},
     ]
     result["feedback_mode"] = "buttons"
+
+
+def _try_send_telegram_buttons(task: dict) -> None:
+    """Send inline feedback buttons via Telegram API."""
+    import os
+    import urllib.request
+    import urllib.parse
+    import json
+    
+    # Get chat_id from task
+    chat_id = task.get("sender") or task.get("metadata", {}).get("chat_id")
+    if not chat_id:
+        return
+    
+    # Get message_id for callback_data
+    message_id = task.get("message_id") or "0"
+    
+    # Get bot token
+    bot_token = None
+    config_path = os.path.expanduser("~/.openclaw/openclaw.json")
+    try:
+        with open(config_path) as f:
+            config = json.load(f)
+            if "channels" in config and "telegram" in config["channels"]:
+                accounts = config["channels"]["telegram"].get("accounts", {})
+                for account_id in ["cheer", "plan", "execute", "review", "default"]:
+                    if account_id in accounts and accounts[account_id].get("botToken"):
+                        bot_token = accounts[account_id]["botToken"]
+                        break
+    except Exception as e:
+        return
+    
+    if not bot_token:
+        return
+    
+    # Build inline keyboard
+    buttons = [
+        {"label": "👍 满意", "value": "satisfied"},
+        {"label": "👎 不满意", "value": "unsatisfied"}
+    ]
+    
+    inline_keyboard = []
+    for btn in buttons:
+        inline_keyboard.append([{
+            "text": btn["label"],
+            "callback_data": f"feedback:v1:{message_id}:{btn['value']}"
+        }])
+    
+    # Send inline keyboard message
+    payload = {
+        "chat_id": str(chat_id),
+        "text": "请对回复进行评价：",
+        "reply_markup": json.dumps({"inline_keyboard": inline_keyboard})
+    }
+    
+    url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
+    data = urllib.parse.urlencode(payload).encode()
+    
+    try:
+        req = urllib.request.Request(url, data=data, method="POST")
+        resp = urllib.request.urlopen(req, timeout=10)
+        result_data = json.loads(resp.read().decode())
+        if result_data.get("ok"):
+            print(f"[buttons] Sent to {chat_id}")
+    except Exception as e:
+        print(f"[buttons] Error: {e}")
 
 
 def _normalize_feedback_value(value: str | None) -> str | None:

@@ -934,6 +934,13 @@ def step2_reflect():
     }
     _safe_db_write(_get_memory_store().upsert_reflection, reflection, "reflection")
 
+    # Mark all processed experiences as reflected in DB
+    if experiences:
+        exp_ids = [e.get("id") for e in experiences if e.get("id")]
+        if exp_ids:
+            marked_count = _get_memory_store().mark_experiences_reflected(exp_ids, reflection_id)
+            print(f"  ✓ Marked {marked_count} experiences as reflected")
+
     if content_trends.get("insights"):
         print("  Insights:")
         for insight in content_trends["insights"][:3]:

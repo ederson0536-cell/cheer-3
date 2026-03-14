@@ -9,7 +9,7 @@ import sqlite3
 from pathlib import Path
 from datetime import datetime, timezone
 
-WORKSPACE = Path("/home/bro/.openclaw/workspace-cheer")
+WORKSPACE = Path(__file__).resolve().parents[1]
 DB_PATH = WORKSPACE / "memory/file_catalog.sqlite"
 
 # 文件扩展名对应语言
