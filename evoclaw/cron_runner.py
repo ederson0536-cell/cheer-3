@@ -1101,45 +1101,57 @@ def step3_propose(notable_count):
     print("\n--- Generate rule proposals from unsatisfied tasks ---")
     try:
         store = _get_memory_store()
-        # 查找不满意的任务
         unsatisfied_tasks = store.query_task_runs(limit=1000)
         unsatisfied = [t for t in unsatisfied_tasks if t.get("satisfaction") in ("unsatisfied", "neutral")]
         
-        # 按 task_type 分组统计
+        # 按 task_type 分组，并收集更多信息
         unsatisfied_by_type = {}
         for task in unsatisfied:
             task_type = task.get("task_type", "unknown")
-            unsatisfied_by_type[task_type] = unsatisfied_by_type.get(task_type, 0) + 1
+            if task_type not in unsatisfied_by_type:
+                unsatisfied_by_type[task_type] = {"count": 0, "methods": [], "errors": []}
+            unsatisfied_by_type[task_type]["count"] += 1
+            
+            # 收集方法信息
+            methods = task.get("methods", [])
+            if isinstance(methods, list):
+                unsatisfied_by_type[task_type]["methods"].extend(methods[:2])
         
-        # 只对不满意次数 >= 1 的类型生成规则
-        for task_type, count in unsatisfied_by_type.items():
-            if count >= 1:
-                existing = _query_db_proposals(status="pending")
+        for task_type, data in unsatisfied_by_type.items():
+            count = data["count"]
+            methods = list(set(data["methods"]))[:3]
+            
+            if methods:
+                method_str = ", ".join([f"'{m}'" for m in methods])
+                proposal_content = f"任务类型 [{task_type}] 有 {count} 次不满意，常用方法: {method_str}。需要制定规则改进处理流程。"
+            else:
                 proposal_content = f"任务类型 [{task_type}] 有 {count} 次不满意记录，需要制定规则改进"
-                
-                skip = False
-                for existing_prop in existing:
-                    if task_type in existing_prop.get("content", ""):
-                        skip = True
-                        break
-                
-                if not skip:
-                    proposal_now = datetime.now().isoformat()
-                    proposal = {
-                        "id": f"prop-rule-{datetime.now().strftime('%Y%m%d%H%M%S%f')}",
-                        "timestamp": proposal_now,
-                        "created_at": proposal_now,
-                        "updated_at": proposal_now,
-                        "type": "rule",
-                        "content": proposal_content,
-                        "task_type": task_type,
-                        "source": "unsatisfied_tasks",
-                        "status": "pending",
-                        "priority": "high"
-                    }
-                    proposals.append(proposal)
-                    _safe_db_write(store.upsert_proposal, proposal, "proposal")
-                    print(f"  ✓ Rule from unsatisfied tasks: {task_type} ({count} unsatisfied)")
+            
+            existing = _query_db_proposals(status="pending")
+            skip = False
+            for existing_prop in existing:
+                if task_type in existing_prop.get("content", ""):
+                    skip = True
+                    break
+            
+            if not skip:
+                proposal_now = datetime.now().isoformat()
+                proposal = {
+                    "id": f"prop-rule-{datetime.now().strftime('%Y%m%d%H%M%S%f')}",
+                    "timestamp": proposal_now,
+                    "created_at": proposal_now,
+                    "updated_at": proposal_now,
+                    "type": "rule",
+                    "content": proposal_content,
+                    "task_type": task_type,
+                    "source": "unsatisfied_tasks",
+                    "metadata": {"methods": methods, "task_count": count},
+                    "status": "pending",
+                    "priority": "high"
+                }
+                proposals.append(proposal)
+                _safe_db_write(store.upsert_proposal, proposal, "proposal")
+                print(f"  ✓ Rule from unsatisfied: {task_type} ({count}x{methods and f', methods: {methods}' or ''})")
                     
     except Exception as e:
         print(f"  ~ Unsatisfied tasks to rule error: {e}")
@@ -1150,18 +1162,39 @@ def step3_propose(notable_count):
         store = _get_memory_store()
         all_candidates = store.query_candidates(limit=1000)
         
-        # 统计 knowledge 出现次数
-        knowledge_count = {}
+        # 统计 knowledge，并收集上下文
+        knowledge_data = {}
         for cand in all_candidates:
-            knowledge = cand.get("knowledge", "")
-            if knowledge:
-                knowledge_count[knowledge] = knowledge_count.get(knowledge, 0) + 1
-        
-        # 出现 >= 2 次的生成规则
-        for knowledge, count in knowledge_count.items():
-            if count >= 2:
-                existing = _query_db_proposals(status="pending")
+            metadata = cand.get("metadata", {})
+            if isinstance(metadata, dict):
+                knowledge = metadata.get("knowledge", "")
+                context = metadata.get("context", {})
+                task_type = cand.get("task_type", "")
                 
+                if knowledge:
+                    if knowledge not in knowledge_data:
+                        knowledge_data[knowledge] = {"count": 0, "task_types": set(), "tags": []}
+                    knowledge_data[knowledge]["count"] += 1
+                    knowledge_data[knowledge]["task_types"].add(task_type)
+                    if isinstance(context, dict):
+                        tags = context.get("tags", [])
+                        knowledge_data[knowledge]["tags"].extend(tags)
+        
+        for knowledge, data in knowledge_data.items():
+            count = data["count"]
+            if count >= 2:
+                task_types = list(data["task_types"])
+                tags = list(set(data["tags"]))[:3]
+                
+                # 构建更具体的内容
+                if task_types and tags:
+                    proposal_content = f"场景 '{knowledge}' 出现 {count} 次，涉及任务类型: {', '.join(task_types)}，相关标签: {', '.join(tags)}。建议制定处理规则。"
+                elif task_types:
+                    proposal_content = f"场景 '{knowledge}' 出现 {count} 次，涉及任务类型: {', '.join(task_types)}。建议制定处理规则。"
+                else:
+                    proposal_content = f"场景 '{knowledge}' 出现 {count} 次，建议制定处理规则"
+                
+                existing = _query_db_proposals(status="pending")
                 skip = False
                 for existing_prop in existing:
                     if knowledge in existing_prop.get("content", ""):
