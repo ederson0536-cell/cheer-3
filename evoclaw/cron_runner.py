@@ -1539,4 +1539,4 @@ def _process_voice_messages():
 
 
 if __name__ == "__main__":
-    run_full_pipeline()
+    main()
