@@ -572,106 +572,6 @@ def _import_task_experiences_from_task_runs() -> int:
     return new_count
 
 
-def _project_task_runs_to_notebook_layers() -> dict[str, int]:
-    """Project task_runs into notebook experience/reflection/proposal/rule tables."""
-    stats = {"notebook_experiences": 0, "notebook_reflections": 0, "notebook_proposals": 0, "notebook_rules": 0}
-    rows = _get_memory_store().query_task_runs(limit=5000)
-    if not rows:
-        return stats
-
-    existing_exp_ids = {r.get("notebook_exp_id") for r in _get_memory_store().query_notebook_experiences(limit=10000) if r.get("notebook_exp_id")}
-    existing_ref_ids = {r.get("notebook_reflection_id") for r in _get_memory_store().query_notebook_reflections(limit=10000) if r.get("notebook_reflection_id")}
-    existing_prop_ids = {r.get("notebook_proposal_id") for r in _get_memory_store().query_notebook_proposals(limit=10000) if r.get("notebook_proposal_id")}
-    existing_rule_ids = {r.get("notebook_rule_id") for r in _get_memory_store().query_notebook_rules(limit=10000) if r.get("notebook_rule_id")}
-
-    for run in rows:
-        task_id = str(run.get("task_id") or "")
-        if not task_id:
-            continue
-        exp_id = f"nbexp-{task_id}"
-        ref_id = f"nbref-{task_id}"
-        prop_id = f"nbprop-{task_id}"
-        rule_id = f"nbrule-{task_id}"
-
-        if exp_id not in existing_exp_ids:
-            _safe_db_write(
-                _get_memory_store().upsert_notebook_experience,
-                {
-                    "notebook_exp_id": exp_id,
-                    "task_id": task_id,
-                    "message_id": str((run.get("metadata") or {}).get("message_id") or ""),
-                    "source": "task_runs_projection",
-                    "content": str((run.get("metadata") or {}).get("user_message") or run.get("output_summary") or ""),
-                    "summary": str(run.get("output_summary") or "")[:500],
-                    "significance": str(run.get("significance") or "routine"),
-                    "created_at": str(run.get("created_at") or datetime.now().isoformat()),
-                    "updated_at": datetime.now().isoformat(),
-                    "metadata": {"task_status": run.get("status"), "satisfaction": run.get("satisfaction")},
-                },
-                "notebook_experience",
-            )
-            existing_exp_ids.add(exp_id)
-            stats["notebook_experiences"] += 1
-
-        if ref_id not in existing_ref_ids:
-            _safe_db_write(
-                _get_memory_store().upsert_notebook_reflection,
-                {
-                    "notebook_reflection_id": ref_id,
-                    "notebook_exp_id": exp_id,
-                    "trigger": "task_run_projection",
-                    "analysis": {
-                        "task_type": run.get("task_type"),
-                        "success": run.get("success"),
-                        "satisfaction": run.get("satisfaction"),
-                    },
-                    "created_at": datetime.now().isoformat(),
-                    "metadata": {"task_id": task_id},
-                },
-                "notebook_reflection",
-            )
-            existing_ref_ids.add(ref_id)
-            stats["notebook_reflections"] += 1
-
-        if prop_id not in existing_prop_ids:
-            _safe_db_write(
-                _get_memory_store().upsert_notebook_proposal,
-                {
-                    "notebook_proposal_id": prop_id,
-                    "notebook_reflection_id": ref_id,
-                    "proposal_type": "task_optimization",
-                    "content": f"复盘任务 {task_id} 的执行摘要并提炼可复用改进项",
-                    "priority": "medium",
-                    "status": "pending",
-                    "created_at": datetime.now().isoformat(),
-                    "updated_at": datetime.now().isoformat(),
-                    "metadata": {"task_id": task_id},
-                },
-                "notebook_proposal",
-            )
-            existing_prop_ids.add(prop_id)
-            stats["notebook_proposals"] += 1
-
-        if rule_id not in existing_rule_ids and str(run.get("satisfaction") or "satisfied") == "unsatisfied":
-            _safe_db_write(
-                _get_memory_store().upsert_notebook_rule,
-                {
-                    "notebook_rule_id": rule_id,
-                    "notebook_proposal_id": prop_id,
-                    "rule_type": "quality_guard",
-                    "content": f"任务 {task_id} 曾被标记不满意，后续同类任务需更严格校验输出",
-                    "enabled": True,
-                    "created_at": datetime.now().isoformat(),
-                    "updated_at": datetime.now().isoformat(),
-                    "metadata": {"task_id": task_id},
-                },
-                "notebook_rule",
-            )
-            existing_rule_ids.add(rule_id)
-            stats["notebook_rules"] += 1
-
-    return stats
-
 
 def _run_nightly_memory_consistency_check() -> dict[str, object]:
     """Run daily relational consistency check for layered memory tables."""
@@ -830,28 +730,6 @@ def step1_ingest():
         task_new = _import_task_experiences_from_task_runs()
         total_new += task_new
 
-        notebook_stats = _project_task_runs_to_notebook_layers()
-        print(
-            "  ✓ Notebook projection:" 
-            f" exp={notebook_stats['notebook_experiences']},"
-            f" ref={notebook_stats['notebook_reflections']},"
-            f" prop={notebook_stats['notebook_proposals']},"
-            f" rule={notebook_stats['notebook_rules']}"
-        )
-        if sum(notebook_stats.values()) == 0:
-            print("  ⚠ Notebook projection empty run")
-
-        consistency = _run_nightly_memory_consistency_check()
-        if not consistency.get("skipped"):
-            print(f"  - Consistency total_issues={consistency.get('total_issues', 0)}")
-
-        json_decode_metrics = _check_json_decode_warning_metrics()
-
-        state = load_state()
-        state["last_json_decode_metrics"] = json_decode_metrics
-        state["last_notebook_projection"] = datetime.now().isoformat()
-        state["last_notebook_projection_counts"] = notebook_stats
-        state["last_task_run_extract"] = datetime.now().isoformat()
         if rss_history_entries:
             state["rss_last_fetched"] = rss_history_entries[-1]["fetched_at"]
             history = state.get("rss_fetch_history", [])
