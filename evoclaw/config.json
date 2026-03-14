@@ -11,7 +11,7 @@
   },
   "interests": {
     "keywords": [],
-    "description": "Topics this agent is drawn to. Nudges significance classification (keyword match → more likely Notable) but never filters out content. Empty array = free exploration mode. Examples: ['agent identity', 'AI safety', 'social dynamics']"
+    "description": "Topics this agent is drawn to. Nudges significance classification (keyword match \u2192 more likely Notable) but never filters out content. Empty array = free exploration mode. Examples: ['agent identity', 'AI safety', 'social dynamics']"
   },
   "sources": {
     "conversation": {
@@ -30,7 +30,8 @@
     "rss": {
       "enabled": true,
       "feeds": [
-        "https://github.com/trending.rss"
+        "https://github.com/trending.rss",
+        "https://hnrss.org/frontpage"
       ],
       "poll_interval_minutes": 15
     }
