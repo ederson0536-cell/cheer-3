@@ -890,23 +890,20 @@ def step2_reflect():
 # ========== Step 3: PROPOSE ==========
 def step3_propose(notable_count):
     print("\n=== Step 3: PROPOSE ===")
-    if notable_count < 2:
-        print("No notable experiences to propose from")
-        return []
-
+    
     proposals = []
-    try:
+    
+    # 3a. 从 notable 经验生成提案
+    if notable_count >= 2:
         experiences, _ = _load_today_experiences()
-
         notable_exps = [e for e in experiences if e.get('significance') == 'notable']
 
         if notable_exps:
-            # Check sources
             active = sum(1 for e in notable_exps if e.get('type') == 'rss_active')
             passive_tasks = sum(1 for e in notable_exps if e.get('type') == 'task_execution')
             passive_conversations = sum(1 for e in notable_exps if e.get('type') == 'conversation')
-            passive = passive_tasks + passive_conversations
-            # Get insights from latest reflection
+            
+            # ... existing notable proposal logic ...
             reflection_insights = ""
             try:
                 store = _get_memory_store()
@@ -926,7 +923,7 @@ def step3_propose(notable_count):
             else:
                 proposal_content = f"从 {notable_count} 条 Notable 经验中发现趋势 (主动: {active}, 被动任务: {passive_tasks}, 被动对话: {passive_conversations})"
 
-            # Dedup: skip similar learning_insight proposal from last 10 minutes
+            # Dedup
             now = datetime.now()
             recent_cutoff = now - timedelta(minutes=10)
             existing = _query_db_proposals(status="pending")
@@ -940,28 +937,82 @@ def step3_propose(notable_count):
                     continue
                 sim = _text_similarity(proposal_content, existing_prop.get("content", ""))
                 if sim >= 0.85:
-                    print("~ Skip duplicate learning_insight proposal (recent similar content)")
-                    return []
+                    print("~ Skip duplicate learning_insight proposal")
+                    break
+            else:
+                proposal_now = datetime.now().isoformat()
+                proposal = {
+                    "id": f"prop-{datetime.now().strftime('%Y%m%d%H%M%S%f')}",
+                    "timestamp": proposal_now,
+                    "created_at": proposal_now,
+                    "updated_at": proposal_now,
+                    "type": "learning_insight",
+                    "content": proposal_content,
+                    "sources": {"active": active, "passive": passive_tasks + passive_conversations},
+                    "status": "pending",
+                    "priority": "medium"
+                }
+                proposals.append(proposal)
+                _safe_db_write(_get_memory_store().upsert_proposal, proposal, "proposal")
+                print(f"✓ Generated learning_insight proposal from notable experiences")
 
-            proposal_now = datetime.now().isoformat()
-            proposal = {
-                "id": f"prop-{datetime.now().strftime('%Y%m%d%H%M%S%f')}",
-                "timestamp": proposal_now,
-                "created_at": proposal_now,
-                "updated_at": proposal_now,
-                "type": "learning_insight",
-                "content": proposal_content,
-                "sources": {"active": active, "passive": passive, "passive_tasks": passive_tasks, "passive_conversations": passive_conversations},
-                "status": "pending",
-                "priority": "medium"
-            }
-            proposals.append(proposal)
-            _safe_db_write(_get_memory_store().upsert_proposal, proposal, "proposal")
-
-            print(f"✓ Generated {len(proposals)} proposal(s)")
+    # 3b. 从 candidates 生成提案
+    print("\n--- Generate proposals from candidates ---")
+    try:
+        store = _get_memory_store()
+        # 获取所有候选（不带过滤）
+        all_candidates = store.query_candidates(limit=1000)
+        pending_candidates = [c for c in all_candidates if c.get("status") in ("candidate", "validating", None, "")]
+        
+        if pending_candidates:
+            print(f"  Found {len(pending_candidates)} candidates to process")
+            
+            for cand in pending_candidates:
+                cand_id = cand.get("id")
+                knowledge = cand.get("knowledge", "")
+                task_type = cand.get("task_type", "")
+                source = cand.get("source", "")
+                
+                if not knowledge:
+                    continue
+                
+                # 检查是否已存在类似提案
+                existing = _query_db_proposals(status="pending")
+                for existing_prop in existing:
+                    if knowledge in existing_prop.get("content", ""):
+                        print(f"  ~ Skip duplicate proposal for: {knowledge[:30]}")
+                        break
+                else:
+                    # 生成提案
+                    proposal_now = datetime.now().isoformat()
+                    proposal = {
+                        "id": f"prop-cand-{datetime.now().strftime('%Y%m%d%H%M%S%f')}",
+                        "timestamp": proposal_now,
+                        "created_at": proposal_now,
+                        "updated_at": proposal_now,
+                        "type": "knowledge",
+                        "content": f"从任务 [{source}] 提取知识: {knowledge}",
+                        "source": source,
+                        "task_type": task_type,
+                        "candidate_id": cand_id,
+                        "status": "pending",
+                        "priority": "medium"
+                    }
+                    proposals.append(proposal)
+                    _safe_db_write(_get_memory_store().upsert_proposal, proposal, "proposal")
+                    
+                    # 更新 candidate 状态
+                    cand["status"] = "proposed"
+                    store.upsert_candidate(cand)
+                    
+                    print(f"  ✓ Proposal from candidate: {knowledge[:40]}")
+        else:
+            print("  - No pending candidates")
+            
     except Exception as e:
-        print(f"Error: {e}")
+        print(f"  ~ Candidates to proposal error: {e}")
 
+    print(f"\n✓ Step 3 complete: {len(proposals)} proposals generated")
     return proposals
 
 # ========== Step 4: GOVERN ==========
