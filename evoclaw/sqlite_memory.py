@@ -650,6 +650,27 @@ class SQLiteMemoryStore:
                     "routine": routine_row[0] if routine_row else 0,
                 }
 
+    def count_experiences(self) -> int:
+        """Count total experiences in memories table"""
+        with self._connect() as conn:
+            row = conn.execute("SELECT COUNT(*) FROM memories").fetchone()
+            return row[0] if row else 0
+
+    def count_experiences_by_significance(self, significance: str) -> int:
+        """Count experiences by significance level"""
+        with self._connect() as conn:
+            row = conn.execute(
+                "SELECT COUNT(*) FROM memories WHERE significance = ?",
+                (significance,),
+            ).fetchone()
+            return row[0] if row else 0
+
+    def count_external_learning_events(self) -> int:
+        """Count total external learning events"""
+        with self._connect() as conn:
+            row = conn.execute("SELECT COUNT(*) FROM external_learning_events").fetchone()
+            return row[0] if row else 0
+
     def _normalized_proposal(self, proposal: dict[str, Any]) -> dict[str, Any]:
         metadata = proposal.get("metadata")
         if not isinstance(metadata, dict):

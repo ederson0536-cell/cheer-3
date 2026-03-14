@@ -1498,6 +1498,49 @@ def step7_state():
     state["source_last_polled"] = source_last_polled
     save_state(state)
     print(f"✓ State: {total} experiences")
+    
+    # 更新 system_catalog
+    _update_system_catalog()
+
+
+def _update_system_catalog():
+    """更新系统目录统计"""
+    try:
+        store = _get_memory_store()
+        
+        # 统计各表数量
+        counts = {
+            "memories.total": store.count_experiences(),
+            "memories.notable": store.count_experiences_by_significance("notable"),
+            "external_learning_events.total": store.count_external_learning_events(),
+            "proposals.pending": len(_load_pending_proposals()),
+            "proposals.approved": len([p for p in store.query_proposals(status="approved", limit=10000) if p.get("status") == "approved"]),
+            "reflections.total": len(store.query_reflections(limit=100000)),
+            "candidates.total": len(store.query_candidates(limit=10000)),
+            "semantic_knowledge.total": len(store.query_semantic_knowledge(limit=100000)),
+            "task_runs.total": len(store.query_task_runs(limit=100000)),
+        }
+        
+        # 构建 catalog 记录
+        now = datetime.now().isoformat()
+        catalog_rows = []
+        for key, count in counts.items():
+            object_type = key.split(".")[0]
+            catalog_rows.append({
+                "object_key": key,
+                "object_type": object_type,
+                "object_count": count,
+                "primary_function": "system_stats",
+                "change_trigger": "pipeline_run",
+                "source": "evoclaw",
+                "updated_at": now,
+            })
+        
+        store.replace_system_catalog(catalog_rows)
+        print(f"✓ System catalog updated: {len(counts)} stats")
+        
+    except Exception as e:
+        print(f"  ~ System catalog update error: {e}")
 
 def step8_notify():
     print("\n=== Step 8: NOTIFY ===")
