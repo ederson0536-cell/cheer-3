@@ -629,10 +629,95 @@ def step0_workspace_check():
     print("\n=== Step 0: Workspace Check ===")
     if WORKSPACE.exists():
         print(f"✓ Workspace: {WORKSPACE}")
+        _run_startup_check()
         return True
     else:
         print(f"✗ Workspace not found")
         return False
+
+
+def _run_startup_check():
+    """检查关键文件和目录是否存在"""
+    from pathlib import Path
+    
+    # 关键文件检查
+    critical_files = {
+        "SOUL.md": "身份定义",
+        "USER.md": "用户配置", 
+        "MEMORY.md": "长期记忆",
+        "HEARTBEAT.md": "心跳配置",
+        "evoclaw/config.json": "EvoClaw配置",
+    }
+    
+    # 关键目录
+    critical_dirs = {
+        "memory/": "记忆目录",
+        "evoclaw/": "EvoClaw代码",
+    }
+    
+    issues = []
+    
+    # 检查文件
+    for file_path, purpose in critical_files.items():
+        full_path = WORKSPACE / file_path
+        if not full_path.exists():
+            issues.append(f"Missing file: {file_path} ({purpose})")
+    
+    # 检查目录
+    for dir_path, purpose in critical_dirs.items():
+        full_path = WORKSPACE / dir_path
+        if not full_path.exists():
+            issues.append(f"Missing directory: {dir_path} ({purpose})")
+    
+    if issues:
+        print("  ⚠ Startup issues:")
+        for issue in issues:
+            print(f"    - {issue}")
+    else:
+        print("  ✓ All critical files and directories exist")
+    
+    # 更新 checklist
+    _update_checklist(critical_files, critical_dirs, issues)
+
+
+def _update_checklist(critical_files, critical_dirs, issues):
+    """更新系统检查清单"""
+    try:
+        store = _get_memory_store()
+        now = datetime.now().isoformat()
+        
+        rows = []
+        
+        # 文件检查项
+        for file_path, purpose in critical_files.items():
+            exists = (WORKSPACE / file_path).exists()
+            rows.append({
+                "checklist_id": f"file-{file_path.replace('/', '-')}",
+                "checklist_type": "root_file",
+                "target_path": str(WORKSPACE / file_path),
+                "purpose": purpose,
+                "when_to_change": "file_create_or_delete",
+                "source": "startup_check",
+                "updated_at": now,
+            })
+        
+        # 目录检查项
+        for dir_path, purpose in critical_dirs.items():
+            exists = (WORKSPACE / dir_path).exists()
+            rows.append({
+                "checklist_id": f"dir-{dir_path.replace('/', '-')}",
+                "checklist_type": "memory_directory", 
+                "target_path": str(WORKSPACE / dir_path),
+                "purpose": purpose,
+                "when_to_change": "dir_create_or_delete",
+                "source": "startup_check",
+                "updated_at": now,
+            })
+        
+        store.replace_readable_checklist(rows)
+        
+    except Exception as e:
+        print(f"  ~ Checklist update error: {e}")
 
 # ========== Step 1: INGEST (Active + Passive) ==========
 def step1_ingest():
