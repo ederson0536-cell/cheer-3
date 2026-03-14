@@ -692,7 +692,7 @@ def step1_ingest():
                         entries.append(exp)
 
                     for e in entries:
-                        _safe_db_write(_get_memory_store().upsert_experience, e, "experience")
+                        # 只写入 external_learning_events (原始数据)
                         _safe_db_write(
                             _get_memory_store().upsert_external_learning_event,
                             {
