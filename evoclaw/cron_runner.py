@@ -1097,6 +1097,97 @@ def step3_propose(notable_count):
     except Exception as e:
         print(f"  ~ Candidates to proposal error: {e}")
 
+    # 3c. 从不满意的任务生成 rule 提案
+    print("\n--- Generate rule proposals from unsatisfied tasks ---")
+    try:
+        store = _get_memory_store()
+        # 查找不满意的任务
+        unsatisfied_tasks = store.query_task_runs(limit=1000)
+        unsatisfied = [t for t in unsatisfied_tasks if t.get("satisfaction") in ("unsatisfied", "neutral")]
+        
+        # 按 task_type 分组统计
+        unsatisfied_by_type = {}
+        for task in unsatisfied:
+            task_type = task.get("task_type", "unknown")
+            unsatisfied_by_type[task_type] = unsatisfied_by_type.get(task_type, 0) + 1
+        
+        # 只对不满意次数 >= 1 的类型生成规则
+        for task_type, count in unsatisfied_by_type.items():
+            if count >= 1:
+                existing = _query_db_proposals(status="pending")
+                proposal_content = f"任务类型 [{task_type}] 有 {count} 次不满意记录，需要制定规则改进"
+                
+                skip = False
+                for existing_prop in existing:
+                    if task_type in existing_prop.get("content", ""):
+                        skip = True
+                        break
+                
+                if not skip:
+                    proposal_now = datetime.now().isoformat()
+                    proposal = {
+                        "id": f"prop-rule-{datetime.now().strftime('%Y%m%d%H%M%S%f')}",
+                        "timestamp": proposal_now,
+                        "created_at": proposal_now,
+                        "updated_at": proposal_now,
+                        "type": "rule",
+                        "content": proposal_content,
+                        "task_type": task_type,
+                        "source": "unsatisfied_tasks",
+                        "status": "pending",
+                        "priority": "high"
+                    }
+                    proposals.append(proposal)
+                    _safe_db_write(store.upsert_proposal, proposal, "proposal")
+                    print(f"  ✓ Rule from unsatisfied tasks: {task_type} ({count} unsatisfied)")
+                    
+    except Exception as e:
+        print(f"  ~ Unsatisfied tasks to rule error: {e}")
+
+    # 3d. 从重复 candidates 生成 rule 提案
+    print("\n--- Generate rule proposals from recurring candidates ---")
+    try:
+        store = _get_memory_store()
+        all_candidates = store.query_candidates(limit=1000)
+        
+        # 统计 knowledge 出现次数
+        knowledge_count = {}
+        for cand in all_candidates:
+            knowledge = cand.get("knowledge", "")
+            if knowledge:
+                knowledge_count[knowledge] = knowledge_count.get(knowledge, 0) + 1
+        
+        # 出现 >= 2 次的生成规则
+        for knowledge, count in knowledge_count.items():
+            if count >= 2:
+                existing = _query_db_proposals(status="pending")
+                
+                skip = False
+                for existing_prop in existing:
+                    if knowledge in existing_prop.get("content", ""):
+                        skip = True
+                        break
+                
+                if not skip:
+                    proposal_now = datetime.now().isoformat()
+                    proposal = {
+                        "id": f"prop-rule-{datetime.now().strftime('%Y%m%d%H%M%S%f')}",
+                        "timestamp": proposal_now,
+                        "created_at": proposal_now,
+                        "updated_at": proposal_now,
+                        "type": "rule",
+                        "content": f"场景 [{knowledge}] 出现 {count} 次，建议制定处理规则",
+                        "source": "recurring_candidates",
+                        "status": "pending",
+                        "priority": "medium"
+                    }
+                    proposals.append(proposal)
+                    _safe_db_write(store.upsert_proposal, proposal, "proposal")
+                    print(f"  ✓ Rule from recurring candidates: {knowledge[:40]} ({count}x)")
+                    
+    except Exception as e:
+        print(f"  ~ Recurring candidates to rule error: {e}")
+
     print(f"\n✓ Step 3 complete: {len(proposals)} proposals generated")
     return proposals
 
